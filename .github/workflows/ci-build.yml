@@ -1,0 +1,58 @@
+name: Build
+
+on:
+  pull_request:
+    branches: [ main ]
+
+env:
+  configuration: Release
+  productNamespacePrefix: "DynamicData"
+
+jobs:
+  build:
+    runs-on: windows-2022
+    outputs:
+      nbgv: ${{ steps.nbgv.outputs.SemVer2 }}
+    steps:        
+       
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        lfs: true
+
+    - name: Setup .NET 6/7
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: |
+            6.0.x
+            7.0.x
+            8.0.x
+
+    - name: NBGV
+      id: nbgv
+      uses: dotnet/nbgv@master
+      with:
+        setAllVars: true
+        
+    - name: NuGet Restore
+      run: dotnet restore DynamicData.sln
+      working-directory: src
+      
+    - name: Build
+      run: dotnet build --no-restore --configuration Release DynamicData.sln
+      working-directory: src
+
+    - name: Run Tests
+      run: dotnet test --no-restore --configuration Release DynamicData.sln
+      working-directory: src
+
+    - name: Pack
+      run: dotnet pack --no-restore --configuration Release DynamicData.sln
+      working-directory: src
+
+    - name: Create NuGet Artifacts
+      uses: actions/upload-artifact@master
+      with:
+        name: nuget
+        path: '**/*.nupkg'
