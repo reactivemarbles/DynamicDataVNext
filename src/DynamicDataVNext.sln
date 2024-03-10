@@ -19,6 +19,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DynamicDataVNext.Tests", "D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DynamicDataVNext.Benchmarks", "DynamicDataVNext.Benchmarks\DynamicDataVNext.Benchmarks.csproj", "{82E9D55B-92AE-4AA3-990E-C6669374DA9E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{709D28C3-6E66-4488-B087-B95DE1B3E8A5}"
+	ProjectSection(SolutionItems) = preProject
+		..\.github\renovate.json = ..\.github\renovate.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{45D1A879-91B9-4080-8BF6-7C8BF0ED9153}"
+	ProjectSection(SolutionItems) = preProject
+		..\.github\workflows\ci-build.yml = ..\.github\workflows\ci-build.yml
+		..\.github\workflows\lock.yml = ..\.github\workflows\lock.yml
+		..\.github\workflows\release.yml = ..\.github\workflows\release.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +52,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{45D1A879-91B9-4080-8BF6-7C8BF0ED9153} = {709D28C3-6E66-4488-B087-B95DE1B3E8A5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5B88E05B-786A-4971-928A-765DE6349FD1}

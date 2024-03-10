@@ -6,7 +6,7 @@ on:
 
 env:
   configuration: Release
-  productNamespacePrefix: "DynamicData"
+  productNamespacePrefix: "DynamicDataVNext"
 
 jobs:
   build:
@@ -21,12 +21,10 @@ jobs:
         fetch-depth: 0
         lfs: true
 
-    - name: Setup .NET 6/7
+    - name: Setup .NET 8
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: |
-            6.0.x
-            7.0.x
             8.0.x
 
     - name: NBGV
@@ -36,19 +34,19 @@ jobs:
         setAllVars: true
         
     - name: NuGet Restore
-      run: dotnet restore DynamicData.sln
+      run: dotnet restore DynamicDataVNext.sln
       working-directory: src
       
     - name: Build
-      run: dotnet build --no-restore --configuration Release DynamicData.sln
+      run: dotnet build --no-restore --configuration Release DynamicDataVNext.sln
       working-directory: src
 
     - name: Run Tests
-      run: dotnet test --no-restore --configuration Release DynamicData.sln
+      run: dotnet test --no-restore --configuration Release DynamicDataVNext.sln
       working-directory: src
 
     - name: Pack
-      run: dotnet pack --no-restore --configuration Release DynamicData.sln
+      run: dotnet pack --no-restore --configuration Release DynamicDataVNext.sln
       working-directory: src
 
     - name: Create NuGet Artifacts
