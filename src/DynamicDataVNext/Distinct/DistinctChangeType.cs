@@ -1,9 +1,9 @@
-﻿namespace DynamicDataVNext.Kernel;
+﻿namespace DynamicDataVNext;
 
 /// <summary>
-/// Identifies the types of single-item operations that can be performed upon a keyed collection.
+/// Identifies the types of single-item operations that can be performed upon a collection of distinct items.
 /// </summary>
-public enum KeyedChangeType
+public enum DistinctChangeType
 {
     /// <summary>
     /// A safeguard value to prevent uninitialized changes from going unnoticed. Should not be used, and should be considered invalid if encountered.
@@ -16,9 +16,5 @@ public enum KeyedChangeType
     /// <summary>
     /// Identifies that an item was removed from a collection.
     /// </summary>
-    Removal,
-    /// <summary>
-    /// Identifies that an existing item was replaced with another, within a collection.
-    /// </summary>
-    Replacement
+    Removal
 }

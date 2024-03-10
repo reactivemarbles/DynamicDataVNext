@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DynamicDataVNext.Kernel;
+namespace DynamicDataVNext;
 
 /// <summary>
 /// Contains convenience methods for creating <see cref="SortedChange{T}"/> values.

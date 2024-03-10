@@ -2,7 +2,7 @@
 using System.Collections.Immutable;
 using System.Linq;
 
-namespace DynamicDataVNext.Kernel;
+namespace DynamicDataVNext;
 
 /// <summary>
 /// Contains convenience methods for creating <see cref="DistinctChangeSet{T}"/> values.
