@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DynamicDataVNext\DynamicDataVNext.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" />
     <PackageReference Include="Bogus" />
   </ItemGroup>
