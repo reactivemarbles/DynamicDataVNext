@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
@@ -18,6 +19,24 @@ public static class SortedChangeSet
 
         // List changes in reverse order, to preserve correctness of indexing.
         for(var index = items.Count - 1; index >= 0; --index)
+            changes.Add(SortedChange.Removal(
+                index:  index,
+                item:   items[index]));
+
+        return new()
+        {
+            Changes = changes.MoveToImmutable(),
+            Type    = ChangeSetType.Clear
+        };
+    }
+
+    /// <inheritdoc cref="Clear{T}(IReadOnlyList{T})"/>
+    public static SortedChangeSet<T> Clear<T>(ReadOnlySpan<T> items)
+    {
+        var changes = ImmutableArray.CreateBuilder<SortedChange<T>>(initialCapacity: items.Length);
+
+        // List changes in reverse order, to preserve correctness of indexing.
+        for(var index = items.Length - 1; index >= 0; --index)
             changes.Add(SortedChange.Removal(
                 index:  index,
                 item:   items[index]));
@@ -51,14 +70,12 @@ public static class SortedChangeSet
     /// Creates a new <see cref="SortedChangeSet{T}"/> representing the insertion of a range of items.
     /// </summary>
     /// <typeparam name="T">The type of items being inserted.</typeparam>
-    /// <typeparam name="TItems">The type of collection or sequence containing the items being inserted. Allows JIT optimizations, depending on the type given.</typeparam>
     /// <param name="index">The index at which the items are being inserted.</param>
     /// <param name="items">The items being inserted.</param>
     /// <returns>A <see cref="SortedChangeSet{T}"/> describing the insertion of the given items.</returns>
-    public static SortedChangeSet<T> Insertion<T, TItems>(
-            int     index,
-            TItems  items)
-        where TItems : IEnumerable<T>
+    public static SortedChangeSet<T> Insertion<T>(
+        int             index,
+        IEnumerable<T>  items)
     {
         if (!items.TryGetNonEnumeratedCount(out var itemsCount))
             itemsCount = 0;
@@ -74,6 +91,26 @@ public static class SortedChangeSet
         return new()
         {
             Changes = changes.MoveToOrCreateImmutable(),
+            Type    = ChangeSetType.Update
+        };
+    }
+
+    /// <inheritdoc cref="Insertion{T}(int, IEnumerable{T})"/>
+    public static SortedChangeSet<T> Insertion<T>(
+        int             index,
+        ReadOnlySpan<T> items)
+    {
+        var changes = ImmutableArray.CreateBuilder<SortedChange<T>>(initialCapacity: items.Length);
+
+        var insertionIndex = index;
+        foreach(var item in items)
+            changes.Add(SortedChange.Insertion(
+                index:  insertionIndex++,
+                item:   item));
+
+        return new()
+        {
+            Changes = changes.MoveToImmutable(),
             Type    = ChangeSetType.Update
         };
     }
@@ -144,6 +181,26 @@ public static class SortedChangeSet
         };
     }
 
+    /// <inheritdoc cref="Removal{T, TItems}(int, IReadOnlyList{T})"/>
+    public static SortedChangeSet<T> Removal<T, TItems>(
+        int             index,
+        ReadOnlySpan<T> items)
+    {
+        var changes = ImmutableArray.CreateBuilder<SortedChange<T>>(initialCapacity: items.Length);
+
+        // List changes in reverse order, to preserve correctness of indexing.
+        for(var removalIndex = index + items.Length - 1; removalIndex >= index; --removalIndex)
+            changes.Add(SortedChange.Removal(
+                index:  index,
+                item:   items[index]));
+
+        return new()
+        {
+            Changes = changes.MoveToImmutable(),
+            Type    = ChangeSetType.Update
+        };
+    }
+
     /// <summary>
     /// Creates a new <see cref="SortedChangeSet{T}"/> representing the replacement of a single item.
     /// </summary>
@@ -170,24 +227,62 @@ public static class SortedChangeSet
     /// </summary>
     /// <typeparam name="T">The type of items being added and removed.</typeparam>
     /// <param name="oldSortedItems">The items being removed, and their indexes.</param>
-    /// <param name="newSortedItems">The items being added, and their indexes.</param>
+    /// <param name="newSortedItems">The items being added, in the order they should appear.</param>
     /// <returns>A <see cref="SortedChangeSet{T}"/> describing the given reset operation.</returns>
     public static SortedChangeSet<T> Reset<T>(
-        IReadOnlyList<T> oldSortedItems,
-        IReadOnlyList<T> newSortedItems)
+        IReadOnlyList<T>    oldSortedItems,
+        IEnumerable<T>      newSortedItems)
     {
-        var changes = ImmutableArray.CreateBuilder<SortedChange<T>>(initialCapacity: oldSortedItems.Count + newSortedItems.Count);
+        if (newSortedItems.TryGetNonEnumeratedCount(out var newSortedItemsCount))
+            newSortedItemsCount = 0;
+
+        var changes = ImmutableArray.CreateBuilder<SortedChange<T>>(initialCapacity: oldSortedItems.Count + newSortedItemsCount);
+        int index;
 
         // List removed items in reverse order, to preserve correctness of indexing.
-        for(var index = oldSortedItems.Count - 1; index >= 0; --index)
+        for(index = oldSortedItems.Count - 1; index >= 0; --index)
             changes.Add(SortedChange.Removal(
                 index:  index,
                 item:   oldSortedItems[index]));
 
-        for(var index = 0; index < newSortedItems.Count; ++index)
+        index = 0;
+        foreach(var item in newSortedItems)
             changes.Add(SortedChange.Insertion(
+                index:  index++,
+                item:   item));
+
+        return new()
+        {
+            Changes = changes.MoveToOrCreateImmutable(),
+            Type    = ChangeSetType.Reset
+        };
+    }
+
+    /// <summary>
+    /// Creates a new <see cref="SortedChangeSet{T}"/> representing the resetting of items in a sorted collection.
+    /// </summary>
+    /// <typeparam name="T">The type of items being added and removed.</typeparam>
+    /// <param name="oldSortedItems">The items being removed, and their indexes.</param>
+    /// <param name="newSortedItems">The items being added, in the order they should appear.</param>
+    /// <returns>A <see cref="SortedChangeSet{T}"/> describing the given reset operation.</returns>
+    public static SortedChangeSet<T> Reset<T>(
+        ReadOnlySpan<T> oldSortedItems,
+        ReadOnlySpan<T> newSortedItems)
+    {
+        var changes = ImmutableArray.CreateBuilder<SortedChange<T>>(initialCapacity: oldSortedItems.Length + newSortedItems.Length);
+        int index;
+
+        // List removed items in reverse order, to preserve correctness of indexing.
+        for(index = oldSortedItems.Length - 1; index >= 0; --index)
+            changes.Add(SortedChange.Removal(
                 index:  index,
-                item:   newSortedItems[index]));
+                item:   oldSortedItems[index]));
+
+        index = 0;
+        foreach(var item in newSortedItems)
+            changes.Add(SortedChange.Insertion(
+                index:  index++,
+                item:   item));
 
         return new()
         {
