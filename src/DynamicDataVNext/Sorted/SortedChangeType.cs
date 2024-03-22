@@ -1,4 +1,4 @@
-﻿namespace DynamicDataVNext.Kernel;
+﻿namespace DynamicDataVNext;
 
 /// <summary>
 /// Identifies the types of single-item operations that can be performed upon a sorted collection.

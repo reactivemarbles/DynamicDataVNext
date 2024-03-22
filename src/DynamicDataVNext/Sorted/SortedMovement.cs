@@ -1,4 +1,4 @@
-﻿namespace DynamicDataVNext.Kernel;
+﻿namespace DynamicDataVNext;
 
 /// <summary>
 /// Describes an item being moved within a sorted collection.

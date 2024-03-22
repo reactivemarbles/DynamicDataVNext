@@ -2,12 +2,12 @@
 using System.Collections.Immutable;
 using System.Linq;
 
-namespace DynamicDataVNext.Kernel;
+namespace DynamicDataVNext;
 
 /// <summary>
 /// Contains convenience methods for creating <see cref="KeyedChangeSet{TKey, TItem}"/> values.
 /// </summary>
-public static class KeyedChangeSet
+public static partial class KeyedChangeSet
 {
     /// <summary>
     /// Creates a new <see cref="KeyedChangeSet{TKey, TItem}"/> representing the addition of a single item.
