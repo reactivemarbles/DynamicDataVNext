@@ -1,4 +1,4 @@
-﻿namespace DynamicDataVNext.Kernel;
+﻿namespace DynamicDataVNext;
 
 /// <summary>
 /// Contains convenience methods for creating <see cref="DistinctChange{T}"/> values.

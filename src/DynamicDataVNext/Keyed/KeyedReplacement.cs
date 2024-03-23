@@ -1,4 +1,4 @@
-﻿namespace DynamicDataVNext.Kernel;
+﻿namespace DynamicDataVNext;
 
 /// <summary>
 /// Describes an item within a keyed collection being replaced by another item with the same key.
