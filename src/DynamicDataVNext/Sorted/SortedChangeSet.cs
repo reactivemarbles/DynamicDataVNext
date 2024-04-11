@@ -5,7 +5,10 @@ using System.Linq;
 
 namespace DynamicDataVNext;
 
-public static class SortedChangeSet
+/// <summary>
+/// Contains convenience methods for creating <see cref="SortedChangeSet{T}"/> values.
+/// </summary>
+public static partial class SortedChangeSet
 {
     /// <summary>
     /// Creates a new <see cref="SortedChangeSet{T}"/> representing the clearing of a sorted collection.

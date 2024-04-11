@@ -8,7 +8,7 @@ namespace DynamicDataVNext;
 /// <summary>
 /// Contains convenience methods for creating <see cref="DistinctChangeSet{T}"/> values.
 /// </summary>
-public static class DistinctChangeSet
+public static partial class DistinctChangeSet
 {
     /// <summary>
     /// Creates a new <see cref="DistinctChangeSet{T}"/> representing the addition of a single item.
