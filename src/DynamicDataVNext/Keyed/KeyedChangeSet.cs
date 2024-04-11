@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
@@ -33,11 +34,9 @@ public static class KeyedChangeSet
     /// </summary>
     /// <typeparam name="TKey">The type of the items' keys.</typeparam>
     /// <typeparam name="TItem">The type of the items being added.</typeparam>
-    /// <typeparam name="TAdditions">The type of collection or sequence containing the items being added. Allows JIT optimizations, depending on the type given.</typeparam>
     /// <param name="additions">The items being added, and their keys.</param>
     /// <returns>A <see cref="KeyedChangeSet{TKey, TItem}"/> describing the addition of the given items.</returns>
-    public static KeyedChangeSet<TKey, TItem> Addition<TKey, TItem, TAdditions>(TAdditions additions)
-        where TAdditions: IEnumerable<KeyValuePair<TKey, TItem>>
+    public static KeyedChangeSet<TKey, TItem> Addition<TKey, TItem>(IEnumerable<KeyValuePair<TKey, TItem>> additions)
     {
         if (!additions.TryGetNonEnumeratedCount(out var additionsCount))
             additionsCount = 0;
@@ -57,6 +56,54 @@ public static class KeyedChangeSet
     }
 
     /// <summary>
+    /// Creates a new <see cref="KeyedChangeSet{TKey, TItem}"/> representing the addition of a range of items.
+    /// </summary>
+    /// <typeparam name="TKey">The type of the items' keys.</typeparam>
+    /// <typeparam name="TItem">The type of the items being added.</typeparam>
+    /// <param name="items">The items being added.</param>
+    /// <param name="keySelector">A selector for determining the key for each item being added.</param>
+    /// <returns>A <see cref="KeyedChangeSet{TKey, TItem}"/> describing the addition of the given items.</returns>
+    public static KeyedChangeSet<TKey, TItem> Addition<TKey, TItem>(
+        IEnumerable<TItem>  items,
+        Func<TItem, TKey>   keySelector)
+    {
+        if (!items.TryGetNonEnumeratedCount(out var itemsCount))
+            itemsCount = 0;
+
+        var changes = ImmutableArray.CreateBuilder<KeyedChange<TKey, TItem>>(initialCapacity: itemsCount);
+
+        foreach(var item in items)
+            changes.Add(KeyedChange.Addition(
+                key:    keySelector.Invoke(item),
+                item:   item));
+
+        return new()
+        {
+            Changes = changes.MoveToOrCreateImmutable(),
+            Type    = ChangeSetType.Update
+        };
+    }
+
+    /// <inheritdoc cref="Addition{TKey, TItem}(IEnumerable{TItem}, Func{TItem, TKey})"/>
+    public static KeyedChangeSet<TKey, TItem> Addition<TKey, TItem>(
+        ReadOnlySpan<TItem>  items,
+        Func<TItem, TKey>   keySelector)
+    {
+        var changes = ImmutableArray.CreateBuilder<KeyedChange<TKey, TItem>>(initialCapacity: items.Length);
+
+        foreach(var item in items)
+            changes.Add(KeyedChange.Addition(
+                key:    keySelector.Invoke(item),
+                item:   item));
+
+        return new()
+        {
+            Changes = changes.MoveToImmutable(),
+            Type    = ChangeSetType.Update
+        };
+    }
+
+    /// <summary>
     /// Creates a new <see cref="KeyedChangeSet{TKey, TItem}"/> representing the clearing of a keyed collection.
     /// </summary>
     /// <typeparam name="TKey">The type of the items' keys.</typeparam>
@@ -64,8 +111,7 @@ public static class KeyedChangeSet
     /// <typeparam name="TRemovals">The type of collection or sequence containing the items being removed. Allows JIT optimizations, depending on the type given.</typeparam>
     /// <param name="removals">The items being removed, and their keys.</param>
     /// <returns>A <see cref="KeyedChangeSet{TKey, TItem}"/> describing the clearing of the collection.</returns>
-    public static KeyedChangeSet<TKey, TItem> Clear<TKey, TItem, TRemovals>(TRemovals removals)
-        where TRemovals : IEnumerable<KeyValuePair<TKey, TItem>>
+    public static KeyedChangeSet<TKey, TItem> Clear<TKey, TItem>(IEnumerable<KeyValuePair<TKey, TItem>> removals)
     {
         if (!removals.TryGetNonEnumeratedCount(out var removalsCount))
             removalsCount = 0;
@@ -80,6 +126,54 @@ public static class KeyedChangeSet
         return new()
         {
             Changes = changes.MoveToOrCreateImmutable(),
+            Type    = ChangeSetType.Clear
+        };
+    }
+
+    /// <summary>
+    /// Creates a new <see cref="KeyedChangeSet{TKey, TItem}"/> representing the clearing of a keyed collection.
+    /// </summary>
+    /// <typeparam name="TKey">The type of the items' keys.</typeparam>
+    /// <typeparam name="TItem">The type of the items being removed.</typeparam>
+    /// <param name="items">The items being removed.</param>
+    /// <param name="keySelector">A selector for determining the key for each item being removed.</param>
+    /// <returns>A <see cref="KeyedChangeSet{TKey, TItem}"/> describing the clearing of the collection.</returns>
+    public static KeyedChangeSet<TKey, TItem> Clear<TKey, TItem>(
+        IEnumerable<TItem>  items,
+        Func<TItem, TKey>   keySelector)
+    {
+        if (!items.TryGetNonEnumeratedCount(out var itemsCount))
+            itemsCount = 0;
+
+        var changes = ImmutableArray.CreateBuilder<KeyedChange<TKey, TItem>>(initialCapacity: itemsCount);
+
+        foreach(var item in items)
+            changes.Add(KeyedChange.Removal(
+                key:    keySelector.Invoke(item),
+                item:   item));
+
+        return new()
+        {
+            Changes = changes.MoveToOrCreateImmutable(),
+            Type    = ChangeSetType.Clear
+        };
+    }
+
+    /// <inheritdoc cref="Clear{TKey, TItem}(IEnumerable{TItem}, Func{TItem, TKey})"/>
+    public static KeyedChangeSet<TKey, TItem> Clear<TKey, TItem>(
+        ReadOnlySpan<TItem>  items,
+        Func<TItem, TKey>   keySelector)
+    {
+        var changes = ImmutableArray.CreateBuilder<KeyedChange<TKey, TItem>>(initialCapacity: items.Length);
+
+        foreach(var item in items)
+            changes.Add(KeyedChange.Removal(
+                key:    keySelector.Invoke(item),
+                item:   item));
+
+        return new()
+        {
+            Changes = changes.MoveToImmutable(),
             Type    = ChangeSetType.Clear
         };
     }
@@ -108,11 +202,9 @@ public static class KeyedChangeSet
     /// </summary>
     /// <typeparam name="TKey">The type of the items' keys.</typeparam>
     /// <typeparam name="TItem">The type of the items being removed.</typeparam>
-    /// <typeparam name="TRemovals">The type of collection or sequence containing the items being removed. Allows JIT optimizations, depending on the type given.</typeparam>
     /// <param name="removals">The items being removed, and their keys.</param>
     /// <returns>A <see cref="KeyedChangeSet{TKey, TItem}"/> describing the removal of the given items.</returns>
-    public static KeyedChangeSet<TKey, TItem> Removal<TKey, TItem, TRemovals>(TRemovals removals)
-        where TRemovals : IEnumerable<KeyValuePair<TKey, TItem>>
+    public static KeyedChangeSet<TKey, TItem> Removal<TKey, TItem>(IEnumerable<KeyValuePair<TKey, TItem>> removals)
     {
         if (!removals.TryGetNonEnumeratedCount(out var removalsCount))
             removalsCount = 0;
@@ -127,6 +219,54 @@ public static class KeyedChangeSet
         return new()
         {
             Changes = changes.MoveToOrCreateImmutable(),
+            Type    = ChangeSetType.Update
+        };
+    }
+
+    /// <summary>
+    /// Creates a new <see cref="KeyedChangeSet{TKey, TItem}"/> representing the removal of a range of items.
+    /// </summary>
+    /// <typeparam name="TKey">The type of the items' keys.</typeparam>
+    /// <typeparam name="TItem">The type of the items being removed.</typeparam>
+    /// <param name="items">The items being removed.</param>
+    /// <param name="keySelector">A selector for determining the key for each item being removed.</param>
+    /// <returns>A <see cref="KeyedChangeSet{TKey, TItem}"/> describing the removal of the given items.</returns>
+    public static KeyedChangeSet<TKey, TItem> Removal<TKey, TItem>(
+        IEnumerable<TItem>  items,
+        Func<TItem, TKey>   keySelector)
+    {
+        if (!items.TryGetNonEnumeratedCount(out var itemsCount))
+            itemsCount = 0;
+
+        var changes = ImmutableArray.CreateBuilder<KeyedChange<TKey, TItem>>(initialCapacity: itemsCount);
+
+        foreach(var item in items)
+            changes.Add(KeyedChange.Removal(
+                key:    keySelector.Invoke(item),
+                item:   item));
+
+        return new()
+        {
+            Changes = changes.MoveToOrCreateImmutable(),
+            Type    = ChangeSetType.Update
+        };
+    }
+
+    /// <inheritdoc cref="Removal{TKey, TItem}(IEnumerable{TItem}, Func{TItem, TKey})"/>
+    public static KeyedChangeSet<TKey, TItem> Removal<TKey, TItem>(
+        ReadOnlySpan<TItem>  items,
+        Func<TItem, TKey>   keySelector)
+    {
+        var changes = ImmutableArray.CreateBuilder<KeyedChange<TKey, TItem>>(initialCapacity: items.Length);
+
+        foreach(var item in items)
+            changes.Add(KeyedChange.Removal(
+                key:    keySelector.Invoke(item),
+                item:   item));
+
+        return new()
+        {
+            Changes = changes.MoveToImmutable(),
             Type    = ChangeSetType.Update
         };
     }
@@ -158,16 +298,12 @@ public static class KeyedChangeSet
     /// </summary>
     /// <typeparam name="TKey">The type of the items' keys.</typeparam>
     /// <typeparam name="TItem">The type of the items being added and removed.</typeparam>
-    /// <typeparam name="TRemovals">The type of collection or sequence containing the items being removed. Allows JIT optimizations, depending on the type given.</typeparam>
-    /// <typeparam name="TAdditions">The type of collection or sequence containing the items being added. Allows JIT optimizations, depending on the type given.</typeparam>
     /// <param name="removals">The items being removed, and their keys.</param>
     /// <param name="additions">The items being added, and their keys.</param>
     /// <returns>A <see cref="KeyedChangeSet{TKey, TItem}"/> describing the given reset operation.</returns>
-    public static KeyedChangeSet<TKey, TItem> Reset<TKey, TItem, TRemovals, TAdditions>(
-            TRemovals   removals,
-            TAdditions  additions)
-        where TRemovals : IEnumerable<KeyValuePair<TKey, TItem>>
-        where TAdditions : IEnumerable<KeyValuePair<TKey, TItem>>
+    public static KeyedChangeSet<TKey, TItem> Reset<TKey, TItem>(
+        IEnumerable<KeyValuePair<TKey, TItem>> removals,
+        IEnumerable<KeyValuePair<TKey, TItem>> additions)
     {
         if (!removals.TryGetNonEnumeratedCount(out var removalsCount))
             removalsCount = 0;
@@ -190,6 +326,70 @@ public static class KeyedChangeSet
         return new()
         {
             Changes = changes.MoveToOrCreateImmutable(),
+            Type    = ChangeSetType.Reset
+        };
+    }
+
+    /// <summary>
+    /// Creates a new <see cref="KeyedChangeSet{TKey, TItem}"/> representing the resetting of items in a keyed collection.
+    /// </summary>
+    /// <typeparam name="TKey">The type of the items' keys.</typeparam>
+    /// <typeparam name="TItem">The type of the items being added and removed.</typeparam>
+    /// <param name="oldItems">The items being removed.</param>
+    /// <param name="newItems">The items being added.</param>
+    /// <param name="keySelector">A selector for determining the key for each item being added or removed.</param>
+    /// <returns>A <see cref="KeyedChangeSet{TKey, TItem}"/> describing the given reset operation.</returns>
+    public static KeyedChangeSet<TKey, TItem> Reset<TKey, TItem>(
+        IEnumerable<TItem>  oldItems,
+        IEnumerable<TItem>  newItems,
+        Func<TItem, TKey>   keySelector)
+    {
+        if (!oldItems.TryGetNonEnumeratedCount(out var oldItemsCount))
+            oldItemsCount = 0;
+
+        if (!newItems.TryGetNonEnumeratedCount(out var newItemsCount))
+            newItemsCount = 0;
+
+        var changes = ImmutableArray.CreateBuilder<KeyedChange<TKey, TItem>>(initialCapacity: oldItemsCount + newItemsCount);
+
+        foreach(var item in oldItems)
+            changes.Add(KeyedChange.Removal(
+                key:    keySelector.Invoke(item),
+                item:   item));
+
+        foreach(var item in newItems)
+            changes.Add(KeyedChange.Addition(
+                key:    keySelector.Invoke(item),
+                item:   item));
+
+        return new()
+        {
+            Changes = changes.MoveToOrCreateImmutable(),
+            Type    = ChangeSetType.Reset
+        };
+    }
+
+    /// <inheritdoc cref="Reset{TKey, TItem}(IEnumerable{TItem}, IEnumerable{TItem}, Func{TItem, TKey})"/>
+    public static KeyedChangeSet<TKey, TItem> Reset<TKey, TItem>(
+        ReadOnlySpan<TItem> oldItems,
+        ReadOnlySpan<TItem> newItems,
+        Func<TItem, TKey>   keySelector)
+    {
+        var changes = ImmutableArray.CreateBuilder<KeyedChange<TKey, TItem>>(initialCapacity: oldItems.Length + newItems.Length);
+
+        foreach(var item in oldItems)
+            changes.Add(KeyedChange.Removal(
+                key:    keySelector.Invoke(item),
+                item:   item));
+
+        foreach(var item in newItems)
+            changes.Add(KeyedChange.Addition(
+                key:    keySelector.Invoke(item),
+                item:   item));
+
+        return new()
+        {
+            Changes = changes.MoveToImmutable(),
             Type    = ChangeSetType.Reset
         };
     }

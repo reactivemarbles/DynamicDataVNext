@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
@@ -27,11 +28,9 @@ public static class DistinctChangeSet
     /// Creates a new <see cref="DistinctChangeSet{T}"/> representing the addition of a range of items.
     /// </summary>
     /// <typeparam name="T">The type of the items being added.</typeparam>
-    /// <typeparam name="TItems">The type of collection or sequence containing the items being added. Allows JIT optimizations, depending on the type given.</typeparam>
     /// <param name="items">The items being added.</param>
     /// <returns>A <see cref="DistinctChangeSet{T}"/> describing the addition of the given items.</returns>
-    public static DistinctChangeSet<T> Addition<T, TItems>(TItems items)
-        where TItems: IEnumerable<T>
+    public static DistinctChangeSet<T> Addition<T>(IEnumerable<T> items)
     {
         if (!items.TryGetNonEnumeratedCount(out var itemsCount))
             itemsCount = 0;
@@ -48,17 +47,28 @@ public static class DistinctChangeSet
         };
     }
 
+    /// <inheritdoc cref="Addition{T}(IEnumerable{T})"/>
+    public static DistinctChangeSet<T> Addition<T>(ReadOnlySpan<T> items)
+    {
+        var changes = ImmutableArray.CreateBuilder<DistinctChange<T>>(initialCapacity: items.Length);
 
+        foreach(var item in items)
+            changes.Add(DistinctChange.Addition(item));
+
+        return new()
+        {
+            Changes = changes.MoveToImmutable(),
+            Type    = ChangeSetType.Update
+        };
+    }
 
     /// <summary>
     /// Creates a new <see cref="DistinctChangeSet{T}"/> representing the clearing of a collection of distinct items.
     /// </summary>
     /// <typeparam name="T">The type of the items being removed.</typeparam>
-    /// <typeparam name="TItems">The type of collection or sequence containing the items being removed. Allows JIT optimizations, depending on the type given.</typeparam>
     /// <param name="items">The items being removed.</param>
     /// <returns>A <see cref="DistinctChangeSet{T}"/> describing the clearing of the collection.</returns>
-    public static DistinctChangeSet<T> Clear<T, TItems>(TItems items)
-        where TItems : IEnumerable<T>
+    public static DistinctChangeSet<T> Clear<T>(IEnumerable<T> items)
     {
         if (!items.TryGetNonEnumeratedCount(out var itemsCount))
             itemsCount = 0;
@@ -71,6 +81,21 @@ public static class DistinctChangeSet
         return new()
         {
             Changes = changes.MoveToOrCreateImmutable(),
+            Type    = ChangeSetType.Clear
+        };
+    }
+
+    /// <inheritdoc cref="Clear{T}(IEnumerable{T})"/>
+    public static DistinctChangeSet<T> Clear<T>(ReadOnlySpan<T> items)
+    {
+        var changes = ImmutableArray.CreateBuilder<DistinctChange<T>>(initialCapacity: items.Length);
+
+        foreach(var item in items)
+            changes.Add(DistinctChange.Removal(item));
+
+        return new()
+        {
+            Changes = changes.MoveToImmutable(),
             Type    = ChangeSetType.Clear
         };
     }
@@ -92,11 +117,9 @@ public static class DistinctChangeSet
     /// Creates a new <see cref="DistinctChangeSet{T}"/> representing the removal of a range of items.
     /// </summary>
     /// <typeparam name="T">The type of the items being removed.</typeparam>
-    /// <typeparam name="TItems">The type of collection or sequence containing the items being removed. Allows JIT optimizations, depending on the type given.</typeparam>
     /// <param name="items">The items being removed.</param>
     /// <returns>A <see cref="DistinctChangeSet{T}"/> describing the removal of the given items.</returns>
-    public static DistinctChangeSet<T> Removal<T, TItems>(TItems items)
-        where TItems : IEnumerable<T>
+    public static DistinctChangeSet<T> Removal<T>(IEnumerable<T> items)
     {
         if (!items.TryGetNonEnumeratedCount(out var itemsCount))
             itemsCount = 0;
@@ -113,20 +136,31 @@ public static class DistinctChangeSet
         };
     }
 
+    /// <inheritdoc cref="Removal{T}(IEnumerable{T})"/>
+    public static DistinctChangeSet<T> Removal<T>(ReadOnlySpan<T> items)
+    {
+        var changes = ImmutableArray.CreateBuilder<DistinctChange<T>>(initialCapacity: items.Length);
+
+        foreach(var item in items)
+            changes.Add(DistinctChange.Removal(item));
+
+        return new()
+        {
+            Changes = changes.MoveToImmutable(),
+            Type    = ChangeSetType.Update
+        };
+    }
+
     /// <summary>
     /// Creates a new <see cref="DistinctChangeSet{T}"/> representing the resetting of items in a collection of distinct items.
     /// </summary>
     /// <typeparam name="T">The type of the items being added and removed.</typeparam>
-    /// <typeparam name="OldItems">The type of collection or sequence containing the items being removed. Allows JIT optimizations, depending on the type given.</typeparam>
-    /// <typeparam name="NewItems">The type of collection or sequence containing the items being added. Allows JIT optimizations, depending on the type given.</typeparam>
     /// <param name="oldItems">The items being removed.</param>
     /// <param name="newItems">The items being added.</param>
     /// <returns>A <see cref="DistinctChangeSet{T}"/> describing the given reset operation.</returns>
-    public static DistinctChangeSet<T> Reset<T, TOldItems, TNewItems>(
-            TOldItems oldItems,
-            TNewItems newItems)
-        where TOldItems : IEnumerable<T>
-        where TNewItems : IEnumerable<T>
+    public static DistinctChangeSet<T> Reset<T>(
+        IEnumerable<T> oldItems,
+        IEnumerable<T> newItems)
     {
         if (!oldItems.TryGetNonEnumeratedCount(out var oldItemsCount))
             oldItemsCount = 0;
@@ -145,6 +179,26 @@ public static class DistinctChangeSet
         return new()
         {
             Changes = changes.MoveToOrCreateImmutable(),
+            Type    = ChangeSetType.Reset
+        };
+    }
+
+    /// <inheritdoc cref="Reset{T}(IEnumerable{T}, IEnumerable{T})"/>
+    public static DistinctChangeSet<T> Reset<T>(
+        ReadOnlySpan<T> oldItems,
+        ReadOnlySpan<T> newItems)
+    {
+        var changes = ImmutableArray.CreateBuilder<DistinctChange<T>>(initialCapacity: oldItems.Length + newItems.Length);
+
+        foreach(var item in oldItems)
+            changes.Add(DistinctChange.Removal(item));
+
+        foreach(var item in newItems)
+            changes.Add(DistinctChange.Addition(item));
+
+        return new()
+        {
+            Changes = changes.MoveToImmutable(),
             Type    = ChangeSetType.Reset
         };
     }
