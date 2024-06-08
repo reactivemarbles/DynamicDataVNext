@@ -30,7 +30,7 @@ public static partial class DistinctChangeSet
     /// <typeparam name="T">The type of the items being added.</typeparam>
     /// <param name="items">The items being added.</param>
     /// <returns>A <see cref="DistinctChangeSet{T}"/> describing the addition of the given items.</returns>
-    public static DistinctChangeSet<T> Addition<T>(IEnumerable<T> items)
+    public static DistinctChangeSet<T> BulkAddition<T>(IEnumerable<T> items)
     {
         if (!items.TryGetNonEnumeratedCount(out var itemsCount))
             itemsCount = 0;
@@ -47,13 +47,51 @@ public static partial class DistinctChangeSet
         };
     }
 
-    /// <inheritdoc cref="Addition{T}(IEnumerable{T})"/>
-    public static DistinctChangeSet<T> Addition<T>(ReadOnlySpan<T> items)
+    /// <inheritdoc cref="BulkAddition{T}(IEnumerable{T})"/>
+    public static DistinctChangeSet<T> BulkAddition<T>(ReadOnlySpan<T> items)
     {
         var changes = ImmutableArray.CreateBuilder<DistinctChange<T>>(initialCapacity: items.Length);
 
         foreach(var item in items)
             changes.Add(DistinctChange.Addition(item));
+
+        return new()
+        {
+            Changes = changes.MoveToImmutable(),
+            Type    = ChangeSetType.Update
+        };
+    }
+
+    /// <summary>
+    /// Creates a new <see cref="DistinctChangeSet{T}"/> representing the removal of a range of items.
+    /// </summary>
+    /// <typeparam name="T">The type of the items being removed.</typeparam>
+    /// <param name="items">The items being removed.</param>
+    /// <returns>A <see cref="DistinctChangeSet{T}"/> describing the removal of the given items.</returns>
+    public static DistinctChangeSet<T> BulkRemoval<T>(IEnumerable<T> items)
+    {
+        if (!items.TryGetNonEnumeratedCount(out var itemsCount))
+            itemsCount = 0;
+
+        var changes = ImmutableArray.CreateBuilder<DistinctChange<T>>(initialCapacity: itemsCount);
+
+        foreach(var item in items)
+            changes.Add(DistinctChange.Removal(item));
+
+        return new()
+        {
+            Changes = changes.MoveToOrCreateImmutable(),
+            Type    = ChangeSetType.Update
+        };
+    }
+
+    /// <inheritdoc cref="BulkRemoval{T}(IEnumerable{T})"/>
+    public static DistinctChangeSet<T> BulkRemoval<T>(ReadOnlySpan<T> items)
+    {
+        var changes = ImmutableArray.CreateBuilder<DistinctChange<T>>(initialCapacity: items.Length);
+
+        foreach(var item in items)
+            changes.Add(DistinctChange.Removal(item));
 
         return new()
         {
@@ -112,44 +150,6 @@ public static partial class DistinctChangeSet
             Changes = ImmutableArray.Create(DistinctChange.Removal(item)),
             Type    = ChangeSetType.Update
         };
-
-    /// <summary>
-    /// Creates a new <see cref="DistinctChangeSet{T}"/> representing the removal of a range of items.
-    /// </summary>
-    /// <typeparam name="T">The type of the items being removed.</typeparam>
-    /// <param name="items">The items being removed.</param>
-    /// <returns>A <see cref="DistinctChangeSet{T}"/> describing the removal of the given items.</returns>
-    public static DistinctChangeSet<T> Removal<T>(IEnumerable<T> items)
-    {
-        if (!items.TryGetNonEnumeratedCount(out var itemsCount))
-            itemsCount = 0;
-
-        var changes = ImmutableArray.CreateBuilder<DistinctChange<T>>(initialCapacity: itemsCount);
-
-        foreach(var item in items)
-            changes.Add(DistinctChange.Removal(item));
-
-        return new()
-        {
-            Changes = changes.MoveToOrCreateImmutable(),
-            Type    = ChangeSetType.Update
-        };
-    }
-
-    /// <inheritdoc cref="Removal{T}(IEnumerable{T})"/>
-    public static DistinctChangeSet<T> Removal<T>(ReadOnlySpan<T> items)
-    {
-        var changes = ImmutableArray.CreateBuilder<DistinctChange<T>>(initialCapacity: items.Length);
-
-        foreach(var item in items)
-            changes.Add(DistinctChange.Removal(item));
-
-        return new()
-        {
-            Changes = changes.MoveToImmutable(),
-            Type    = ChangeSetType.Update
-        };
-    }
 
     /// <summary>
     /// Creates a new <see cref="DistinctChangeSet{T}"/> representing the resetting of items in a collection of distinct items.

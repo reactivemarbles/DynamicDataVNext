@@ -70,55 +70,6 @@ public static partial class SortedChangeSet
         };
 
     /// <summary>
-    /// Creates a new <see cref="SortedChangeSet{T}"/> representing the insertion of a range of items.
-    /// </summary>
-    /// <typeparam name="T">The type of items being inserted.</typeparam>
-    /// <param name="index">The index at which the items are being inserted.</param>
-    /// <param name="items">The items being inserted.</param>
-    /// <returns>A <see cref="SortedChangeSet{T}"/> describing the insertion of the given items.</returns>
-    public static SortedChangeSet<T> Insertion<T>(
-        int             index,
-        IEnumerable<T>  items)
-    {
-        if (!items.TryGetNonEnumeratedCount(out var itemsCount))
-            itemsCount = 0;
-
-        var changes = ImmutableArray.CreateBuilder<SortedChange<T>>(initialCapacity: itemsCount);
-
-        var insertionIndex = index;
-        foreach(var item in items)
-            changes.Add(SortedChange.Insertion(
-                index:  insertionIndex++,
-                item:   item));
-
-        return new()
-        {
-            Changes = changes.MoveToOrCreateImmutable(),
-            Type    = ChangeSetType.Update
-        };
-    }
-
-    /// <inheritdoc cref="Insertion{T}(int, IEnumerable{T})"/>
-    public static SortedChangeSet<T> Insertion<T>(
-        int             index,
-        ReadOnlySpan<T> items)
-    {
-        var changes = ImmutableArray.CreateBuilder<SortedChange<T>>(initialCapacity: items.Length);
-
-        var insertionIndex = index;
-        foreach(var item in items)
-            changes.Add(SortedChange.Insertion(
-                index:  insertionIndex++,
-                item:   item));
-
-        return new()
-        {
-            Changes = changes.MoveToImmutable(),
-            Type    = ChangeSetType.Update
-        };
-    }
-
-    /// <summary>
     /// Creates a new <see cref="SortedChangeSet{T}"/> representing the movement of a single item.
     /// </summary>
     /// <typeparam name="T">The type of item being moved.</typeparam>
@@ -140,22 +91,53 @@ public static partial class SortedChangeSet
         };
 
     /// <summary>
-    /// Creates a new <see cref="SortedChangeSet{T}"/> representing the removal of a single item.
+    /// Creates a new <see cref="SortedChangeSet{T}"/> representing the insertion of a range of items.
     /// </summary>
-    /// <typeparam name="T">The type of item being removed.</typeparam>
-    /// <param name="index">The index of the item being removed.</param>
-    /// <param name="item">The item being removed.</param>
-    /// <returns>A <see cref="SortedChangeSet{T}"/> describing the removal of the given item.</returns>
-    public static SortedChangeSet<T> Removal<T>(
-            int index,
-            T   item)
-        => new()
+    /// <typeparam name="T">The type of items being inserted.</typeparam>
+    /// <param name="index">The index at which the items are being inserted.</param>
+    /// <param name="items">The items being inserted.</param>
+    /// <returns>A <see cref="SortedChangeSet{T}"/> describing the insertion of the given items.</returns>
+    public static SortedChangeSet<T> RangeInsertion<T>(
+        int             index,
+        IEnumerable<T>  items)
+    {
+        if (!items.TryGetNonEnumeratedCount(out var itemsCount))
+            itemsCount = 0;
+
+        var changes = ImmutableArray.CreateBuilder<SortedChange<T>>(initialCapacity: itemsCount);
+
+        var insertionIndex = index;
+        foreach(var item in items)
+            changes.Add(SortedChange.Insertion(
+                index:  insertionIndex++,
+                item:   item));
+
+        return new()
         {
-            Changes = ImmutableArray.Create(SortedChange.Removal(
-                index:  index,
-                item:   item)),
+            Changes = changes.MoveToOrCreateImmutable(),
             Type    = ChangeSetType.Update
         };
+    }
+
+    /// <inheritdoc cref="RangeInsertion{T}(int, IEnumerable{T})"/>
+    public static SortedChangeSet<T> RangeInsertion<T>(
+        int             index,
+        ReadOnlySpan<T> items)
+    {
+        var changes = ImmutableArray.CreateBuilder<SortedChange<T>>(initialCapacity: items.Length);
+
+        var insertionIndex = index;
+        foreach(var item in items)
+            changes.Add(SortedChange.Insertion(
+                index:  insertionIndex++,
+                item:   item));
+
+        return new()
+        {
+            Changes = changes.MoveToImmutable(),
+            Type    = ChangeSetType.Update
+        };
+    }
 
     /// <summary>
     /// Creates a new <see cref="SortedChangeSet{T}"/> representing the removal of a range of items.
@@ -165,7 +147,7 @@ public static partial class SortedChangeSet
     /// <param name="index">The index at which the sequence of removed items begins.</param>
     /// <param name="items">The items being removed.</param>
     /// <returns>A <see cref="SortedChangeSet{T}"/> describing the removal of the given items.</returns>
-    public static SortedChangeSet<T> Removal<T, TItems>(
+    public static SortedChangeSet<T> RangeRemoval<T, TItems>(
         int                 index,
         IReadOnlyList<T>    items)
     {
@@ -184,8 +166,8 @@ public static partial class SortedChangeSet
         };
     }
 
-    /// <inheritdoc cref="Removal{T, TItems}(int, IReadOnlyList{T})"/>
-    public static SortedChangeSet<T> Removal<T, TItems>(
+    /// <inheritdoc cref="RangeRemoval{T, TItems}(int, IReadOnlyList{T})"/>
+    public static SortedChangeSet<T> RangeRemoval<T, TItems>(
         int             index,
         ReadOnlySpan<T> items)
     {
@@ -203,6 +185,24 @@ public static partial class SortedChangeSet
             Type    = ChangeSetType.Update
         };
     }
+
+    /// <summary>
+    /// Creates a new <see cref="SortedChangeSet{T}"/> representing the removal of a single item.
+    /// </summary>
+    /// <typeparam name="T">The type of item being removed.</typeparam>
+    /// <param name="index">The index of the item being removed.</param>
+    /// <param name="item">The item being removed.</param>
+    /// <returns>A <see cref="SortedChangeSet{T}"/> describing the removal of the given item.</returns>
+    public static SortedChangeSet<T> Removal<T>(
+            int index,
+            T   item)
+        => new()
+        {
+            Changes = ImmutableArray.Create(SortedChange.Removal(
+                index:  index,
+                item:   item)),
+            Type    = ChangeSetType.Update
+        };
 
     /// <summary>
     /// Creates a new <see cref="SortedChangeSet{T}"/> representing the replacement of a single item.
