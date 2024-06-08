@@ -17,7 +17,4 @@ public interface IObservableList<T>
 
     /// <inheritdoc cref="ISubjectList{T}.ObserveValue(int)"/>
     IObservable<T> ObserveValue(int index);
-
-    /// <inheritdoc cref="ISubjectList{T}.SuspendNotifications"/>
-    IDisposable SuspendNotifications();
 }

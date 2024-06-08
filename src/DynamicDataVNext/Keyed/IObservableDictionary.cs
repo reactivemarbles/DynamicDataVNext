@@ -11,7 +11,7 @@ namespace DynamicDataVNext;
 /// <typeparam name="TValue">The type of the item values in the collection.</typeparam>
 public interface IObservableDictionary<TKey, TValue>
     : IReadOnlyDictionary<TKey, TValue>,
-        IObservable<KeyedChange<TKey, TValue>>
+        IObservable<KeyedChangeSet<TKey, TValue>>
 {
     /// <inheritdoc cref="ISubjectDictionary{TKey, TValue}.CollectionChanged"/>
     IObservable<Unit> CollectionChanged { get; }
@@ -24,7 +24,4 @@ public interface IObservableDictionary<TKey, TValue>
 
     /// <inheritdoc cref="ISubjectDictionary{TKey, TValue}.ObserveValue(TKey)"/>
     IObservable<TValue> ObserveValue(TKey key);
-
-    /// <inheritdoc cref="ISubjectDictionary{TKey, TValue}.SuspendNotifications"/>
-    IDisposable SuspendNotifications();
 }
