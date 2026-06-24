@@ -5,7 +5,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Shared\" />
+    <Compile Update="Distinct\DistinctChange.Addition.cs">
+      <DependentUpon>DistinctChange.Createcs</DependentUpon>
+    </Compile>
+    <Compile Update="Distinct\DistinctChange.Refreshment.cs">
+      <DependentUpon>DistinctChange.Createcs</DependentUpon>
+    </Compile>
+    <Compile Update="Distinct\DistinctChange.Removal.cs">
+      <DependentUpon>DistinctChange.Createcs</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>

@@ -16,5 +16,9 @@ public enum DistinctChangeType
     /// <summary>
     /// Identifies that an item was removed from a collection.
     /// </summary>
-    Removal
+    Removal,
+    /// <summary>
+    /// Identifies that an item within a collection has been mutated, and should be re-evaluated by downstream listeners that care about its state.
+    /// </summary>
+    Refreshment
 }

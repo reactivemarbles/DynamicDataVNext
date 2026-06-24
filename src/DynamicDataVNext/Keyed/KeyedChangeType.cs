@@ -18,7 +18,11 @@ public enum KeyedChangeType
     /// </summary>
     Removal,
     /// <summary>
-    /// Identifies that an existing item was replaced with another, within a collection.
+    /// Identifies that an existing item within a collection was replaced with another.
     /// </summary>
-    Replacement
+    Replacement,
+    /// <summary>
+    /// Identifies that an item within a collection has been mutated, and should be re-evaluated by downstream listeners that care about its state.
+    /// </summary>
+    Refreshment
 }

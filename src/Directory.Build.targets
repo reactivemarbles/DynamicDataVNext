@@ -1,0 +1,10 @@
+<Project>
+
+    <ItemGroup>
+        <!-- Automatic file nesting, for .cs files-->
+        <Compile Update="**\*.*.cs">
+            <DependentUpon>$([System.Text.RegularExpressions.Regex]::Replace(%(Filename), '\.[^\.]+$', '.cs'))</DependentUpon>
+        </Compile>
+    </ItemGroup>
+
+</Project>

@@ -6,21 +6,24 @@ using System.Reactive;
 namespace DynamicDataVNext;
 
 /// <summary>
-/// Describes a collection of distinctly-keyed items, which publishes notifications about its mutations to subscribers, as they occur.
+/// Describes a collection of keyed items, which publishes notifications about its mutations, as they occur.
 /// </summary>
-/// <typeparam name="TKey">The type of the key values of items in the collection.</typeparam>
+/// <typeparam name="TKey">The type of the key values in the collection.</typeparam>
 /// <typeparam name="TItem">The type of the items in the collection.</typeparam>
 public interface IObservableCache<TKey, TItem>
-    : IReadOnlyCollection<TItem>,
+    : ICollection<TItem>,
         IObservable<KeyedChange<TKey, TItem>>
 {
     /// <summary>
-    /// retrieves the item in the collection (if any) for the given key.
+    /// Accesses the item in the collection (if any) for the given key.
     /// </summary>
-    /// <param name="key">The key of the item to be retrieved.</param>
-    /// <exception cref="KeyNotFoundException">Throws when <paramref name="key"/> does not exist within the collection.</exception>
+    /// <param name="key">The key of the item to be accessed.</param>
+    /// <exception cref="KeyNotFoundException">Throws when <paramref name="key"/> does not exist within the collection, during a retrieval.</exception>
     /// <returns>The item in the collection with the given key.</returns>
-    TItem this[TKey key] { get; }
+    /// <remarks>
+    /// When assigning a value to a given key, the key need not be already-present within the collection.
+    /// </remarks>
+    TItem this[TKey key] { get; set; }
     
     /// <summary>
     /// Retrieves the current set of keys present within the collection.
@@ -38,27 +41,29 @@ public interface IObservableCache<TKey, TItem>
     /// </remarks>
     IReadOnlyCollection<TItem> Items { get; }
 
-    /// <summary>
-    /// An event that occurs after any mutation of the collection occurs.
-    /// </summary>
-    IObservable<Unit> CollectionChanged { get; }
+    /// <inheritdoc cref="AddRange(ReadOnlySpan{TItem})"/>
+    /// <exception cref="ArgumentNullException">Throws for <paramref name="items"/>.</exception>
+    void AddRange(IEnumerable<TItem> items);
 
     /// <summary>
-    /// Checks whether a given key is currently present, within the collection.
+    /// Adds a range of items to the collection, as a single operation.
     /// </summary>
-    /// <param name="key">The key to check for.</param>
-    /// <returns>A flag indicating whether the given key is present in the collection, or not.</returns>
-    bool ContainsKey(TKey key);
+    /// <param name="items">The items to be added.</param>
+    /// <exception cref="ArgumentException">Throws if <paramref name="items"/> contains an item whose key is already present within the collection.</exception>
+    void AddRange(ReadOnlySpan<TItem> items);
+
+    /// <inheritdoc cref="RemoveRange(ReadOnlySpan{TItem})"/>
+    /// <exception cref="ArgumentNullException">Throws for <paramref name="items"/>.</exception>
+    void RemoveRange(IEnumerable<TItem> items);
 
     /// <summary>
-    /// Allows subscribers to observe the value of a particular keyed item within the collection, as it changes.
+    /// Removes a set of items from the collection, as a single operation.
     /// </summary>
-    /// <param name="key">The key whose value is to be observed.</param>
-    /// <returns>A stream which will publish the latest value, for the given key, within the collection.</returns>
+    /// <param name="items">The set of items to be removed.</param>
     /// <remarks>
-    /// The returned stream will always immediately publish the current value for the given key, upon subscription, and will complete if the given key is removed. If the key is not present within the collection upon subscription, the stream will complete immediately.
+    /// Note that the collection will silently ignore items that are not present in the collection.
     /// </remarks>
-    IObservable<TItem> ObserveValue(TKey key);
+    void RemoveRange(ReadOnlySpan<TItem> items);
 
     /// <summary>
     /// Attempts to retrieve an item from the collection, by its key.
@@ -69,11 +74,19 @@ public interface IObservableCache<TKey, TItem>
     bool TryGetItem(TKey key, [MaybeNullWhen(false)] out TItem item);
 
     /// <summary>
-    /// Temporarily suspends the publication of notifications by the collection, until the returned object is disposed, at which point all mutations made during the suspension will (if any) will be published as one notification.
+    /// Signals that an item within the collection has, itself, mutated, triggering a <see cref="KeyedChangeType.Refreshment"/> notification to be published via <see cref="ChangeStream"/>.
     /// </summary>
-    /// <returns>An object that will trigger the resumption of notifications, when disposed.</returns>
-    /// <remarks>
-    /// May be called multiple times, in which case no notifications will be published until all outstanding suspensions have been disposed.
-    /// </remarks>
-    IDisposable SuspendNotifications();
+    /// <param name="item">The item that was refreshed.</param>
+    /// <returns><see langword="false"/> if the collection does not actually contain <paramref name="item"/>. Otherwise, <see langword="true"/>.</returns>
+    bool Refresh(TItem item);
+
+    /// <inheritdoc cref="Reset(ReadOnlySpan{TItem})"/>
+    /// <exception cref="ArgumentNullException">Throws for <paramref name="items"/>.</exception>
+    void Reset(IEnumerable<TItem> items);
+
+    /// <summary>
+    /// Performs a <see cref="ChangeSetType.Reset"/> operation upon the collection, by removing any existing items within the collection, and replacing them with the given items. 
+    /// </summary>
+    /// <param name="items">The new set of items to be loaded into the collection.</param>
+    void Reset(ReadOnlySpan<TItem> items);
 }

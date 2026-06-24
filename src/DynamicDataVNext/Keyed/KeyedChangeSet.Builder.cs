@@ -2,42 +2,37 @@
 
 namespace DynamicDataVNext;
 
-public static partial class KeyedChangeSet
+public readonly partial record struct KeyedChangeSet<TKey, TItem>
 {
     /// <summary>
     /// An object capable of efficiently collecting individual <see cref="KeyedChange{TKey, TItem}"/> values, over time, to be assembled into a <see cref="KeyedChangeSet{TKey, TItem}"/>, with correctness guarantees.
     /// </summary>
-    /// <typeparam name="TKey">The type of the keys of items in the source collection.</typeparam>
-    /// <typeparam name="TItem">The type of the items in the source collection.</typeparam>
-    public sealed class Builder<TKey, TItem>
-        : ChangeSetBuilderBase<KeyedChange<TKey, TItem>, KeyedChangeSet<TKey, TItem>>
+    public sealed class Builder
+        : ChangeSetBuilderBase<KeyedChange<TKey, TItem>, KeyedChangeType, KeyedChangeSet<TKey, TItem>>
     {
-        /// <inheritdoc />
-        public Builder()
-            : base()
+        /// <inheritdoc/>
+        public Builder(bool isSourceEmpty)
+            : base(isSourceEmpty)
         { }
 
-        /// <inheritdoc />
-        public Builder(int initialCapacity)
-            : base(initialCapacity)
+        /// <inheritdoc/>
+        public Builder(
+            int     initialCapacity,
+            bool    isSourceEmpty)
+            : base(
+                initialCapacity,
+                isSourceEmpty)
         { }
-
-        protected override KeyedChangeSet<TKey, TItem> Empty
-            => default;
 
         protected override KeyedChangeSet<TKey, TItem> CreateChangeSet(
-                ImmutableArray<KeyedChange<TKey, TItem>>    changes,
-                ChangeSetType                               type)
+            ImmutableArray<KeyedChange<TKey, TItem>>    changes,
+            ChangeSetType                               type,
+            int                                         firstResetAdditionIndex)
             => new()
             {
-                Changes = changes,
-                Type    = type
+                Changes            = changes,
+                FirstAdditionIndex = firstResetAdditionIndex,
+                Type               = type
             };
-
-        protected override bool IsAddition(KeyedChange<TKey, TItem> change)
-            => change.Type is KeyedChangeType.Addition;
-
-        protected override bool IsRemoval(KeyedChange<TKey, TItem> change)
-            => change.Type is KeyedChangeType.Removal;
     }
 }
