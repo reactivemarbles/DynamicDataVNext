@@ -6,5 +6,8 @@ obj/
 .idea/
 .vs/
 
+# ReSharper user files
+*.DotSettings.user
+
 # Benchmark Results
 BenchmarkDotNet.Artifacts/
