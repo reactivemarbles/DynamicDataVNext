@@ -26,6 +26,7 @@ public static partial class KeyedChangeSet
         => KeyedChangeSet<TKey, TItem>.CreateForRemovals(
             items:          items,
             keySelector:    keySelector);
+
     /// <inheritdoc cref="KeyedChangeSet{TKey, TItem}.CreateForRemovals(IEnumerable{KeyedItem{TKey,TItem}})"/>
     /// <typeparam name="TKey">The type of the items' keys.</typeparam>
     /// <typeparam name="TItem">The type of the removed items.</typeparam>
@@ -60,6 +61,7 @@ public readonly partial record struct KeyedChangeSet<TKey, TItem>
         Func<TItem, TKey>   keySelector)
     {
         ArgumentNullException.ThrowIfNull(items);
+        ArgumentNullException.ThrowIfNull(keySelector);
 
         var isItemCountValid = items.TryGetNonEnumeratedCount(out var itemCount);
         if (isItemCountValid && (itemCount is 0))
@@ -95,6 +97,8 @@ public readonly partial record struct KeyedChangeSet<TKey, TItem>
         ReadOnlySpan<TItem> items,
         Func<TItem, TKey>   keySelector)
     {
+        ArgumentNullException.ThrowIfNull(keySelector);
+
         if (items.Length is 0)
             return Empty;
         

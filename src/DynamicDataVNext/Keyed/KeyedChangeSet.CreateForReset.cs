@@ -125,6 +125,7 @@ public readonly partial record struct KeyedChangeSet<TKey, TItem>
         Func<TItem, TKey>   keySelector)
     {
         ArgumentNullException.ThrowIfNull(addedItems);
+        ArgumentNullException.ThrowIfNull(keySelector);
     
         var isAddedItemCountValid = addedItems.TryGetNonEnumeratedCount(out var addedItemCount);
 
@@ -159,6 +160,8 @@ public readonly partial record struct KeyedChangeSet<TKey, TItem>
         ReadOnlySpan<TItem> addedItems,
         Func<TItem, TKey>   keySelector)
     {
+        ArgumentNullException.ThrowIfNull(keySelector);
+
         if (addedItems.Length is 0)
             return Empty;
     
@@ -297,11 +300,11 @@ public readonly partial record struct KeyedChangeSet<TKey, TItem>
 
         foreach(var removal in removals)
             changes.Add(KeyedChange.CreateRemoval(removal));
-
         removalCount = changes.Count;
 
         foreach(var addition in additions)
             changes.Add(KeyedChange.CreateAddition(addition));
+        additionCount = changes.Count - removalCount;
 
         if (changes.Count is 0)
             return Empty;
@@ -309,7 +312,7 @@ public readonly partial record struct KeyedChangeSet<TKey, TItem>
         return new()
         {
             Changes             = changes.MoveToOrCreateImmutable(),
-            Type                = (changes.Count == removalCount)
+            Type                = (additionCount is 0)
                 ? ChangeSetType.Clear
                 : ChangeSetType.Reset,
             FirstAdditionIndex  = removalCount 
@@ -338,11 +341,11 @@ public readonly partial record struct KeyedChangeSet<TKey, TItem>
 
         foreach(var removal in removals)
             changes.Add(KeyedChange.CreateRemoval(removal));
-
         removalCount = changes.Count;
 
         foreach(var addition in additions)
             changes.Add(KeyedChange.CreateAddition(addition));
+        additionCount = changes.Count - removalCount;
 
         if (changes.Count is 0)
             return Empty;
@@ -350,7 +353,7 @@ public readonly partial record struct KeyedChangeSet<TKey, TItem>
         return new()
         {
             Changes             = changes.MoveToOrCreateImmutable(),
-            Type                = (changes.Count == removalCount)
+            Type                = (additionCount is 0)
                 ? ChangeSetType.Clear
                 : ChangeSetType.Reset,
             FirstAdditionIndex  = removalCount 
@@ -423,6 +426,7 @@ public readonly partial record struct KeyedChangeSet<TKey, TItem>
     {
         ArgumentNullException.ThrowIfNull(removedItems);
         ArgumentNullException.ThrowIfNull(addedItems);
+        ArgumentNullException.ThrowIfNull(keySelector);
     
         var isRemovedItemCountValid = removedItems  .TryGetNonEnumeratedCount(out var removedItemCount);
         var isAddedItemCountValid   = addedItems    .TryGetNonEnumeratedCount(out var addedItemCount);
@@ -439,18 +443,18 @@ public readonly partial record struct KeyedChangeSet<TKey, TItem>
             changes.Add(KeyedChange.CreateRemoval(
                 key:    keySelector.Invoke(item),
                 item:   item));
-
         removedItemCount = changes.Count;
 
         foreach(var item in addedItems)
             changes.Add(KeyedChange.CreateAddition(
                 key:    keySelector.Invoke(item),
                 item:   item));
+        addedItemCount = changes.Count - removedItemCount;
 
         return new()
         {
             Changes             = changes.MoveToImmutable(),
-            Type                = (changes.Count == removedItemCount)
+            Type                = (addedItemCount is 0)
                 ? ChangeSetType.Clear
                 : ChangeSetType.Reset,
             FirstAdditionIndex  = removedItemCount
@@ -470,6 +474,8 @@ public readonly partial record struct KeyedChangeSet<TKey, TItem>
         ReadOnlySpan<TItem> addedItems,
         Func<TItem, TKey>   keySelector)
     {
+        ArgumentNullException.ThrowIfNull(keySelector);
+
         if ((removedItems.Length is 0) && (addedItems.Length is 0))
             return Empty;
     

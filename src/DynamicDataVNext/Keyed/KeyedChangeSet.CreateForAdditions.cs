@@ -157,6 +157,7 @@ public readonly partial record struct KeyedChangeSet<TKey, TItem>
         Func<TItem, TKey>   keySelector)
     {
         ArgumentNullException.ThrowIfNull(items);
+        ArgumentNullException.ThrowIfNull(keySelector);
 
         var isItemCountValid = items.TryGetNonEnumeratedCount(out var itemCount);
         if (isItemCountValid && (itemCount is 0))
@@ -192,6 +193,8 @@ public readonly partial record struct KeyedChangeSet<TKey, TItem>
         ReadOnlySpan<TItem> items,
         Func<TItem, TKey>   keySelector)
     {
+        ArgumentNullException.ThrowIfNull(keySelector);
+    
         if (items.Length is 0)
             return Empty;
         

@@ -26,6 +26,7 @@ public static partial class KeyedChangeSet
         => KeyedChangeSet<TKey, TItem>.CreateForClear(
             items:          items,
             keySelector:    keySelector);
+
     /// <inheritdoc cref="KeyedChangeSet{TKey, TItem}.CreateForClear(IEnumerable{KeyedItem{TKey,TItem}})"/>
     /// <typeparam name="TKey">The type of the items' keys.</typeparam>
     /// <typeparam name="TItem">The type of the removed items.</typeparam>
@@ -96,6 +97,8 @@ public readonly partial record struct KeyedChangeSet<TKey, TItem>
         ReadOnlySpan<TItem> items,
         Func<TItem, TKey>   keySelector)
     {
+        ArgumentNullException.ThrowIfNull(keySelector);
+
         if (items.Length is 0)
             return Empty;
         
@@ -200,7 +203,7 @@ public readonly partial record struct KeyedChangeSet<TKey, TItem>
         var changes = ImmutableArray.CreateBuilder<KeyedChange<TKey, TItem>>(initialCapacity: removals.Length);
 
         foreach(var removal in removals)
-            changes.Add(KeyedChange.CreateAddition(removal));
+            changes.Add(KeyedChange.CreateRemoval(removal));
             
         return new()
         {
