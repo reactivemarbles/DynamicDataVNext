@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 
 namespace DynamicDataVNext;
 
-public partial class ChangeSetBuilderBase<TChange, TChangeType, TChangeSet>
+public partial class ChangeSetBuilderBase<TChangeSet, TChange, TChangeType>
 {
     /// <summary>
     /// The collection of buffered changes within a <see cref="ChangeSetBuilderBase{TChange,TChangeType,TChangeSet}"/> object.

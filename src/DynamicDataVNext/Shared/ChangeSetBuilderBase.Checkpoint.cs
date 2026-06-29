@@ -2,14 +2,14 @@ using System;
 
 namespace DynamicDataVNext;
 
-public partial class ChangeSetBuilderBase<TChange, TChangeType, TChangeSet>
+public partial class ChangeSetBuilderBase<TChangeSet, TChange, TChangeType>
 {
     /// <summary>
     /// A snapshot of state from a <see cref="ChangeSetBuilderBase{TChange,TChangeType,TChangeSet}"/> object, which may be used to restore that state after it has changed.
     /// </summary>
     public readonly struct Checkpoint
     {
-        internal Checkpoint(ChangeSetBuilderBase<TChange, TChangeType, TChangeSet> owner)
+        internal Checkpoint(ChangeSetBuilderBase<TChangeSet, TChange, TChangeType> owner)
         {
             _owner = owner;
             
@@ -52,7 +52,7 @@ public partial class ChangeSetBuilderBase<TChange, TChangeType, TChangeSet>
         private readonly ChangeSetType                                          _currentType;
         private readonly int                                                    _firstResetAdditionIndex;
         private readonly bool                                                   _isSourceEmpty;
-        private readonly ChangeSetBuilderBase<TChange, TChangeType, TChangeSet> _owner;
+        private readonly ChangeSetBuilderBase<TChangeSet, TChange, TChangeType> _owner;
         private readonly int                                                    _pendingChangeCount;
         private readonly bool                                                   _pendingChangesHasNonRemovals;
     }

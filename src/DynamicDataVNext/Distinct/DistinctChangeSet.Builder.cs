@@ -8,7 +8,7 @@ public readonly partial record struct DistinctChangeSet<T>
     /// An object capable of efficiently collecting individual <see cref="DistinctChange{T}"/> values, over time, to be assembled into a <see cref="DistinctChangeSet{T}"/>, with correctness guarantees.
     /// </summary>
     public sealed class Builder
-        : ChangeSetBuilderBase<DistinctChange<T>, DistinctChangeType, DistinctChangeSet<T>>
+        : ChangeSetBuilderBase<DistinctChangeSet<T>, DistinctChange<T>, DistinctChangeType>
     {
         /// <inheritdoc/>
         public Builder(bool isSourceEmpty)

@@ -13,6 +13,7 @@ public static partial class DistinctChangeSet { }
 /// </summary>
 /// <typeparam name="T">The type of the items in the collection.</typeparam>
 public readonly partial record struct DistinctChangeSet<T>
+    : IChangeSet<DistinctChange<T>, DistinctChangeType>
 {
     /// <summary>
     /// The sequence of single-item changes that make up the operation.

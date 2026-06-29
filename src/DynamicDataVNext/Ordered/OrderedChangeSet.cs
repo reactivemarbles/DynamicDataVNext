@@ -13,6 +13,7 @@ public static partial class OrderedChangeSet { }
 /// </summary>
 /// <typeparam name="T">The type of the items in the collection.</typeparam>
 public readonly partial record struct OrderedChangeSet<T>
+    : IChangeSet<OrderedChange<T>, OrderedChangeType>
 {
     /// <summary>
     /// The sequence of single-item changes that make up the operation.

@@ -14,6 +14,7 @@ public static partial class KeyedChangeSet { }
 /// <typeparam name="TKey">The type of the items' keys.</typeparam>
 /// <typeparam name="TItem">The type of the items in the collection.</typeparam>
 public readonly partial record struct KeyedChangeSet<TKey, TItem>
+    : IChangeSet<KeyedChange<TKey, TItem>, KeyedChangeType>
 {
     /// <summary>
     /// The sequence of single-item changes that make up the operation.

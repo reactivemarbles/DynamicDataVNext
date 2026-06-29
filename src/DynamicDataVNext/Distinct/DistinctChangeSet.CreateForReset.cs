@@ -123,11 +123,9 @@ public readonly partial record struct DistinctChangeSet<T>
         return new()
         {
             Changes             = changes.MoveToOrCreateImmutable(),
-            Type                = (removalCount, additionCount) switch
-            {
-                (>0, 0) => ChangeSetType.Clear,
-                _       => ChangeSetType.Reset
-            },
+            Type                = (additionCount is 0)
+                ? ChangeSetType.Clear
+                : ChangeSetType.Reset,
             FirstAdditionIndex  = removalCount
         };
     }
@@ -155,11 +153,9 @@ public readonly partial record struct DistinctChangeSet<T>
         return new()
         {
             Changes             = changes.MoveToImmutable(),
-            Type                = (removedItems.Length, addedItems.Length) switch
-            {
-                (>0, 0) => ChangeSetType.Clear,
-                _       => ChangeSetType.Reset
-            },
+            Type                = (addedItems.Length is 0)
+                ? ChangeSetType.Clear
+                : ChangeSetType.Reset,
             FirstAdditionIndex  = removedItems.Length
         };
     }

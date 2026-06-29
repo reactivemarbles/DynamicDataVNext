@@ -8,7 +8,7 @@ public readonly partial record struct OrderedChangeSet<T>
     /// An object capable of efficiently collecting individual <see cref="OrderedChange{T}"/> values, over time, to be assembled into a <see cref="OrderedChangeSet{T}"/>, with correctness guarantees.
     /// </summary>
     public sealed class Builder
-        : ChangeSetBuilderBase<OrderedChange<T>, OrderedChangeType, OrderedChangeSet<T>>
+        : ChangeSetBuilderBase<OrderedChangeSet<T>, OrderedChange<T>, OrderedChangeType>
     {
         /// <inheritdoc/>
         public Builder(bool isSourceEmpty)

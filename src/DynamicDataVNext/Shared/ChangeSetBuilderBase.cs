@@ -14,8 +14,9 @@ namespace DynamicDataVNext;
 /// <para>For example, the builder will produce a changeset of type <see cref="ChangeSetType.Clear"/> or <see cref="ChangeSetType.Reset"/> when the sequence of changes warrants it, but relies on the consumer to accurately report when the source collection is or is not empty.</para>
 /// <para>This builder class does not, however, guarantee that the actual sequence of changes is valid, with respect to the source collection, as it does not receive a reference to the source collection.</para>
 /// </remarks>
-public abstract partial class ChangeSetBuilderBase<TChange, TChangeType, TChangeSet>
-    where TChange : IChange<TChangeType>
+public abstract partial class ChangeSetBuilderBase<TChangeSet, TChange, TChangeType>
+    where TChangeSet : struct, IChangeSet<TChange, TChangeType>
+    where TChange : struct, IChange<TChangeType>
     where TChangeType : Enum
 {
     /// <summary>

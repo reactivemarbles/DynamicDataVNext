@@ -8,7 +8,7 @@ public readonly partial record struct KeyedChangeSet<TKey, TItem>
     /// An object capable of efficiently collecting individual <see cref="KeyedChange{TKey, TItem}"/> values, over time, to be assembled into a <see cref="KeyedChangeSet{TKey, TItem}"/>, with correctness guarantees.
     /// </summary>
     public sealed class Builder
-        : ChangeSetBuilderBase<KeyedChange<TKey, TItem>, KeyedChangeType, KeyedChangeSet<TKey, TItem>>
+        : ChangeSetBuilderBase<KeyedChangeSet<TKey, TItem>, KeyedChange<TKey, TItem>, KeyedChangeType>
     {
         /// <inheritdoc/>
         public Builder(bool isSourceEmpty)
