@@ -34,6 +34,7 @@ public readonly partial record struct OrderedChangeSet<T>
         int             index,
         IEnumerable<T>  items)
     {
+        ArgumentOutOfRangeException.ThrowIfNegative(index);
         ArgumentNullException.ThrowIfNull(items);
     
         var isItemCountValid = items.TryGetNonEnumeratedCount(out var itemCount);
@@ -66,10 +67,13 @@ public readonly partial record struct OrderedChangeSet<T>
     /// <param name="index">The index at which the insertion occurs.</param>
     /// <param name="items">The inserted items.</param>
     /// <returns>An <see cref="OrderedChangeSet{T}"/> describing the insertion of the given items.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Throws if <paramref name="index"/> is negative.</exception>
     public static OrderedChangeSet<T> CreateForInsertions(
         int             index,
         ReadOnlySpan<T> items)
     {
+        ArgumentOutOfRangeException.ThrowIfNegative(index);
+    
         if (items.Length is 0)
             return Empty;
 

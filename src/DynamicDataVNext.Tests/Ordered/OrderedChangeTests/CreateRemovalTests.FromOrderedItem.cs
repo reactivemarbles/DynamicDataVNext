@@ -1,0 +1,20 @@
+using NUnit.Framework;
+
+namespace DynamicDataVNext.Tests.Ordered.OrderedChangeTests;
+
+public static partial class CreateRemovalTests
+{
+    [TestFixture]
+    public sealed class FromOrderedItem
+        : Base
+    {
+        protected override OrderedChange<int> InvokeUut(
+                int index,
+                int item)
+            => OrderedChange.CreateRemoval(new OrderedItem<int>()
+            {
+                Index   = index,
+                Item    = item
+            });
+    }
+}

@@ -96,6 +96,7 @@ public readonly partial record struct OrderedChangeSet<T>
     /// <param name="newIndex">The index of <paramref name="newItem"/>, after the update occurs.</param>
     /// <param name="newItem">The replacement item.</param>
     /// <returns>An <see cref="OrderedChangeSet{T}"/> describing the update involving the given items.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Throws if <paramref name="oldIndex"/> or <paramref name="newIndex"/> is negative.</exception>
     public static OrderedChangeSet<T> CreateForUpdate(
             int oldIndex,
             T   oldItem,

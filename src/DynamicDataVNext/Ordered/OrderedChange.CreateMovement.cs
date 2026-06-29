@@ -1,3 +1,5 @@
+using System;
+
 namespace DynamicDataVNext;
 
 public static partial class OrderedChange
@@ -28,17 +30,23 @@ public readonly partial record struct OrderedChange<T>
     /// <param name="newIndex">The index of the item, after the move occurs.</param>
     /// <param name="item">The moved item.</param>
     /// <returns>An <see cref="OrderedChange{T}"/> describing the insertion of the given item.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Throws if <paramref name="oldIndex"/> or <paramref name="newIndex"/> is negative.</exception>
     public static OrderedChange<T> CreateMovement(
-            int oldIndex,
-            int newIndex,
-            T   item)
-        => new()
+        int oldIndex,
+        int newIndex,
+        T   item)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(oldIndex);
+        ArgumentOutOfRangeException.ThrowIfNegative(newIndex);
+
+        return new()
         {
             PrimaryIndex    = newIndex,
             PrimaryItem     = item,
             SecondaryIndex  = oldIndex, 
             Type            = OrderedChangeType.Movement
         };
+    }
 
     /// <summary>
     /// Creates a new <see cref="OrderedChange{T}"/> representing the <see cref="OrderedChangeType.Movement"/> of a given item.

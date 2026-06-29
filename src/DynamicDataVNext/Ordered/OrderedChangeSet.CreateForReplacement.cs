@@ -1,3 +1,5 @@
+using System;
+
 namespace DynamicDataVNext;
 
 public static partial class OrderedChangeSet
@@ -28,6 +30,7 @@ public readonly partial record struct OrderedChangeSet<T>
     /// <param name="oldItem">The replaced item.</param>
     /// <param name="newItem">The replacement item.</param>
     /// <returns>An <see cref="OrderedChangeSet{T}"/> describing the replacement of the given items.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Throws if <paramref name="index"/> is negative.</exception>
     public static OrderedChangeSet<T> CreateForReplacement(
             int index,
             T   oldItem,

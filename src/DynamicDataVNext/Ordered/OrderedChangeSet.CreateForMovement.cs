@@ -1,3 +1,5 @@
+using System;
+
 namespace DynamicDataVNext;
 
 public static partial class OrderedChangeSet
@@ -28,6 +30,7 @@ public readonly partial record struct OrderedChangeSet<T>
     /// <param name="newIndex">The index of the item, after the move occurs.</param>
     /// <param name="item">The moved item.</param>
     /// <returns>An <see cref="OrderedChangeSet{T}"/> describing the movement of the given item.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Throws if <paramref name="oldIndex"/> or <paramref name="newIndex"/> is negative.</exception>
     public static OrderedChangeSet<T> CreateForMovement(
             int oldIndex,
             int newIndex,

@@ -1,4 +1,6 @@
-﻿namespace DynamicDataVNext;
+﻿using System;
+
+namespace DynamicDataVNext;
 
 /// <summary>
 /// Describes an item being moved within a collection of ordered items.
@@ -14,10 +16,30 @@ public readonly record struct OrderedMovement<T>
     /// <summary>
     /// The 0-based index of the item's position, within its collection, after being moved.
     /// </summary>
-    public required int NewIndex { get; init; }
+    /// <exception cref="ArgumentOutOfRangeException">Throws if set to a negative value</exception>
+    public required int NewIndex
+    {
+        get;
+        init
+        {
+            ArgumentOutOfRangeException.ThrowIfNegative(value);
+            
+            field = value;
+        }
+    }
 
     /// <summary>
     /// The 0-based index of the item's position, within its collection, before being moved.
     /// </summary>
-    public required int OldIndex { get; init; }
+    /// <exception cref="ArgumentOutOfRangeException">Throws if set to a negative value</exception>
+    public required int OldIndex
+    {
+        get;
+        init
+        {
+            ArgumentOutOfRangeException.ThrowIfNegative(value);
+            
+            field = value;
+        }
+    }
 }

@@ -1,3 +1,5 @@
+using System;
+
 namespace DynamicDataVNext;
 
 public static partial class OrderedChangeSet
@@ -25,6 +27,7 @@ public readonly partial record struct OrderedChangeSet<T>
     /// <param name="index">The index at which the insertion occurs.</param>
     /// <param name="item">The inserted item.</param>
     /// <returns>An <see cref="OrderedChangeSet{T}"/> describing the insertion of the given item.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Throws if <paramref name="index"/> is negative.</exception>
     public static OrderedChangeSet<T> CreateForInsertion(
             int index,
             T   item)

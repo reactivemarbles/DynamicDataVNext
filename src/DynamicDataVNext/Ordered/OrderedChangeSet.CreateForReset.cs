@@ -122,6 +122,7 @@ public readonly partial record struct OrderedChangeSet<T>
             changes.Add(OrderedChange.CreateInsertion(
                 index:  index++,
                 item:   item));
+        addedItemCount = changes.Count - removedItems.Count;
 
         if (changes.Count is 0)
             return Empty;
@@ -129,7 +130,7 @@ public readonly partial record struct OrderedChangeSet<T>
         return new()
         {
             Changes             = changes.MoveToOrCreateImmutable(),
-            Type                = (changes.Count == removedItems.Count)
+            Type                = (addedItemCount is 0)
                 ? ChangeSetType.Clear
                 : ChangeSetType.Reset,
             FirstAdditionIndex  = removedItems.Count

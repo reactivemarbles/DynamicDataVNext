@@ -34,6 +34,7 @@ public readonly partial record struct OrderedChangeSet<T>
         int                 index,
         IReadOnlyList<T>    items)
     {
+        ArgumentOutOfRangeException.ThrowIfNegative(index);
         ArgumentNullException.ThrowIfNull(items);
 
         if (items.Count is 0)
@@ -59,6 +60,7 @@ public readonly partial record struct OrderedChangeSet<T>
     /// <param name="index">The index at which the removal occurs.</param>
     /// <param name="items">The removed items.</param>
     /// <returns>An <see cref="OrderedChangeSet{T}"/> describing the removal of the given items.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Throws if <paramref name="index"/> is negative.</exception>
     /// <remarks>
     /// The generated sequence of changes will involve removing the items in the reverse order that they are listed in <paramref name="items"/>. This helps optimize the removal of items from <see cref="List{T}"/> or similar data structures, should consumers be forced to process the removals one-at-a-time, instead of calling a .RemoveRange() method. 
     /// </remarks>
@@ -66,6 +68,8 @@ public readonly partial record struct OrderedChangeSet<T>
         int             index,
         ReadOnlySpan<T> items)
     {
+        ArgumentOutOfRangeException.ThrowIfNegative(index);
+
         if (items.Length is 0)
             return Empty;
 

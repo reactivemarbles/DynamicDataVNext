@@ -1,4 +1,6 @@
-﻿namespace DynamicDataVNext;
+﻿using System;
+
+namespace DynamicDataVNext;
 
 /// <summary>
 /// Describes an item within a collection of ordered items being replaced by another.
@@ -9,7 +11,17 @@ public readonly record struct OrderedReplacement<T>
     /// <summary>
     /// The 0-based index of the collection position at which the replacement is occurring.
     /// </summary>
-    public required int Index { get; init; }
+    /// <exception cref="ArgumentOutOfRangeException">Throws if set to a negative value</exception>
+    public required int Index
+    {
+        get;
+        init
+        {
+            ArgumentOutOfRangeException.ThrowIfNegative(value);
+            
+            field = value;
+        }
+    }
 
     /// <summary>
     /// The replacement item.
