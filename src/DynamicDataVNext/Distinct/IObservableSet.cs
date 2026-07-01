@@ -21,18 +21,16 @@ public interface IObservableSet<T>
     /// </summary>
     /// <param name="item">The item that was refreshed.</param>
     /// <returns><see langword="false"/> if the collection does not actually contain <paramref name="item"/>. Otherwise, <see langword="true"/>.</returns>
+    /// <exception cref="ImmutableRefreshException">Throws if <see cref="ChangeStream"/>.<see cref="DistinctChangeStream{T}.Options"/>.<see cref="DistinctItemOptions.ItemsAreMutable"/> is <see langword="false"/>.</exception>
     bool Refresh(T item);
     
-    /// <inheritdoc cref="Reset(ReadOnlySpan{T})"/>
-    /// <exception cref="ArgumentNullException">Throws for <paramref name="items"/>.</exception>
-    void Reset(IEnumerable<T> items);
-
     /// <summary>
     /// Performs a <see cref="ChangeSetType.Reset"/> operation upon the collection, by removing any existing items within the collection, and replacing them with the given items. 
     /// </summary>
     /// <param name="items">The new set of items to be loaded into the collection.</param>
+    /// <exception cref="ArgumentNullException">Throws for <paramref name="items"/>.</exception>
     /// <remarks>
     /// Any duplicate items within <paramref name="items"/> are automatically ignored.
     /// </remarks>
-    void Reset(ReadOnlySpan<T> items);
+    void Reset(IEnumerable<T> items);
 }
