@@ -6,7 +6,6 @@ using NUnit.Framework;
 
 namespace DynamicDataVNext.Tests.ChangeSetBuilderBaseTests;
 
-[TestFixture]
 public class ConstructorTestsBase<TUutAdapter, TChangeSet, TChange, TChangeType>
         : Base
     where TUutAdapter : IUutAdapter<TChangeSet, TChange, TChangeType>, new()
