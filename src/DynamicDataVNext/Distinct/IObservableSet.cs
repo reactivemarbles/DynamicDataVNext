@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace DynamicDataVNext;
 
 /// <summary>
-/// Describes a collection of distinct items, which publishes notifications about its mutations to subscribers, as they occur.
+/// Describes a collection of distinct items, which publishes notifications about mutations made to itself or its items.
 /// </summary>
 /// <typeparam name="T">The type of the items in the collection.</typeparam>
 public interface IObservableSet<T>
@@ -28,9 +28,11 @@ public interface IObservableSet<T>
     /// Performs a <see cref="ChangeSetType.Reset"/> operation upon the collection, by removing any existing items within the collection, and replacing them with the given items. 
     /// </summary>
     /// <param name="items">The new set of items to be loaded into the collection.</param>
+    /// <typeparam name="TItems">The type of the collection of given items.</typeparam>
     /// <exception cref="ArgumentNullException">Throws for <paramref name="items"/>.</exception>
     /// <remarks>
     /// Any duplicate items within <paramref name="items"/> are automatically ignored.
     /// </remarks>
-    void Reset(IEnumerable<T> items);
+    void Reset<TItems>(TItems items)
+        where TItems : IEnumerable<T>;
 }

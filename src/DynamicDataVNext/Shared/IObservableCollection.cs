@@ -20,6 +20,7 @@ public interface IObservableCollection<T>
     /// Temporarily pauses the publication of notifications, allowing change notifications to be buffered and published in batches.
     /// </summary>
     /// <returns>An object that, when disposed, will end the suspension and immediately trigger the publication of buffered notifications.</returns>
+    /// <exception cref="InvalidOperationException">Throws if notifications have already been suspended.</exception>
     /// <remarks>
     /// May be called multiple times, in which case no notifications will be published until all outstanding suspensions have been disposed.
     /// </remarks>

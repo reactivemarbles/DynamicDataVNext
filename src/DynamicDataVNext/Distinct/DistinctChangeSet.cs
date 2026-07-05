@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 namespace DynamicDataVNext;
 
 /// <summary>
-/// Contains convenience methods for creating <see cref="DistinctChangeSet{T}"/> structures.
+/// Contains convenience methods for creating and manipulating <see cref="DistinctChangeSet{T}"/> structures.
 /// </summary>
 public static partial class DistinctChangeSet { }
 

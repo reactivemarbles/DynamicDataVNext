@@ -13,7 +13,8 @@ namespace DynamicDataVNext;
 [DebuggerDisplay("Count = {Count}")]
 public partial class ChangeTrackingHashSet<T>
     : ISet<T>,
-        IReadOnlySet<T>
+        IReadOnlySet<T>,
+        IExpandableCollection
 {
     /// <summary>
     /// Initializes a new empty instance of the <see cref="ChangeTrackingHashSet{T}"/> class. 
@@ -41,6 +42,9 @@ public partial class ChangeTrackingHashSet<T>
             options:    options)
     { }
     
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ChangeTrackingHashSet{T}"/> class, containing the given items. 
+    /// </summary>
     /// <inheritdoc cref="ChangeTrackingHashSet{T}(System.Collections.Generic.IEqualityComparer{T}, DistinctItemOptions)"/>
     /// <param name="items">The initial set of items to be loaded into the collection. Duplicate items are ignored.</param>
     /// <exception cref="ArgumentNullException">Throws for <paramref name="items"/>.</exception>
@@ -70,9 +74,7 @@ public partial class ChangeTrackingHashSet<T>
     public BufferedChangeCollection BufferedChanges
         => _bufferedChanges;
     
-    /// <summary>
-    /// The maximum number of items that the collection can store without having to perform an internal resizing re-allocation.
-    /// </summary>
+    /// <inheritdoc/>
     public int Capacity
         => _items.Capacity;
     
@@ -141,6 +143,7 @@ public partial class ChangeTrackingHashSet<T>
     public void CopyTo(T[] array, int arrayIndex)
         => _items.CopyTo(array, arrayIndex);
 
+    /// <inheritdoc/>
     public void EnsureCapacity(int capacity)
         => _items.EnsureCapacity(capacity);
     
@@ -168,8 +171,8 @@ public partial class ChangeTrackingHashSet<T>
                     isSourceEmpty:  _items.Count is 0);
     }
 
-    /// <inheritdoc/>
-    public IEnumerator<T> GetEnumerator()
+    /// <inheritdoc cref="HashSet{T}.GetEnumerator()"/>
+    public HashSet<T>.Enumerator GetEnumerator()
         => _items.GetEnumerator();
 
     /// <inheritdoc/>
@@ -275,11 +278,13 @@ public partial class ChangeTrackingHashSet<T>
     /// Performs a <see cref="ChangeSetType.Reset"/> operation upon the collection, by removing any existing items within the collection, and replacing them with the given items. 
     /// </summary>
     /// <param name="items">The new set of items to be loaded into the collection.</param>
+    /// <typeparam name="TItems">The type of the collection of given items.</typeparam>
     /// <exception cref="ArgumentNullException">Throws for <paramref name="items"/>.</exception>
     /// <remarks>
     /// Any duplicate items within <paramref name="items"/> are automatically ignored.
     /// </remarks>
-    public void Reset(IEnumerable<T> items)
+    public void Reset<TItems>(TItems items)
+        where TItems : IEnumerable<T>
     {
         ArgumentNullException.ThrowIfNull(items);
 
@@ -397,6 +402,9 @@ public partial class ChangeTrackingHashSet<T>
 
     IEnumerator IEnumerable.GetEnumerator()
         => GetEnumerator();
+
+    IEnumerator<T> IEnumerable<T>.GetEnumerator()
+        => _items.GetEnumerator();
 
     private void AddRange(
         IEnumerable<T>  items,

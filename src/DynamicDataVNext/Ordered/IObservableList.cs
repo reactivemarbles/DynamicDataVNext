@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace DynamicDataVNext;
 
 /// <summary>
-/// Describes a collection of ordered items, which publishes notifications about its mutations to subscribers, as they occur.
+/// Describes a collection of ordered items, and which publishes notifications about mutations made to itself or its items.
 /// </summary>
 /// <typeparam name="T">The type of the items in the collection.</typeparam>
 public interface IObservableList<T>
@@ -31,16 +31,6 @@ public interface IObservableList<T>
     void InsertRange(
         int             index,
         IEnumerable<T>  items);
-
-    /// <summary>
-    /// Inserts a range of items into the list.
-    /// </summary>
-    /// <param name="index">The index at which the first item in the range should be inserted.</param>
-    /// <param name="items">The items to be inserted.</param>
-    /// <exception cref="IndexOutOfRangeException">Throws when <paramref name="index"/> does not represent a valid index of an item in the list, or the next available index of the list.</exception>
-    void InsertRange(
-        int             index,
-        ReadOnlySpan<T> items);
 
     /// <summary>
     /// Moves an item within the list.
@@ -70,13 +60,12 @@ public interface IObservableList<T>
         int index,
         int count);
 
-    /// <inheritdoc cref="Reset(ReadOnlySpan{T})"/>
-    /// <exception cref="ArgumentNullException">Throws for <paramref name="items"/>.</exception>
-    void Reset(IEnumerable<T> items);
-
     /// <summary>
     /// Performs a <see cref="ChangeSetType.Reset"/> operation upon the collection, by removing any existing items within the collection, and replacing them with the given items. 
     /// </summary>
     /// <param name="items">The new set of items to be loaded into the collection.</param>
-    void Reset(ReadOnlySpan<T> items);
+    /// <typeparam name="TItems">The type of the collection of given items.</typeparam>
+    /// <exception cref="ArgumentNullException">Throws for <paramref name="items"/>.</exception>
+    void Reset<TItems>(TItems items)
+        where TItems : IEnumerable<T>;
 }

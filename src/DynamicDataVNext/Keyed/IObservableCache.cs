@@ -6,7 +6,7 @@ using System.Reactive;
 namespace DynamicDataVNext;
 
 /// <summary>
-/// Describes a collection of keyed items, which publishes notifications about its mutations, as they occur.
+/// Describes a collection of keyed items, and which publishes notifications about mutations made to itself or its items.
 /// </summary>
 /// <typeparam name="TKey">The type of the key values in the collection.</typeparam>
 /// <typeparam name="TItem">The type of the items in the collection.</typeparam>
@@ -41,29 +41,23 @@ public interface IObservableCache<TKey, TItem>
     /// </remarks>
     IReadOnlyCollection<TItem> Items { get; }
 
-    /// <inheritdoc cref="AddRange(ReadOnlySpan{TItem})"/>
-    /// <exception cref="ArgumentNullException">Throws for <paramref name="items"/>.</exception>
-    void AddRange(IEnumerable<TItem> items);
-
     /// <summary>
     /// Adds a range of items to the collection, as a single operation.
     /// </summary>
     /// <param name="items">The items to be added.</param>
     /// <exception cref="ArgumentException">Throws if <paramref name="items"/> contains an item whose key is already present within the collection.</exception>
-    void AddRange(ReadOnlySpan<TItem> items);
-
-    /// <inheritdoc cref="RemoveRange(ReadOnlySpan{TItem})"/>
     /// <exception cref="ArgumentNullException">Throws for <paramref name="items"/>.</exception>
-    void RemoveRange(IEnumerable<TItem> items);
+    void AddRange(IEnumerable<TItem> items);
 
     /// <summary>
     /// Removes a set of items from the collection, as a single operation.
     /// </summary>
     /// <param name="items">The set of items to be removed.</param>
+    /// <exception cref="ArgumentNullException">Throws for <paramref name="items"/>.</exception>
     /// <remarks>
     /// Note that the collection will silently ignore items that are not present in the collection.
     /// </remarks>
-    void RemoveRange(ReadOnlySpan<TItem> items);
+    void RemoveRange(IEnumerable<TItem> items);
 
     /// <summary>
     /// Attempts to retrieve an item from the collection, by its key.
@@ -80,13 +74,12 @@ public interface IObservableCache<TKey, TItem>
     /// <returns><see langword="false"/> if the collection does not actually contain <paramref name="item"/>. Otherwise, <see langword="true"/>.</returns>
     bool Refresh(TItem item);
 
-    /// <inheritdoc cref="Reset(ReadOnlySpan{TItem})"/>
-    /// <exception cref="ArgumentNullException">Throws for <paramref name="items"/>.</exception>
-    void Reset(IEnumerable<TItem> items);
-
     /// <summary>
     /// Performs a <see cref="ChangeSetType.Reset"/> operation upon the collection, by removing any existing items within the collection, and replacing them with the given items. 
     /// </summary>
+    /// <typeparam name="TItems">The type of the collection of given items.</typeparam>
     /// <param name="items">The new set of items to be loaded into the collection.</param>
-    void Reset(ReadOnlySpan<TItem> items);
+    /// <exception cref="ArgumentNullException">Throws for <paramref name="items"/>.</exception>
+    void Reset<TItems>(TItems items)
+        where TItems : IEnumerable<TItem>;
 }

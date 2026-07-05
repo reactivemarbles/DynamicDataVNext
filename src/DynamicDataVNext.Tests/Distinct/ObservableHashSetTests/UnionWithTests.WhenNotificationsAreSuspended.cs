@@ -1,0 +1,10 @@
+using NUnit.Framework;
+
+namespace DynamicDataVNext.Tests.Distinct.ObservableHashSetTests;
+
+public partial class UnionWithTests
+{
+    [TestFixture]
+    public class WhenNotificationsAreSuspended
+        : Distinct.UnionWithTests.Base<UutFixture.WhenNotificationsAreSuspended, ObservableHashSet<int>>;
+}

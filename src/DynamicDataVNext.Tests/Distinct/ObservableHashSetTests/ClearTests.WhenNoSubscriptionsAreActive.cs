@@ -1,0 +1,10 @@
+using NUnit.Framework;
+
+namespace DynamicDataVNext.Tests.Distinct.ObservableHashSetTests;
+
+public partial class ClearTests
+{
+    [TestFixture]
+    public class WhenNoSubscriptionsAreActive
+        : Distinct.ClearTests.Base<UutFixture.WhenNoSubscriptionsAreActive, ObservableHashSet<int>>;
+}

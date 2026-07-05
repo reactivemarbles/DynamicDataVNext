@@ -5,7 +5,7 @@ using System.Reactive;
 namespace DynamicDataVNext;
 
 /// <summary>
-/// Describes a collection of items, with distinct keys, which may not be mutated by the consumer, and which publishes notifications about its mutations, as they occur.
+/// Describes a collection of items, with distinct keys, which may not be mutated by the consumer, and which publishes notifications about mutations made to itself or its items.
 /// </summary>
 /// <typeparam name="TKey">The type of the item keys in the collection.</typeparam>
 /// <typeparam name="TValue">The type of the item values in the collection.</typeparam>

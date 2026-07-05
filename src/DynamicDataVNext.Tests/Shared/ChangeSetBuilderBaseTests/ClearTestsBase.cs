@@ -6,7 +6,7 @@ using NUnit.Framework;
 
 namespace DynamicDataVNext.Tests.ChangeSetBuilderBaseTests;
 
-public class ClearTestsBase<TUutAdapter, TChangeSet, TChange, TChangeType>
+public abstract class ClearTestsBase<TUutAdapter, TChangeSet, TChange, TChangeType>
         : Base
     where TUutAdapter : IUutAdapter<TChangeSet, TChange, TChangeType>, new()
     where TChangeSet : struct, IChangeSet<TChange, TChangeType>
