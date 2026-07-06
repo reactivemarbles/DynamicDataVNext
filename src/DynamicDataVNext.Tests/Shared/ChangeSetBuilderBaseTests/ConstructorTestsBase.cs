@@ -13,15 +13,10 @@ public abstract class ConstructorTestsBase<TUutAdapter, TChangeSet, TChange, TCh
     where TChange : struct, IChange<TChangeType>
     where TChangeType : Enum
 {
-    public static readonly IReadOnlyList<TestCaseData> WhenCapacityIsGiven_TestCases
-        = new[]
-        {
-            new TestCaseData(0,     true)   .SetName("{m}(Empty capacity)"),
-            new TestCaseData(0,     false)  .SetName("{m}(Populated source)"),
-            new TestCaseData(1,     true)   .SetName("{m}(Trivial capacity)"),
-            new TestCaseData(10,    true)   .SetName("{m}(Non-trivial capacity)")
-        };
-    [TestCaseSource(nameof(WhenCapacityIsGiven_TestCases))]
+    [TestCase(0,    true,   TestName = "{m}(Empty capacity)")]
+    [TestCase(0,    false,  TestName = "{m}(Populated source)")]
+    [TestCase(1,    true,   TestName = "{m}(Trivial capacity)")]
+    [TestCase(10,   true,   TestName = "{m}(Non-trivial capacity)")]
     public void WhenCapacityIsGiven_ResultIsEmpty(
         int     initialCapacity,
         bool    isSourceEmpty)

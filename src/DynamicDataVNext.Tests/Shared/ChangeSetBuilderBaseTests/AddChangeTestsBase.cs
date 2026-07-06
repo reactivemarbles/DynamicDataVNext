@@ -25,17 +25,12 @@ public abstract class AddChangeTestsBase<TUutAdapter, TChangeSet, TChange, TChan
             },
             because:            "a collection cannot be emptied by adding an item");
     
-    public static readonly IReadOnlyList<TestCaseData> WhenChangeIsNone_TestCases
-        = new[]
-        {
-            new TestCaseData(0, false,  false)  .SetName("{m}(No pending changes)"),
-            new TestCaseData(0, true,   false)  .SetName("{m}(Source is initially empty)"),
-            new TestCaseData(0, false,  true)   .SetName("{m}(Change empties source)"),
-            new TestCaseData(1, false,  false)  .SetName("{m}(Single pending change)"),
-            new TestCaseData(1, true,   false)  .SetName("{m}(Source is previously emptied)"),
-            new TestCaseData(5, false,  false)  .SetName("{m}(Multiple pending changes)")
-        };
-    [TestCaseSource(nameof(WhenChangeIsNone_TestCases))]
+    [TestCase(0, false,  false, TestName = "{m}(No pending changes)")]
+    [TestCase(0, true,   false, TestName = "{m}(Source is initially empty)")]
+    [TestCase(0, false,  true,  TestName = "{m}(Change empties source)")]
+    [TestCase(1, false,  false, TestName = "{m}(Single pending change)")]
+    [TestCase(1, true,   false, TestName = "{m}(Source is previously emptied)")]
+    [TestCase(5, false,  false, TestName = "{m}(Multiple pending changes)")]
     public void WhenChangeIsNone_ThrowsException(
             int     priorChangeCount,
             bool    isSourcePreviouslyEmpty,
@@ -56,14 +51,9 @@ public abstract class AddChangeTestsBase<TUutAdapter, TChangeSet, TChange, TChan
             },
             because:            "changes of type None are not supported");
 
-    public static readonly IReadOnlyList<TestCaseData> WhenChangeIsRemovalAndSourceIsEmpty_TestCases
-        = new[]
-        {
-            new TestCaseData(0).SetName("{m}(No pending changes)"),
-            new TestCaseData(1).SetName("{m}(Single pending change)"),
-            new TestCaseData(5).SetName("{m}(Multiple pending changes)")
-        };
-    [TestCaseSource(nameof(WhenChangeIsRemovalAndSourceIsEmpty_TestCases))]
+    [TestCase(0, TestName = "{m}(No pending changes)")]
+    [TestCase(1, TestName = "{m}(Single pending change)")]
+    [TestCase(5, TestName = "{m}(Multiple pending changes)")]
     public void WhenChangeIsRemovalAndSourceIsEmpty_ThrowsException(int priorChangeCount)
         => WhenChangeIsInvalidOrIncoherent_ThrowsException(
             isSourceEmpty:      (priorChangeCount is 0),

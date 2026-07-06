@@ -121,15 +121,10 @@ public abstract class BuildAndClearTestsBase<TUutAdapter, TChangeSet, TChange, T
             expectedResultType:     ChangeSetType.Update,
             because:                "items were removed from the source, after a reset");
 
-    public static readonly IReadOnlyList<TestCaseData> WhenSourceIsClearedAfterAdditions_TestCases
-        = new[]
-        {
-            new TestCaseData(1, 1).SetName("{m}(Single Removal following Single Addition)"),
-            new TestCaseData(1, 5).SetName("{m}(Multiple Removals following Single Addition)"),
-            new TestCaseData(5, 1).SetName("{m}(Single Removal following Multiple Additions)"),
-            new TestCaseData(5, 5).SetName("{m}(Multiple Removals following Multiple Additions)")
-        };
-    [TestCaseSource(nameof(WhenSourceIsClearedAfterAdditions_TestCases))]
+    [TestCase(1, 1, TestName = "{m}(Single Removal following Single Addition)")]
+    [TestCase(1, 5, TestName = "{m}(Multiple Removals following Single Addition)")]
+    [TestCase(5, 1, TestName = "{m}(Single Removal following Multiple Additions)")]
+    [TestCase(5, 5, TestName = "{m}(Multiple Removals following Multiple Additions)")]
     public void WhenSourceIsClearedAfterAdditions_ResultIsUpdate(
             int additionCount,
             int removalCount)

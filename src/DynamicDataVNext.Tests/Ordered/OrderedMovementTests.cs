@@ -45,13 +45,8 @@ public class OrderedMovementTests
         Console.WriteLine(result);
     }
 
-    public static readonly IReadOnlyList<TestCaseData> Otherwise_TestCases
-        = new[]
-        {
-            new TestCaseData(0,             0)              .SetName("{m}(Minimum indexes)"),
-            new TestCaseData(int.MaxValue,  int.MaxValue)   .SetName("{m}(Maximum indexes)")
-        };
-    [TestCaseSource(nameof(Otherwise_TestCases))]
+    [TestCase(0,             0,             TestName = "{m}(Minimum indexes)")]
+    [TestCase(int.MaxValue,  int.MaxValue,  TestName = "{m}(Maximum indexes)")]
     public void Otherwise_ResultIsValid(
         int oldIndex,
         int newIndex)

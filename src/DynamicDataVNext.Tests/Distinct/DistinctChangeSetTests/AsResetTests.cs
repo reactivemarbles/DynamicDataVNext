@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 
 using AwesomeAssertions;
@@ -8,47 +6,13 @@ using NUnit.Framework;
 namespace DynamicDataVNext.Tests.Distinct.DistinctChangeSetTests;
 
 [TestFixture]
-public class AsResetTests
+public partial class AsResetTests
 {
-    public static readonly IReadOnlyList<TestCaseData> WhenTypeIsNotReset_TestCasea
-        = new[]
-        {
-            new TestCaseData(DistinctChangeSet.CreateForClear(new[] { 1 }))    .SetName("{m}(Clear Changeset)"),
-            new TestCaseData(DistinctChangeSet.Empty<int>())                   .SetName("{m}(Empty Changeset)"),
-            new TestCaseData(DistinctChangeSet.CreateForUpdate(new[]
-            {
-                new DistinctChange<int>()
-                {
-                    Item = 1,
-                    Type = DistinctChangeType.Addition
-                }
-            }))                                                             .SetName("{m}(Update Changeset)"),
-        };
-    [TestCaseSource(nameof(WhenTypeIsNotReset_TestCasea))]
-    public void WhenTypeIsNotReset_ThrowsException(DistinctChangeSet<int> uut)
-    {
-        var result = FluentActions.Invoking(() =>
-            {
-                _ = uut.AsReset();
-            })
-            .Should().Throw<InvalidOperationException>()
-            .Which;
-        
-        result.Message.Should().Contain(nameof(ChangeSetType.Reset));
-        
-        Console.WriteLine(result);
-    }
-    
-    public static readonly IReadOnlyList<TestCaseData> WhenTypeIsReset_TestCasea
-        = new[]
-        {
-            new TestCaseData(0, 1).SetName("{m}(No removals, Single addition)"),
-            new TestCaseData(1, 1).SetName("{m}(Single removal, Single addition)"),
-            new TestCaseData(1, 5).SetName("{m}(Single removal, Multiple additions)"),
-            new TestCaseData(5, 1).SetName("{m}(Multiple removals, Single addition)"),
-            new TestCaseData(5, 5).SetName("{m}(Multiple removals, Multiple additions)")
-        };
-    [TestCaseSource(nameof(WhenTypeIsReset_TestCasea))]
+    [TestCase(0, 1, TestName = "{m}(No removals, Single addition)")]
+    [TestCase(1, 1, TestName = "{m}(Single removal, Single addition)")]
+    [TestCase(1, 5, TestName = "{m}(Single removal, Multiple additions)")]
+    [TestCase(5, 1, TestName = "{m}(Multiple removals, Single addition)")]
+    [TestCase(5, 5, TestName = "{m}(Multiple removals, Multiple additions)")]
     public void WhenTypeIsReset_ResultMatchesChanges(
         int removedItemCount,
         int addedItemCount)

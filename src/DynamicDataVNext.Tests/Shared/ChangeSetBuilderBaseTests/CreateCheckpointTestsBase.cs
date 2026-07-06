@@ -74,16 +74,11 @@ public abstract partial class CreateCheckpointTestsBase<TUutAdapter, TChangeSet,
         Console.WriteLine(result);
     }
     
-    public static readonly IReadOnlyList<TestCaseData> WhenBuilderHasBeenCleared_TestCases
-        = new[]
-        {
-            new TestCaseData(true,  0,  1,  1,  0,  0).SetName("{m}(Checkpoint before changes, Source is empty)"),
-            new TestCaseData(false, 0,  0,  1,  1,  0).SetName("{m}(Checkpoint before changes, Source is not empty)"),
-            new TestCaseData(false, 2,  0,  0,  0,  1).SetName("{m}(Checkpoint during pending Clear)"),
-            new TestCaseData(true,  0,  2,  0,  0,  1).SetName("{m}(Checkpoint during pending Reset)"),
-            new TestCaseData(false, 0,  0,  2,  2,  2).SetName("{m}(Checkpoint during pending Update)")
-        };
-    [TestCaseSource(nameof(WhenBuilderHasBeenCleared_TestCases))]
+    [TestCase(true,  0,  1,  1,  0,  0, TestName = "{m}(Checkpoint before changes, Source is empty)")]
+    [TestCase(false, 0,  0,  1,  1,  0, TestName = "{m}(Checkpoint before changes, Source is not empty)")]
+    [TestCase(false, 2,  0,  0,  0,  1, TestName = "{m}(Checkpoint during pending Clear)")]
+    [TestCase(true,  0,  2,  0,  0,  1, TestName = "{m}(Checkpoint during pending Reset)")]
+    [TestCase(false, 0,  0,  2,  2,  2, TestName = "{m}(Checkpoint during pending Update)")]
     public void WhenBuilderHasBeenCleared_RestoreThrowsException(
         bool    isSourceEmpty,
         int     clearingRemovalCount,
@@ -113,16 +108,11 @@ public abstract partial class CreateCheckpointTestsBase<TUutAdapter, TChangeSet,
         Console.WriteLine(result);
     }
     
-    public static readonly IReadOnlyList<TestCaseData> WhenNoChangesHaveBeenAdded_TestCases
-        = new[]
-        {
-            new TestCaseData(true,  0,  0,  0,  0).SetName("{m}(No pending changes, Source is empty)"),
-            new TestCaseData(false, 0,  0,  0,  0).SetName("{m}(No pending changes, Source is not empty)"),
-            new TestCaseData(false, 1,  0,  0,  0).SetName("{m}(Pending Clear)"),
-            new TestCaseData(true,  0,  1,  0,  0).SetName("{m}(Pending Reset)"),
-            new TestCaseData(false, 0,  0,  1,  1).SetName("{m}(Pending Update)")
-        };
-    [TestCaseSource(nameof(WhenNoChangesHaveBeenAdded_TestCases))]
+    [TestCase(true,  0,  0,  0,  0, TestName=  "{m}(No pending changes, Source is empty)")]
+    [TestCase(false, 0,  0,  0,  0, TestName=  "{m}(No pending changes, Source is not empty)")]
+    [TestCase(false, 1,  0,  0,  0, TestName=  "{m}(Pending Clear)")]
+    [TestCase(true,  0,  1,  0,  0, TestName=  "{m}(Pending Reset)")]
+    [TestCase(false, 0,  0,  1,  1, TestName=  "{m}(Pending Update)")]
     public void WhenNoChangesHaveBeenAdded_RestoreDoesNothing(
         bool    isSourceEmpty,
         int     clearingRemovalCount,
@@ -148,16 +138,11 @@ public abstract partial class CreateCheckpointTestsBase<TUutAdapter, TChangeSet,
             .Should().NotThrow("no changes were added after the checkpoint");
     }
     
-    public static readonly IReadOnlyList<TestCaseData> Otherwise_TestCases
-        = new[]
-        {
-            new TestCaseData(true,  0,  1,  1,  0,  0).SetName("{m}(Checkpoint before changes, Source is empty)"),
-            new TestCaseData(false, 0,  0,  1,  1,  0).SetName("{m}(Checkpoint before changes, Source is not empty)"),
-            new TestCaseData(false, 2,  0,  0,  0,  1).SetName("{m}(Checkpoint during pending Clear)"),
-            new TestCaseData(true,  0,  2,  0,  0,  1).SetName("{m}(Checkpoint during pending Reset)"),
-            new TestCaseData(false, 0,  0,  2,  2,  2).SetName("{m}(Checkpoint during pending Update)")
-        };
-    [TestCaseSource(nameof(Otherwise_TestCases))]
+    [TestCase(true,  0,  1,  1,  0,  0, TestName = "{m}(Checkpoint before changes, Source is empty)")]
+    [TestCase(false, 0,  0,  1,  1,  0, TestName = "{m}(Checkpoint before changes, Source is not empty)")]
+    [TestCase(false, 2,  0,  0,  0,  1, TestName = "{m}(Checkpoint during pending Clear)")]
+    [TestCase(true,  0,  2,  0,  0,  1, TestName = "{m}(Checkpoint during pending Reset)")]
+    [TestCase(false, 0,  0,  2,  2,  2, TestName = "{m}(Checkpoint during pending Update)")]
     public void Otherwise_RestoreRestoresBuilder(
         bool    isSourceEmpty,
         int     clearingRemovalCount,

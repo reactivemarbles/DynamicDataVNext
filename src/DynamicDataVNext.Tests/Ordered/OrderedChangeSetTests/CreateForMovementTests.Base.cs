@@ -9,14 +9,9 @@ public static partial class CreateForMovementTests
 {
     public abstract class Base
     {
-        public static readonly IReadOnlyList<TestCaseData> InputsAreValid_TestCases
-            = new[]
-            {
-                new TestCaseData(0,             0)              .SetName("{m}(Minimum indexes)"),
-                new TestCaseData(int.MaxValue,  int.MaxValue)   .SetName("{m}(Maximum indexes)"),
-                new TestCaseData(1,             2)              .SetName("{m}(Unique indexes)")
-            };
-        [TestCaseSource(nameof(InputsAreValid_TestCases))]
+        [TestCase(0,             0,             TestName = "{m}(Minimum indexes)")]
+        [TestCase(int.MaxValue,  int.MaxValue,  TestName = "{m}(Maximum indexes)")]
+        [TestCase(1,             2,             TestName = "{m}(Unique indexes)")]
         public void InputsAreValid_ResultIsUpdate(
             int oldIndex,
             int newIndex)

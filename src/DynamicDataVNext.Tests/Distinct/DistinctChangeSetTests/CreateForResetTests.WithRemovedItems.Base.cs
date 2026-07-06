@@ -24,13 +24,8 @@ public static partial class CreateForResetTests
                 result.Type.Should().Be(ChangeSetType.Empty, "an empty changeset should have been constructed");
             }
 
-            public static readonly IReadOnlyList<TestCaseData> AddedItemsIsEmpty_TestCases
-                = new[]
-                {
-                    new TestCaseData(1).SetName("{m}(Single Removal)"),
-                    new TestCaseData(5).SetName("{m}(Multiple Removals)")
-                };
-            [TestCaseSource(nameof(AddedItemsIsEmpty_TestCases))]
+            [TestCase(1, TestName = "{m}(Single item)")]
+            [TestCase(5, TestName = "{m}(Multiple items)")]
             public void WhenAddedItemsIsEmpty_ResultIsClear(int removedItemCount)
             {
                 var removedItems = Enumerable
@@ -49,16 +44,11 @@ public static partial class CreateForResetTests
                 result.AsClear().Items.Should().BeEquivalentTo(removedItems, static config => config.WithStrictOrdering(), "all removed items should be listed");
             }
 
-            public static readonly IReadOnlyList<TestCaseData> Otherwise_TestCases
-                = new[]
-                {
-                    new TestCaseData(0, 1).SetName("{m}(No Removals, Single Addition)"),
-                    new TestCaseData(0, 5).SetName("{m}(No Removals, Multiple Additions)"),
-                    new TestCaseData(1, 1).SetName("{m}(Single Removal, Single Addition)"),
-                    new TestCaseData(1, 5).SetName("{m}(Single Removal, Multiple Additions)"),
-                    new TestCaseData(5, 5).SetName("{m}(Multiple Removals, Multiple Additions)")
-                };
-            [TestCaseSource(nameof(Otherwise_TestCases))]
+            [TestCase(0, 1, TestName = "{m}(No Removals, Single Addition)")]
+            [TestCase(0, 5, TestName = "{m}(No Removals, Multiple Additions)")]
+            [TestCase(1, 1, TestName = "{m}(Single Removal, Single Addition)")]
+            [TestCase(1, 5, TestName = "{m}(Single Removal, Multiple Additions)")]
+            [TestCase(5, 5, TestName = "{m}(Multiple Removals, Multiple Additions)")]
             public void Otherwise_ResultIsReset(
                 int removedItemCount,
                 int addedItemCount)

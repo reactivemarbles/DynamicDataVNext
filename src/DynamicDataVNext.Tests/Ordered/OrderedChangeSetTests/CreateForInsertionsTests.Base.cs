@@ -38,14 +38,9 @@ public static partial class CreateForInsertionsTests
             result.Type.Should().Be(ChangeSetType.Empty, "an empty changeset should have been constructed");
         }
 
-        public static readonly IReadOnlyList<TestCaseData> Otherwise_TestCases
-            = new[]
-            {
-                new TestCaseData(0,             1).SetName("{m}(Single item, Minimum index)"),
-                new TestCaseData(int.MaxValue,  1).SetName("{m}(Single item, Maximum index)"),
-                new TestCaseData(0,             5).SetName("{m}(Multiple items)")
-            };
-        [TestCaseSource(nameof(Otherwise_TestCases))]
+        [TestCase(0,             1, TestName = "{m}(Single item, Minimum index)")]
+        [TestCase(int.MaxValue,  1, TestName = "{m}(Single item, Maximum index)")]
+        [TestCase(0,             5, TestName = "{m}(Multiple items)")]
         public void Otherwise_ResultIsClear(
             int index,
             int itemCount)

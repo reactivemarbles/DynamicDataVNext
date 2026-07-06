@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 using AwesomeAssertions;
 using NUnit.Framework;
 
@@ -9,13 +7,8 @@ public static partial class CreateForInsertionTests
 {
     public abstract class Base
     {
-        public static readonly IReadOnlyList<TestCaseData> InputsAreValid_TestCases
-            = new[]
-            {
-                new TestCaseData(0)             .SetName("{m}(Minimum index)"),
-                new TestCaseData(int.MaxValue)  .SetName("{m}(Maximum index)")
-            };
-        [TestCaseSource(nameof(InputsAreValid_TestCases))]
+        [TestCase(0,            TestName = "{m}(Minimum index)")]
+        [TestCase(int.MaxValue, TestName = "{m}(Maximum index)")]
         public void InputsAreValid_ResultIsUpdate(int index)
         {
             var item = 1;

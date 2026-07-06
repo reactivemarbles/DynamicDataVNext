@@ -27,13 +27,8 @@ public class OrderedReplacementTests
         Console.WriteLine(result);
     }
 
-    public static readonly IReadOnlyList<TestCaseData> Otherwise_TestCases
-        = new[]
-        {
-            new TestCaseData(0)             .SetName("{m}(Minimum index)"),
-            new TestCaseData(int.MaxValue)  .SetName("{m}(Maximum index)")
-        };
-    [TestCaseSource(nameof(Otherwise_TestCases))]
+    [TestCase(0,            TestName = "{m}(Minimum index)")]
+    [TestCase(int.MaxValue, TestName = "{m}(Maximum index)")]
     public void Otherwise_ResultIsValid(int index)
     {
         var oldItem = 1;

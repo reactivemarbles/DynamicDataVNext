@@ -20,13 +20,8 @@ public static partial class CreateForAdditionsTests
             result.Type.Should().Be(ChangeSetType.Empty, "an empty changeset should have been constructed");
         }
 
-        public static readonly IReadOnlyList<TestCaseData> Otherwise_TestCases
-            = new[]
-            {
-                new TestCaseData(1).SetName("{m}(Single item)"),
-                new TestCaseData(5).SetName("{m}(Multiple items)")
-            };
-        [TestCaseSource(nameof(Otherwise_TestCases))]
+        [TestCase(1, TestName = "{m}(Single item)")]
+        [TestCase(5, TestName = "{m}(Multiple items)")]
         public void Otherwise_ResultIsClear(int itemCount)
         {
             var items = Enumerable
