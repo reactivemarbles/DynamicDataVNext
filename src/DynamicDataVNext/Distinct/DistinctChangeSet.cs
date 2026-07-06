@@ -18,12 +18,12 @@ public readonly partial record struct DistinctChangeSet<T>
     /// <summary>
     /// The sequence of single-item changes that make up the operation.
     /// </summary>
-    public ImmutableArray<DistinctChange<T>> Changes { get; private init; }
+    public ImmutableArray<DistinctChange<T>> Changes { get; internal init; }
 
     /// <summary>
     /// The type of operation being described.
     /// </summary>
-    public ChangeSetType Type { get; private init; }
+    public ChangeSetType Type { get; internal init; }
 
     /// <summary>
     /// Provides a more-detailed representation of this changeset as a <see cref="ChangeSetType.Clear"/> operation. 
@@ -47,5 +47,5 @@ public readonly partial record struct DistinctChangeSet<T>
                 firstAdditionIndex: FirstAdditionIndex)
             : throw new InvalidOperationException($"Unable to interpret {nameof(DistinctChangeSet)} of type {Type} as {nameof(ChangeSetType.Reset)}");
     
-    private int FirstAdditionIndex { get; init; }
+    internal int FirstAdditionIndex { get; init; }
 }
