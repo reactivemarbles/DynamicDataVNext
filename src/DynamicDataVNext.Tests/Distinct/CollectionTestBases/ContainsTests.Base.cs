@@ -12,7 +12,7 @@ public static partial class ContainsTests
         where TUut : IReadOnlySet<int>
     {
         [TestCaseSource(typeof(ContainsTests), nameof(WhenItemIsInSet_TestCases))]
-        public void WhenItemIsInSet_ReturnsTrue(ItemOperationTestCase testCase)
+        public void WhenItemIsInSet_ReturnsTrue(SingleItemOperationTestCase testCase)
         {
             using var fixture = TUutFixture.Create(testCase.Items);
 
@@ -22,7 +22,7 @@ public static partial class ContainsTests
         }
 
         [TestCaseSource(typeof(ContainsTests), nameof(WhenItemIsNotInSet_TestCases))]
-        public void WhenItemIsNotInSet_ReturnsFalse(ItemOperationTestCase testCase)
+        public void WhenItemIsNotInSet_ReturnsFalse(SingleItemOperationTestCase testCase)
         {
             using var fixture = TUutFixture.Create(testCase.Items);
 

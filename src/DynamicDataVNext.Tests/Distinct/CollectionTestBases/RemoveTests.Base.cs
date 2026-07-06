@@ -45,7 +45,7 @@ public partial class RemoveTests
         }
 
         [TestCaseSource(typeof(RemoveTests), nameof(WhenItemIsNotInSet_TestCases))]
-        public void WhenItemIsNotInSet_DoesNothingAndReturnsFalse(ItemOperationTestCase testCase)
+        public void WhenItemIsNotInSet_DoesNothingAndReturnsFalse(SingleItemOperationTestCase testCase)
         {
             using var fixture = TUutFixture.Create(items: testCase.Items);
                 

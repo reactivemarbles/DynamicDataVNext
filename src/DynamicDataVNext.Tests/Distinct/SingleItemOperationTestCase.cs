@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace DynamicDataVNext.Tests.Distinct;
 
-public class ItemOperationTestCase
+public class SingleItemOperationTestCase
 {
     public required int Item { get; init; }
 

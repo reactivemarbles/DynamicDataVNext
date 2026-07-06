@@ -13,7 +13,7 @@ public static partial class AddTests
         where TUut : ISet<int>
     {
         [TestCaseSource(typeof(AddTests), nameof(WhenItemIsInSet_TestCases))]
-        public void WhenItemIsInSet_DoesNothingAndReturnsFalse(ItemOperationTestCase testCase)
+        public void WhenItemIsInSet_DoesNothingAndReturnsFalse(SingleItemOperationTestCase testCase)
         {
             using var fixture = TUutFixture.Create(items: testCase.Items);
                 
@@ -27,7 +27,7 @@ public static partial class AddTests
         }
         
         [TestCaseSource(typeof(AddTests), nameof(WhenItemIsNotInSet_TestCases))]
-        public void WhenItemIsNotInSet_AddsItemAndReturnsTrue(ItemOperationTestCase testCase)
+        public void WhenItemIsNotInSet_AddsItemAndReturnsTrue(SingleItemOperationTestCase testCase)
         {
             using var fixture = TUutFixture.Create(items: testCase.Items);
                 
