@@ -3,12 +3,12 @@ using System.Linq;
 
 using BenchmarkDotNet.Attributes;
 
-namespace DynamicDataVNext.Benchmarks;
+namespace DynamicDataVNext.Benchmarks.IterationStrategies;
 
 [MemoryDiagnoser]
-public class DictionaryIteration
+public class IterationStrategies_Dictionary
 {
-    public DictionaryIteration()
+    public IterationStrategies_Dictionary()
     {
         var values = Enumerable.Range(1, 100_00).ToArray();
 

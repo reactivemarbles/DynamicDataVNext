@@ -1,24 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 
 using BenchmarkDotNet.Attributes;
 
-namespace DynamicDataVNext.Benchmarks;
+namespace DynamicDataVNext.Benchmarks.IterationStrategies;
 
 [MemoryDiagnoser]
-public class ListIteration
+public class IterationStrategies_Array
 {
-    public ListIteration()
+    public IterationStrategies_Array()
     {
         var items = Enumerable.Range(1, 100_00).ToArray();
 
         _itemSetsByLength = new()
         {
-            [100] = items[0..100].ToList(),
-            [1_000] = items[0..1_000].ToList(),
-            [10_000] = items[0..10_000].ToList()
+            [100] = items[0..100].ToArray(),
+            [1_000] = items[0..1_000].ToArray(),
+            [10_000] = items
         };
     }
 
@@ -39,11 +38,11 @@ public class ListIteration
 
     [Benchmark]
     public int ItemsAsReadOnlySpan()
-        => SumReadOnlySpan(CollectionsMarshal.AsSpan(_itemSetsByLength[ItemCount]));
+        => SumReadOnlySpan(_itemSetsByLength[ItemCount]);
 
     [Benchmark]
-    public int ItemsAsList()
-        => SumList(_itemSetsByLength[ItemCount]);
+    public int ItemsAsArray()
+        => SumArray(_itemSetsByLength[ItemCount]);
 
     private static int SumEnumerable(IEnumerable<int> items)
     {
@@ -77,7 +76,7 @@ public class ListIteration
         return result;
     }
 
-    private static int SumList(List<int> items)
+    private static int SumArray(int[] items)
     {
         var result = 0;
         foreach (var item in items)
@@ -85,5 +84,5 @@ public class ListIteration
         return result;
     }
 
-    private readonly Dictionary<int, List<int>> _itemSetsByLength;
+    private readonly Dictionary<int, int[]> _itemSetsByLength;
 }

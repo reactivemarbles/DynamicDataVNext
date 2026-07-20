@@ -1,0 +1,8 @@
+# Config for C# files
+[*.cs]
+
+# Underscores needed in benchmark fixture names.  
+dotnet_naming_rule.types_should_be_pascal_case.severity = none
+dotnet_naming_rule.types_should_be_pascal_snake_case.severity = suggestion
+dotnet_naming_rule.types_should_be_pascal_snake_case.symbols = types
+dotnet_naming_rule.types_should_be_pascal_snake_case.style = pascal_snake_case
