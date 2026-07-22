@@ -9,18 +9,18 @@ public interface ISetUutFixture<out TUutFixture, out TUut>
     where TUut : ISet<int>
 {
     static abstract TUutFixture Create(
-        IEqualityComparer<int>?     comparer    = null,
-        DistinctItemOptions  options     = default);
+        IEqualityComparer<int>? comparer    = null,
+        DistinctItemOptions     options     = default);
 
     static abstract TUutFixture Create(
-        int                         capacity,
-        IEqualityComparer<int>?     comparer    = null,
-        DistinctItemOptions  options     = default);
+        int                     capacity,
+        IEqualityComparer<int>? comparer    = null,
+        DistinctItemOptions     options     = default);
 
     static abstract TUutFixture Create(
-        IEnumerable<int>            items,
-        IEqualityComparer<int>?     comparer    = null,
-        DistinctItemOptions  options     = default);
+        IEnumerable<int>        items,
+        IEqualityComparer<int>? comparer    = null,
+        DistinctItemOptions     options     = default);
     
     TUut Uut { get; }
     

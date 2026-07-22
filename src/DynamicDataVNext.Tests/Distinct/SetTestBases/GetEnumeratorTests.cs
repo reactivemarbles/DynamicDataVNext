@@ -7,7 +7,7 @@ namespace DynamicDataVNext.Tests.Distinct;
 
 public static partial class GetEnumeratorTests
 {
-    public static readonly IReadOnlyList<TestCaseData> WhenSetIsNotMutatedDuringEnumeration_TestCases
+    public static readonly IReadOnlyList<TestCaseData> Always_TestCases
         = new[]
         {
             new TestCaseData(Array.Empty<int>()).SetName("{m}(Empty set)"),

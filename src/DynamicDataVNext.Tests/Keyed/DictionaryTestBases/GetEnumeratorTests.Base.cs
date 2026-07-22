@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using AwesomeAssertions;
 using NUnit.Framework;
 
-namespace DynamicDataVNext.Tests.Distinct;
+namespace DynamicDataVNext.Tests.Keyed;
 
 public static partial class GetEnumeratorTests
 {
     public abstract class Base<TUutFixture, TUut>
-        where TUutFixture : IReadOnlySetUutFixture<TUutFixture, TUut>
-        where TUut : IReadOnlySet<int>
+        where TUutFixture : IReadOnlyDictionaryUutFixture<TUutFixture, TUut>
+        where TUut : IReadOnlyDictionary<string, int>
     {
-        [TestCaseSource(typeof(GetEnumeratorTests), nameof(WhenSetIsNotMutatedDuringEnumeration_TestCases))]
-        public void Always_EnumerationMatchesItems(IReadOnlyList<int> items)
+        [TestCaseSource(typeof(GetEnumeratorTests), nameof(Always_TestCases))]
+        public void Always_EnumerationMatchesItems(IReadOnlyList<KeyValuePair<string, int>> items)
         {
             using var fixture = TUutFixture.Create(items: items);
 

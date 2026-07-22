@@ -24,20 +24,6 @@ public static partial class ResetTests
             fixture.AssertUutDidNothing();
         }
 
-        [TestCaseSource(typeof(ResetTests), nameof(WhenItemsAndSetAreNotEmpty_TestCases))]
-        public void WhenItemsAndSetAreNotEmpty_ResetsSetToItems(SetOperationTestCase testCase)
-        {
-            using var fixture = TUutFixture.Create(items: testCase.Items);
-                
-            fixture.ResetUut(testCase.Other);
-            
-            fixture.Uut.Should().BeEquivalentTo(testCase.Other, "the set should have been reset to the given set");
-            
-            fixture.AssertUutWasReset(
-                oldItems: testCase.Items,
-                newItems: testCase.Other);
-        }
-
         [TestCaseSource(typeof(ResetTests), nameof(WhenItemsIsEmptyAndSetIsNot_TestCases))]
         public void WhenItemsIsEmptyAndSetIsNot_ClearsSet(IReadOnlyList<int> items)
         {
@@ -48,6 +34,20 @@ public static partial class ResetTests
             fixture.Uut.Should().BeEmpty("the set should have been cleared");
             
             fixture.AssertUutWasCleared(items);
+        }
+
+        [TestCaseSource(typeof(ResetTests), nameof(WhenItemsIsNotEmpty_TestCases))]
+        public void WhenItemsIsNotEmpty_ResetsSetToItems(SetOperationTestCase testCase)
+        {
+            using var fixture = TUutFixture.Create(items: testCase.Items);
+                
+            fixture.ResetUut(testCase.Other);
+            
+            fixture.Uut.Should().BeEquivalentTo(testCase.Other, "the set should have been reset to the given set");
+            
+            fixture.AssertUutWasReset(
+                oldItems: testCase.Items,
+                newItems: testCase.Other);
         }
     }
 }

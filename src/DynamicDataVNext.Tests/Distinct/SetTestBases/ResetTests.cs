@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 using NUnit.Framework;
@@ -6,9 +7,15 @@ namespace DynamicDataVNext.Tests.Distinct;
 
 public static partial class ResetTests
 {
-    public static readonly IReadOnlyList<TestCaseData> WhenItemsAndSetAreNotEmpty_TestCases
+    public static readonly IReadOnlyList<TestCaseData> WhenItemsIsNotEmpty_TestCases
         = new[]
         {
+            new TestCaseData(new SetOperationTestCase()
+                {
+                    Items = Array.Empty<int>(),
+                    Other = new[] { 1 }
+                })
+                .SetName("{m}(Empty set)"),
             new TestCaseData(new SetOperationTestCase()
                 {
                     Items = new[] { 1 },
