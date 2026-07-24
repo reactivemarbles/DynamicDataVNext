@@ -113,13 +113,37 @@ public sealed class UutFixture
         _uut.BufferedChanges.CurrentSetType.Should().Be(ChangeSetType.Update, "removing an item from a collection of multiple items should produce an update");
 
         var capturedChangeSet = _uut.BufferedChanges.CaptureAndClear();
-        
+
         capturedChangeSet.Changes.Should().ContainSingle("a single change was made");
         capturedChangeSet.Changes[0].Type.Should().Be(KeyedChangeType.Removal, "a single removal was performed");
         capturedChangeSet.Changes[0].AsRemoval().Key.Should().Be(removedKey, "the given item should have been removed");
         capturedChangeSet.Changes[0].AsRemoval().Item.Should().Be(removedValue, "the given item should have been removed");
         capturedChangeSet.Type.Should().Be(ChangeSetType.Update, "removing an item from a collection of multiple items should produce an update");
-        
+
+        _uut.BufferedChanges.Should().BeEmpty("all changes should have been captured from the buffer");
+    }
+
+    public void AssertItemWasReplaced(
+        string  replacementKey,
+        int     replacedValue,
+        int     replacementValue)
+    {
+        _uut.BufferedChanges.Should().ContainSingle("a single change was made");
+        _uut.BufferedChanges[0].Type.Should().Be(KeyedChangeType.Replacement, "a single replacement was performed");
+        _uut.BufferedChanges[0].AsReplacement().Key.Should().Be(replacementKey, "the replacement should have occurred for the given key");
+        _uut.BufferedChanges[0].AsReplacement().OldItem.Should().Be(replacedValue, "the previous item at the given key should have been recorded");
+        _uut.BufferedChanges[0].AsReplacement().NewItem.Should().Be(replacementValue, "the given item should have replaced the previous one");
+        _uut.BufferedChanges.CurrentSetType.Should().Be(ChangeSetType.Update, "replacing an item within a collection should produce an update");
+
+        var capturedChangeSet = _uut.BufferedChanges.CaptureAndClear();
+
+        capturedChangeSet.Changes.Should().ContainSingle("a single change was made");
+        capturedChangeSet.Changes[0].Type.Should().Be(KeyedChangeType.Replacement, "a single replacement was performed");
+        capturedChangeSet.Changes[0].AsReplacement().Key.Should().Be(replacementKey, "the replacement should have occurred for the given key");
+        capturedChangeSet.Changes[0].AsReplacement().OldItem.Should().Be(replacedValue, "the previous item at the given key should have been recorded");
+        capturedChangeSet.Changes[0].AsReplacement().NewItem.Should().Be(replacementValue, "the given item should have replaced the previous one");
+        capturedChangeSet.Type.Should().Be(ChangeSetType.Update, "replacing an item within a collection should produce an update");
+
         _uut.BufferedChanges.Should().BeEmpty("all changes should have been captured from the buffer");
     }
 

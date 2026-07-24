@@ -16,7 +16,7 @@ public static partial class RemoveTests
         [TestCaseSource(typeof(RemoveTests), nameof(WhenDictionaryContainsKey_TestCases))]
         public void WhenDictionaryContainsKey_RemovesItemAndReturnsTrue(SingleKeyOperationTestCase testCase)
         {
-            var fixture = TUutFixture.Create(items: testCase.InitialItems);
+            using var fixture = TUutFixture.Create(items: testCase.InitialItems);
             
             var result = fixture.Uut.Remove(testCase.Key);
             
@@ -35,7 +35,7 @@ public static partial class RemoveTests
         [TestCaseSource(typeof(RemoveTests), nameof(WhenDictionaryDoesNotContainKey_TestCases))]
         public void WhenDictionaryDoesNotContainKey_DoesNothingAndReturnsFalse(SingleKeyOperationTestCase testCase)
         {
-            var fixture = TUutFixture.Create(items: testCase.InitialItems);
+            using var fixture = TUutFixture.Create(items: testCase.InitialItems);
             
             var result = fixture.Uut.Remove(testCase.Key);
             

@@ -15,7 +15,7 @@ public static partial class RefreshTests
         [TestCaseSource(typeof(RefreshTests), nameof(WhenDictionaryContainsKey_TestCases))]
         public void WhenDictionaryContainsKey_RefreshesItemAndReturnsTrue(SingleKeyOperationTestCase testCase)
         {
-            var fixture = TUutFixture.Create(
+            using var fixture = TUutFixture.Create(
                 items:      testCase.InitialItems,
                 options:    new()
                 {
@@ -36,7 +36,7 @@ public static partial class RefreshTests
         [TestCaseSource(typeof(RefreshTests), nameof(WhenDictionaryDoesNotContainKey_TestCases))]
         public void WhenDictionaryDoesNotContainKey_DoesNothingAndReturnsFalse(SingleKeyOperationTestCase testCase)
         {
-            var fixture = TUutFixture.Create(
+            using var fixture = TUutFixture.Create(
                 items:      testCase.InitialItems,
                 options:    new()
                 {

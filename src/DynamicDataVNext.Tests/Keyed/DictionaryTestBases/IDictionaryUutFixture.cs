@@ -46,6 +46,11 @@ public interface IDictionaryUutFixture<out TUutFixture, out TUut>
         string  removedKey,
         int     removedValue);
 
+    void AssertItemWasReplaced(
+        string  replacementKey,
+        int     replacedValue,
+        int     replacementValue);
+
     void AssertItemsWereAdded(IReadOnlyList<KeyValuePair<string, int>> addedItems);
 
     void AssertUutDidNothing();

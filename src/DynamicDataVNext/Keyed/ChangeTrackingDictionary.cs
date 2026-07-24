@@ -78,6 +78,9 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
         {
             if (_items.TryGetValue(key, out var priorValue))
             {
+                if (EqualityComparer<TValue>.Default.Equals(value, priorValue))
+                    return;
+            
                 _items[key] = value;
                 
                 _bufferedChanges.Add(KeyedChange.CreateReplacement(
