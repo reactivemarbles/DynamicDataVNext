@@ -6,5 +6,5 @@ public partial class ResetTests
 {
     [TestFixture]
     public class WhenNotificationsAreSuspended
-        : Distinct.ResetTests.Base<UutFixture.WhenNotificationsAreSuspended, ObservableHashSet<int>>;
+        : Distinct.SetTestBases.ResetTests.Base<UutFixture.WhenNotificationsAreSuspended, ObservableHashSet<int>>;
 }

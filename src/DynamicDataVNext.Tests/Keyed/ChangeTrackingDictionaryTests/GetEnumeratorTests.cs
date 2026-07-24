@@ -4,4 +4,4 @@ namespace DynamicDataVNext.Tests.Keyed.ChangeTrackingDictionaryTests;
 
 [TestFixture]
 public class GetEnumeratorTests
-    : Keyed.GetEnumeratorTests.Base<UutFixture, ChangeTrackingDictionary<string, int>>;
+    : Keyed.DictionaryTestBases.GetEnumeratorTests.Base<UutFixture, ChangeTrackingDictionary<string, int>>;

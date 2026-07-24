@@ -6,5 +6,5 @@ public partial class ClearTests
 {
     [TestFixture]
     public class WhenNoSubscriptionsAreActive
-        : Distinct.ClearTests.Base<UutFixture.WhenNoSubscriptionsAreActive, ObservableHashSet<int>>;
+        : Distinct.SetTestBases.ClearTests.Base<UutFixture.WhenNoSubscriptionsAreActive, ObservableHashSet<int>>;
 }

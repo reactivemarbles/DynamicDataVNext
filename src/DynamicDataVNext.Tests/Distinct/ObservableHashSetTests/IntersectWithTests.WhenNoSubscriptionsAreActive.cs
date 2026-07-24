@@ -6,5 +6,5 @@ public partial class IntersectWithTests
 {
     [TestFixture]
     public class WhenNoSubscriptionsAreActive
-        : Distinct.IntersectWithTests.Base<UutFixture.WhenNoSubscriptionsAreActive, ObservableHashSet<int>>;
+        : Distinct.SetTestBases.IntersectWithTests.Base<UutFixture.WhenNoSubscriptionsAreActive, ObservableHashSet<int>>;
 }

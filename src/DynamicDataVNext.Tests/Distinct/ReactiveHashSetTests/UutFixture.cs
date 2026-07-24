@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 
+using DynamicDataVNext.Tests.Distinct.SetTestBases;
+
 namespace DynamicDataVNext.Tests.Distinct.ReactiveHashSetTests;
 
 public sealed class UutFixture

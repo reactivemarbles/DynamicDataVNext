@@ -4,4 +4,4 @@ namespace DynamicDataVNext.Tests.Distinct.ObservableHashSetTests;
 
 [TestFixture]
 public class OverlapsTests
-    : Distinct.OverlapsTests.Base<UutFixture.WhenNoSubscriptionsAreActive, ObservableHashSet<int>>;
+    : Distinct.SetTestBases.OverlapsTests.Base<UutFixture.WhenNoSubscriptionsAreActive, ObservableHashSet<int>>;

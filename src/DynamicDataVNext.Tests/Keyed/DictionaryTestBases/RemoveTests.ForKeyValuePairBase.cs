@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 
 using AwesomeAssertions;
-
-using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
-
 using NUnit.Framework;
 
-namespace DynamicDataVNext.Tests.Keyed;
+namespace DynamicDataVNext.Tests.Keyed.DictionaryTestBases;
 
 public static partial class RemoveTests
 {

@@ -3,6 +3,8 @@ using System.Linq;
 
 using AwesomeAssertions;
 
+using DynamicDataVNext.Tests.Distinct.SetTestBases;
+
 namespace DynamicDataVNext.Tests.Distinct.ChangeTrackingHashSetTests;
 
 public sealed class UutFixture

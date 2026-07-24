@@ -6,5 +6,5 @@ public partial class UnionWithTests
 {
     [TestFixture]
     public class WhenCollectionChangedHasSubscribers
-        : Distinct.UnionWithTests.Base<UutFixture.WhenSetChangedHasSubscribers, ObservableHashSet<int>>;
+        : Distinct.SetTestBases.UnionWithTests.Base<UutFixture.WhenSetChangedHasSubscribers, ObservableHashSet<int>>;
 }

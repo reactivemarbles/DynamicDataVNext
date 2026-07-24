@@ -4,4 +4,4 @@ namespace DynamicDataVNext.Tests.Distinct.ChangeTrackingHashSetTests;
 
 [TestFixture]
 public class IsSubsetOfTests
-    : Distinct.IsSubsetOfTests.Base<UutFixture, ChangeTrackingHashSet<int>>;
+    : Distinct.SetTestBases.IsSubsetOfTests.Base<UutFixture, ChangeTrackingHashSet<int>>;

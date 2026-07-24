@@ -6,5 +6,5 @@ public partial class AddTests
 {
     [TestFixture]
     public class WhenNoSubscriptionsAreActive
-        : Distinct.AddTests.Base<UutFixture.WhenNoSubscriptionsAreActive, ObservableHashSet<int>>;
+        : Distinct.SetTestBases.AddTests.Base<UutFixture.WhenNoSubscriptionsAreActive, ObservableHashSet<int>>;
 }

@@ -4,4 +4,4 @@ namespace DynamicDataVNext.Tests.Distinct.ChangeTrackingHashSetTests;
 
 [TestFixture]
 public class AddTests
-    : Distinct.AddTests.Base<UutFixture, ChangeTrackingHashSet<int>>;
+    : Distinct.SetTestBases.AddTests.Base<UutFixture, ChangeTrackingHashSet<int>>;

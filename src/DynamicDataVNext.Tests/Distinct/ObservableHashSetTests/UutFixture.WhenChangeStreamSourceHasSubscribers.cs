@@ -4,6 +4,8 @@ using System.Linq;
 
 using AwesomeAssertions;
 
+using DynamicDataVNext.Tests.Distinct.SetTestBases;
+
 namespace DynamicDataVNext.Tests.Distinct.ObservableHashSetTests;
 
 public static partial class UutFixture

@@ -6,5 +6,5 @@ public partial class SymmetricExceptWithTests
 {
     [TestFixture]
     public class WhenCollectionChangedHasSubscribers
-        : Distinct.SymmetricExceptWithTests.Base<UutFixture.WhenSetChangedHasSubscribers, ObservableHashSet<int>>;
+        : Distinct.SetTestBases.SymmetricExceptWithTests.Base<UutFixture.WhenSetChangedHasSubscribers, ObservableHashSet<int>>;
 }

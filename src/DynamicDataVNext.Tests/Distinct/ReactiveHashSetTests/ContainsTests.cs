@@ -4,4 +4,4 @@ namespace DynamicDataVNext.Tests.Distinct.ReactiveHashSetTests;
 
 [TestFixture]
 public class ContainsTests
-    : Distinct.ContainsTests.Base<UutFixture, ReactiveHashSet<int>>;
+    : Distinct.SetTestBases.ContainsTests.Base<UutFixture, ReactiveHashSet<int>>;

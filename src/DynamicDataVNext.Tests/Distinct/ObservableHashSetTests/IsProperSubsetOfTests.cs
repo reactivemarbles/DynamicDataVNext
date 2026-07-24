@@ -4,4 +4,4 @@ namespace DynamicDataVNext.Tests.Distinct.ObservableHashSetTests;
 
 [TestFixture]
 public class IsProperSubsetOfTests
-    : Distinct.IsProperSubsetOfTests.Base<UutFixture.WhenNoSubscriptionsAreActive, ObservableHashSet<int>>;
+    : Distinct.SetTestBases.IsProperSubsetOfTests.Base<UutFixture.WhenNoSubscriptionsAreActive, ObservableHashSet<int>>;

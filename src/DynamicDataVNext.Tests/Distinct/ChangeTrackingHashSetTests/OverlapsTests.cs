@@ -4,4 +4,4 @@ namespace DynamicDataVNext.Tests.Distinct.ChangeTrackingHashSetTests;
 
 [TestFixture]
 public class OverlapsTests
-    : Distinct.OverlapsTests.Base<UutFixture, ChangeTrackingHashSet<int>>;
+    : Distinct.SetTestBases.OverlapsTests.Base<UutFixture, ChangeTrackingHashSet<int>>;

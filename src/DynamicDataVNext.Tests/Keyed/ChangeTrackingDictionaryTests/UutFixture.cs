@@ -4,6 +4,8 @@ using System.Linq;
 
 using AwesomeAssertions;
 
+using DynamicDataVNext.Tests.Keyed.DictionaryTestBases;
+
 namespace DynamicDataVNext.Tests.Keyed.ChangeTrackingDictionaryTests;
 
 public sealed class UutFixture

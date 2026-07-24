@@ -6,5 +6,5 @@ public partial class SymmetricExceptWithTests
 {
     [TestFixture]
     public class WhenChangeStreamSourceHasSubscribers
-        : Distinct.SymmetricExceptWithTests.Base<UutFixture.WhenChangeStreamSourceHasSubscribers, ObservableHashSet<int>>;
+        : Distinct.SetTestBases.SymmetricExceptWithTests.Base<UutFixture.WhenChangeStreamSourceHasSubscribers, ObservableHashSet<int>>;
 }

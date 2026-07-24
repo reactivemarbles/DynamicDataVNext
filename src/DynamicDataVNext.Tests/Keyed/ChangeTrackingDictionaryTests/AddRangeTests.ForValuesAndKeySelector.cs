@@ -6,5 +6,5 @@ public static partial class AddRangeTests
 {
     [TestFixture]
     public sealed class ForValuesAndKeySelector
-        : Keyed.AddRangeTests.ForValuesAndKeySelectorBase<UutFixture, ChangeTrackingDictionary<string, int>>;
+        : Keyed.DictionaryTestBases.AddRangeTests.ForValuesAndKeySelectorBase<UutFixture, ChangeTrackingDictionary<string, int>>;
 }

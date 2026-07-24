@@ -4,4 +4,4 @@ namespace DynamicDataVNext.Tests.Distinct.ReactiveHashSetTests;
 
 [TestFixture]
 public class IsSubsetOfTests
-    : Distinct.IsSubsetOfTests.Base<UutFixture, ReactiveHashSet<int>>;
+    : Distinct.SetTestBases.IsSubsetOfTests.Base<UutFixture, ReactiveHashSet<int>>;

@@ -6,5 +6,5 @@ public partial class IntersectWithTests
 {
     [TestFixture]
     public class WhenCollectionChangedHasSubscribers
-        : Distinct.IntersectWithTests.Base<UutFixture.WhenSetChangedHasSubscribers, ObservableHashSet<int>>;
+        : Distinct.SetTestBases.IntersectWithTests.Base<UutFixture.WhenSetChangedHasSubscribers, ObservableHashSet<int>>;
 }

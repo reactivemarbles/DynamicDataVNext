@@ -4,4 +4,4 @@ namespace DynamicDataVNext.Tests.Distinct.ChangeTrackingHashSetTests;
 
 [TestFixture]
 public class SetEqualsTests
-    : Distinct.SetEqualsTests.Base<UutFixture, ChangeTrackingHashSet<int>>;
+    : Distinct.SetTestBases.SetEqualsTests.Base<UutFixture, ChangeTrackingHashSet<int>>;

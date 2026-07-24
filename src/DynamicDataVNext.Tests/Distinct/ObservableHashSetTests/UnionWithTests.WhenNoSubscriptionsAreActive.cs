@@ -6,5 +6,5 @@ public partial class UnionWithTests
 {
     [TestFixture]
     public class WhenNoSubscriptionsAreActive
-        : Distinct.UnionWithTests.Base<UutFixture.WhenNoSubscriptionsAreActive, ObservableHashSet<int>>;
+        : Distinct.SetTestBases.UnionWithTests.Base<UutFixture.WhenNoSubscriptionsAreActive, ObservableHashSet<int>>;
 }

@@ -6,5 +6,5 @@ public partial class ClearTests
 {
     [TestFixture]
     public class WhenCollectionChangedHasSubscribers
-        : Distinct.ClearTests.Base<UutFixture.WhenSetChangedHasSubscribers, ObservableHashSet<int>>;
+        : Distinct.SetTestBases.ClearTests.Base<UutFixture.WhenSetChangedHasSubscribers, ObservableHashSet<int>>;
 }

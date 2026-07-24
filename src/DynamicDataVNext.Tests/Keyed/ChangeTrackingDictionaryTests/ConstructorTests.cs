@@ -4,5 +4,5 @@ namespace DynamicDataVNext.Tests.Keyed.ChangeTrackingDictionaryTests;
 
 [TestFixture]
 public class ConstructorTests
-    : Keyed.ConstructorTests.Base<UutFixture, ChangeTrackingDictionary<string, int>>;
+    : Keyed.DictionaryTestBases.ConstructorTests.Base<UutFixture, ChangeTrackingDictionary<string, int>>;
 

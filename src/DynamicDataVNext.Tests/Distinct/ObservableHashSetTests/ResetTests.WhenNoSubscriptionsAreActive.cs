@@ -6,5 +6,5 @@ public partial class ResetTests
 {
     [TestFixture]
     public class WhenNoSubscriptionsAreActive
-        : Distinct.ResetTests.Base<UutFixture.WhenNoSubscriptionsAreActive, ObservableHashSet<int>>;
+        : Distinct.SetTestBases.ResetTests.Base<UutFixture.WhenNoSubscriptionsAreActive, ObservableHashSet<int>>;
 }

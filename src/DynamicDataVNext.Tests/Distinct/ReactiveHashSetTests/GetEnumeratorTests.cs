@@ -4,4 +4,4 @@ namespace DynamicDataVNext.Tests.Distinct.ReactiveHashSetTests;
 
 [TestFixture]
 public class GetEnumeratorTests
-    : Distinct.GetEnumeratorTests.Base<UutFixture, ReactiveHashSet<int>>;
+    : Distinct.SetTestBases.GetEnumeratorTests.Base<UutFixture, ReactiveHashSet<int>>;

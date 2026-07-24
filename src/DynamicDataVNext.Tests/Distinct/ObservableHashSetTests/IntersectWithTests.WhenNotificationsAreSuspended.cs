@@ -6,5 +6,5 @@ public partial class IntersectWithTests
 {
     [TestFixture]
     public class WhenNotificationsAreSuspended
-        : Distinct.IntersectWithTests.Base<UutFixture.WhenNotificationsAreSuspended, ObservableHashSet<int>>;
+        : Distinct.SetTestBases.IntersectWithTests.Base<UutFixture.WhenNotificationsAreSuspended, ObservableHashSet<int>>;
 }

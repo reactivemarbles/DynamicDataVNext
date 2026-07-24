@@ -4,4 +4,4 @@ namespace DynamicDataVNext.Tests.Distinct.ChangeTrackingHashSetTests;
 
 [TestFixture]
 public class SymmetricExceptWithTests
-    : Distinct.SymmetricExceptWithTests.Base<UutFixture, ChangeTrackingHashSet<int>>;
+    : Distinct.SetTestBases.SymmetricExceptWithTests.Base<UutFixture, ChangeTrackingHashSet<int>>;

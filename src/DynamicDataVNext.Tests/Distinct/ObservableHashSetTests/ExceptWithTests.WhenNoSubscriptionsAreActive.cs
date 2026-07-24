@@ -6,5 +6,5 @@ public partial class ExceptWithTests
 {
     [TestFixture]
     public class WhenNoSubscriptionsAreActive
-        : Distinct.ExceptWithTests.Base<UutFixture.WhenNoSubscriptionsAreActive, ObservableHashSet<int>>;
+        : Distinct.SetTestBases.ExceptWithTests.Base<UutFixture.WhenNoSubscriptionsAreActive, ObservableHashSet<int>>;
 }

@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 
+using DynamicDataVNext.Tests.Distinct.SetTestBases;
+
 namespace DynamicDataVNext.Tests.Distinct.ObservableHashSetTests;
 
 public static partial class UutFixture

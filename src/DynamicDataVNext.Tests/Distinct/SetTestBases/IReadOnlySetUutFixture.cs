@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace DynamicDataVNext.Tests.Distinct;
+namespace DynamicDataVNext.Tests.Distinct.SetTestBases;
 
 public interface IReadOnlySetUutFixture<out TUutFixture, out TUut>
         : IDisposable

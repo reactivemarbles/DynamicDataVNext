@@ -6,5 +6,5 @@ public partial class ExceptWithTests
 {
     [TestFixture]
     public class WhenChangeStreamSourceHasSubscribers
-        : Distinct.ExceptWithTests.Base<UutFixture.WhenChangeStreamSourceHasSubscribers, ObservableHashSet<int>>;
+        : Distinct.SetTestBases.ExceptWithTests.Base<UutFixture.WhenChangeStreamSourceHasSubscribers, ObservableHashSet<int>>;
 }

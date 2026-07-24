@@ -5,7 +5,7 @@ using System.Linq;
 using AwesomeAssertions;
 using NUnit.Framework;
 
-namespace DynamicDataVNext.Tests.Keyed;
+namespace DynamicDataVNext.Tests.Keyed.DictionaryTestBases;
 
 public static partial class AddRangeTests
 {

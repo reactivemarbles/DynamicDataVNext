@@ -6,5 +6,5 @@ public static partial class AddRangeTests
 {
     [TestFixture]
     public sealed class ForItems
-        : Keyed.AddRangeTests.ForItemsBase<UutFixture, ChangeTrackingDictionary<string, int>>;
+        : Keyed.DictionaryTestBases.AddRangeTests.ForItemsBase<UutFixture, ChangeTrackingDictionary<string, int>>;
 }

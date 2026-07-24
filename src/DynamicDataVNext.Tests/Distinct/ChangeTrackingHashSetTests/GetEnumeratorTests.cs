@@ -4,4 +4,4 @@ namespace DynamicDataVNext.Tests.Distinct.ChangeTrackingHashSetTests;
 
 [TestFixture]
 public class GetEnumeratorTests
-    : Distinct.GetEnumeratorTests.Base<UutFixture, ChangeTrackingHashSet<int>>;
+    : Distinct.SetTestBases.GetEnumeratorTests.Base<UutFixture, ChangeTrackingHashSet<int>>;

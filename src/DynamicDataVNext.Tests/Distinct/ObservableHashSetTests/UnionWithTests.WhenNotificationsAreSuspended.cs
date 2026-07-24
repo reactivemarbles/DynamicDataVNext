@@ -6,5 +6,5 @@ public partial class UnionWithTests
 {
     [TestFixture]
     public class WhenNotificationsAreSuspended
-        : Distinct.UnionWithTests.Base<UutFixture.WhenNotificationsAreSuspended, ObservableHashSet<int>>;
+        : Distinct.SetTestBases.UnionWithTests.Base<UutFixture.WhenNotificationsAreSuspended, ObservableHashSet<int>>;
 }

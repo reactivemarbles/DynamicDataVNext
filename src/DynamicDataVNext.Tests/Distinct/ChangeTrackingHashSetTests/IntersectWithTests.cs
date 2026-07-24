@@ -4,4 +4,4 @@ namespace DynamicDataVNext.Tests.Distinct.ChangeTrackingHashSetTests;
 
 [TestFixture]
 public class IntersectWithTests
-    : Distinct.IntersectWithTests.Base<UutFixture, ChangeTrackingHashSet<int>>;
+    : Distinct.SetTestBases.IntersectWithTests.Base<UutFixture, ChangeTrackingHashSet<int>>;

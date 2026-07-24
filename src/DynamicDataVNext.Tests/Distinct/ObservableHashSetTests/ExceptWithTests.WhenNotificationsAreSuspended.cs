@@ -6,5 +6,5 @@ public partial class ExceptWithTests
 {
     [TestFixture]
     public class WhenNotificationsAreSuspended
-        : Distinct.ExceptWithTests.Base<UutFixture.WhenNotificationsAreSuspended, ObservableHashSet<int>>;
+        : Distinct.SetTestBases.ExceptWithTests.Base<UutFixture.WhenNotificationsAreSuspended, ObservableHashSet<int>>;
 }

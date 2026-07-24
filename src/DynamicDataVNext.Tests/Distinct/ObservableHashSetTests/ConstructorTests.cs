@@ -4,4 +4,4 @@ namespace DynamicDataVNext.Tests.Distinct.ObservableHashSetTests;
 
 [TestFixture]
 public class ConstructorTests
-    : Distinct.ConstructorTests.Base<UutFixture.WhenNoSubscriptionsAreActive, ObservableHashSet<int>>;
+    : Distinct.SetTestBases.ConstructorTests.Base<UutFixture.WhenNoSubscriptionsAreActive, ObservableHashSet<int>>;

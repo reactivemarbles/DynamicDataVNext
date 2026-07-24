@@ -5,7 +5,7 @@ using System.Linq;
 using AwesomeAssertions;
 using NUnit.Framework;
 
-namespace DynamicDataVNext.Tests.Distinct;
+namespace DynamicDataVNext.Tests.Distinct.SetTestBases;
 
 public static partial class IsSupersetOfTests
 {

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 using NUnit.Framework;
 
-namespace DynamicDataVNext.Tests.Keyed;
+namespace DynamicDataVNext.Tests.Keyed.DictionaryTestBases;
 
 public static partial class AddTests
 {

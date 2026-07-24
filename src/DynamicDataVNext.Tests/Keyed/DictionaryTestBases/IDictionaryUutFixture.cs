@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace DynamicDataVNext.Tests.Keyed;
+namespace DynamicDataVNext.Tests.Keyed.DictionaryTestBases;
 
 public interface IDictionaryUutFixture<out TUutFixture, out TUut>
         : IDisposable

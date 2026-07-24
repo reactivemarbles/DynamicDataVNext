@@ -6,5 +6,5 @@ public static partial class RemoveTests
 {
     [TestFixture]
     public class ForKeyValuePair
-        : Keyed.RemoveTests.ForKeyValuePairBase<UutFixture, ChangeTrackingDictionary<string, int>>;
+        : Keyed.DictionaryTestBases.RemoveTests.ForKeyValuePairBase<UutFixture, ChangeTrackingDictionary<string, int>>;
 }
