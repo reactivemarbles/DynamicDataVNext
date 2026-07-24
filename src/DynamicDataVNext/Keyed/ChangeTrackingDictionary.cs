@@ -143,6 +143,8 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
                 message:        exception.Message,
                 innerException: exception);
         }
+
+        _bufferedChanges.Add(KeyedChange.CreateAddition(item));
     }
 
     /// <inheritdoc/>
@@ -159,6 +161,8 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
                 message:        exception.Message,
                 innerException: exception);
         }
+
+        _bufferedChanges.Add(KeyedChange.CreateAddition(key, value));
     }
 
     /// <summary>
