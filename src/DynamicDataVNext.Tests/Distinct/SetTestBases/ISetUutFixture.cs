@@ -24,8 +24,6 @@ public interface ISetUutFixture<out TUutFixture, out TUut>
     
     TUut Uut { get; }
     
-    int UutCapacity { get; }
-    
     IEqualityComparer<int> UutComparer { get; }
     
     DistinctItemOptions UutOptions { get; }

@@ -6,7 +6,8 @@ using NUnit.Framework;
 
 namespace DynamicDataVNext.Tests;
 
-public abstract class EnsureCapacityTestsBase<T>
+public abstract class EnsureCapacityTestsBase<TUut>
+    where TUut : IExpandableCollection
 {
     [TestCase(-1,           TestName = "{m}(Max negative value)")]
     [TestCase(int.MinValue, TestName = "{m}(Min negative value)")]
@@ -14,7 +15,7 @@ public abstract class EnsureCapacityTestsBase<T>
     {
         var uut = CreateUut(initialCapacity: 0);
         
-        var result = uut.Invoking(uut => EnsureCapacity(uut, capacity))
+        var result = uut.Invoking(uut => uut.EnsureCapacity(capacity))
             .Should().Throw<ArgumentOutOfRangeException>()
             .Which;
         
@@ -32,16 +33,10 @@ public abstract class EnsureCapacityTestsBase<T>
     {
         var uut = CreateUut(initialCapacity: initialCapacity);
         
-        EnsureCapacity(uut, capacity);
+        uut.EnsureCapacity(capacity);
         
-        GetCapacity(uut).Should().BeGreaterThanOrEqualTo(Math.Max(initialCapacity, capacity), because);
+        uut.Capacity.Should().BeGreaterThanOrEqualTo(Math.Max(initialCapacity, capacity), because);
     }
     
-    protected abstract T CreateUut(int initialCapacity);
-    
-    protected abstract void EnsureCapacity(
-        T   uut,
-        int capacity);
-    
-    protected abstract int GetCapacity(T uut);
+    protected abstract TUut CreateUut(int initialCapacity);
 }

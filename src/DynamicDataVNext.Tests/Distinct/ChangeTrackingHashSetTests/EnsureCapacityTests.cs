@@ -8,12 +8,4 @@ public class EnsureCapacityTests
 {
     protected override ChangeTrackingHashSet<int> CreateUut(int initialCapacity)
         => new(capacity: initialCapacity);
-
-    protected override void EnsureCapacity(
-            ChangeTrackingHashSet<int>  uut,
-            int                         capacity)
-        => uut.EnsureCapacity(capacity);
-
-    protected override int GetCapacity(ChangeTrackingHashSet<int> uut)
-        => uut.Capacity;
 }

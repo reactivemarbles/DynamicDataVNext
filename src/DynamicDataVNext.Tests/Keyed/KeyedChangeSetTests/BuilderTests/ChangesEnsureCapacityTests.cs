@@ -5,6 +5,6 @@ using DynamicDataVNext.Tests.ChangeSetBuilderBaseTests;
 namespace DynamicDataVNext.Tests.Keyed.KeyedChangeSetTests.BuilderTests;
 
 [TestFixture]
-public sealed class EnsureCapacityTests
-    : EnsureCapacityTestsBase<UutAdapter, KeyedChangeSet<int, int>, KeyedChange<int, int>, KeyedChangeType>
+public sealed class ChangesEnsureCapacityTests
+    : ChangesEnsureCapacityTestsBase<UutAdapter, KeyedChangeSet<int, int>, KeyedChange<int, int>, KeyedChangeType>
 { }

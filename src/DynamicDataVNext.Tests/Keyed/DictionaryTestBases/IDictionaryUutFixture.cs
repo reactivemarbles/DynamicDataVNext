@@ -24,8 +24,6 @@ public interface IDictionaryUutFixture<out TUutFixture, out TUut>
     
     TUut Uut { get; }
     
-    int UutCapacity { get; }
-    
     IEqualityComparer<string> UutComparer { get; }
     
     KeyedItemOptions UutOptions { get; }

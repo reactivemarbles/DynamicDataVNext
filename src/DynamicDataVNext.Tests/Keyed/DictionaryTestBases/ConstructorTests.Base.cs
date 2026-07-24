@@ -11,7 +11,8 @@ public static partial class ConstructorTests
 {
     public abstract class Base<TUutFixture, TUut>
         where TUutFixture : IDictionaryUutFixture<TUutFixture, TUut>
-        where TUut : IDictionary<string, int>
+        where TUut : IDictionary<string, int>,
+            IExpandableCollection
     {
         [TestCase(-1,           TestName = "{m}(Max negative value)")]
         [TestCase(int.MinValue, TestName = "{m}(Min negative value)")]
@@ -38,7 +39,7 @@ public static partial class ConstructorTests
             fixture.Uut.Should().BeEmpty("no initial items were given");
             fixture.Uut.Keys.Should().BeEmpty("no initial items were given");
             fixture.Uut.Values.Should().BeEmpty("no initial items were given");
-            fixture.UutCapacity.Should().BeGreaterThanOrEqualTo(capacity, "an initial capacity was given");
+            fixture.Uut.Capacity.Should().BeGreaterThanOrEqualTo(capacity, "an initial capacity was given");
             fixture.UutComparer.Should().BeSameAs(EqualityComparer<string>.Default, "no equality comparer was specified");
             fixture.UutOptions.Should().Be(default(KeyedItemOptions), "no change tracking options were specified");
         }

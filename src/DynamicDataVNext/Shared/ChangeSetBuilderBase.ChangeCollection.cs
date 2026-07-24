@@ -11,7 +11,8 @@ public partial class ChangeSetBuilderBase<TChangeSet, TChange, TChangeType>
     /// The collection of buffered changes within a <see cref="ChangeSetBuilderBase{TChange,TChangeType,TChangeSet}"/> object.
     /// </summary>
     public class ChangeCollection
-        : IReadOnlyList<TChange>
+        : IReadOnlyList<TChange>,
+            IExpandableCollection
     {
         internal ChangeCollection()
             => _changes = ImmutableArray.CreateBuilder<TChange>();
