@@ -182,7 +182,7 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
                 keySelector:    static item => item.Key,
                 valueSelector:  static item => item.Value);
         }
-        catch (ArgumentException exception) when (exception.ParamName is not nameof(items))
+        catch (ArgumentException exception)
         {
             throw new ArgumentException(
                 paramName:      nameof(items),
@@ -212,7 +212,7 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
                 keySelector:    keySelector,
                 valueSelector:  static value => value);
         }
-        catch (ArgumentException exception) when (exception.ParamName is not nameof(keySelector))
+        catch (ArgumentException exception)
         {
             throw new ArgumentException(
                 paramName:      nameof(keySelector),
@@ -316,7 +316,7 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
             if (!((ICollection<KeyValuePair<TKey, TValue>>)_items).Remove(item))
                 return false;
         }
-        catch (ArgumentNullException exception)
+        catch (ArgumentNullException exception) when (exception.ParamName is not nameof(item))
         {
             throw new ArgumentException(
                 paramName:      nameof(item),
@@ -368,7 +368,7 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
                     keySelector:    keySelector,
                     valueSelector:  static value => value);
             }
-            catch (ArgumentException exception) when (exception.ParamName is not nameof(keySelector))
+            catch (ArgumentException exception)
             {
                 throw new ArgumentException(
                     paramName:      nameof(keySelector),
@@ -411,7 +411,19 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
             foreach(var value in values)
             {
                 var key = keySelector.Invoke(value);
-                _items.Add(key, value);
+                
+                try
+                {
+                    _items.Add(key, value);
+                }
+                catch (ArgumentException exception)
+                {
+                    throw new ArgumentException(
+                        paramName:      nameof(keySelector),
+                        message:        exception.Message,
+                        innerException: exception);
+                }
+                
                 _bufferedChanges.Add(KeyedChange.CreateAddition(key, value));
             }
         }
