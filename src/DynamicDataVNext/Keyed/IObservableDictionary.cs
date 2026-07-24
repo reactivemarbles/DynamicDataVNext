@@ -55,11 +55,8 @@ public interface IObservableDictionary<TKey, TValue>
     /// </summary>
     /// <param name="values">The values to use as <see cref="KeyValuePair{TKey, TValue}.Value"/> for the new set of items to be loaded into the collection.</param>
     /// <param name="keySelector">A selector to select a <see cref="KeyValuePair{TKey, TValue}.Key"/> value for each new item.</param>
-    /// <typeparam name="TValues">The type of the collection of given values.</typeparam>
-    /// <exception cref="ArgumentNullException">Throws for <paramref name="keySelector"/>.</exception>
     /// <exception cref="ArgumentNullException">Throws for <paramref name="values"/> and <paramref name="keySelector"/>.</exception>
-    void Reset<TValues>(
-            TValues             values,
-            Func<TValue, TKey>  keySelector)
-        where TValues : IEnumerable<TValue>;
+    void Reset(
+        IEnumerable<TValue> values,
+        Func<TValue, TKey>  keySelector);
 }

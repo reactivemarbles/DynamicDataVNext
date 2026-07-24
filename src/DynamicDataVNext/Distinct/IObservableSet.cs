@@ -32,6 +32,5 @@ public interface IObservableSet<T>
     /// <remarks>
     /// Any duplicate items within <paramref name="items"/> are automatically ignored.
     /// </remarks>
-    void Reset<TItems>(TItems items)
-        where TItems : IEnumerable<T>;
+    void Reset(IEnumerable<T> items);
 }

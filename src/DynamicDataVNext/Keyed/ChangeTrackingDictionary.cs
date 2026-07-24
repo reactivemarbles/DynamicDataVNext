@@ -346,13 +346,12 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
     /// <param name="values">The values to use as <see cref="KeyValuePair{TKey, TValue}.Value"/> for the new set of items to be loaded into the collection.</param>
     /// <param name="keySelector">A selector to select a <see cref="KeyValuePair{TKey, TValue}.Key"/> value for each new item.</param>
     /// <exception cref="ArgumentNullException">Throws for <paramref name="values"/> and <paramref name="keySelector"/>.</exception>
-    public void Reset<TValues>(
-            TValues             values,
-            Func<TValue, TKey>  keySelector)
-        where TValues : IEnumerable<TValue>
+    /// <exception cref="ArgumentException">Throws if <paramref name="keySelector"/> returns <see langword="null"/>, a duplicated key value, or a key value that already exists within the collection.</exception>
+    public void Reset(
+        IEnumerable<TValue> values,
+        Func<TValue, TKey>  keySelector)
     {
-        if (!typeof(TValues).IsValueType)
-            ArgumentNullException.ThrowIfNull(values);
+        ArgumentNullException.ThrowIfNull(values);
         ArgumentNullException.ThrowIfNull(keySelector);
 
         // If there's no existing items to remove, this is equivalent to an AddRange().

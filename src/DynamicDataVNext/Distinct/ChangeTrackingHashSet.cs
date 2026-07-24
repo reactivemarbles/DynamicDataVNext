@@ -282,8 +282,7 @@ public partial class ChangeTrackingHashSet<T>
     /// <remarks>
     /// Any duplicate items within <paramref name="items"/> are automatically ignored.
     /// </remarks>
-    public void Reset<TItems>(TItems items)
-        where TItems : IEnumerable<T>
+    public void Reset(IEnumerable<T> items)
     {
         ArgumentNullException.ThrowIfNull(items);
 

@@ -13,7 +13,7 @@ public partial class ResetTests
     {
         var uut = new ObservableHashSet<int>();
         
-        var result = uut.Invoking(uut => uut.Reset<IEnumerable<int>>(null!))
+        var result = uut.Invoking(uut => uut.Reset(null!))
             .Should().Throw<ArgumentNullException>()
             .WithParameterName("items")
             .Which;

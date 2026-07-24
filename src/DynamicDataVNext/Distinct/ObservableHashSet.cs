@@ -238,8 +238,7 @@ public sealed partial class ObservableHashSet<T>
 
     /// <inheritdoc/>
     /// <exception cref="ObjectDisposedException"></exception>
-    public void Reset<TItems>(TItems items)
-        where TItems : IEnumerable<T>
+    public void Reset(IEnumerable<T> items)
     {
         ObjectDisposedException.ThrowIf(_hasDisposed, GetType());
 
