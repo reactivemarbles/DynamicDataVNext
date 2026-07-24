@@ -27,8 +27,8 @@ public static partial class AddTests
             fixture.Uut.Values.Should().Contain(value, "the set should have been reset to the given item");
 
             fixture.AssertUutWasReset(
-                oldItems: Array.Empty<KeyValuePair<string, int>>(),
-                newItems: new[] { new KeyValuePair<string, int>(key, value) });
+                removedItems:   Array.Empty<KeyValuePair<string, int>>(),
+                addedItems:     new[] { new KeyValuePair<string, int>(key, value) });
         }
         
         protected abstract void AddItem(

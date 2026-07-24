@@ -77,8 +77,8 @@ public static partial class ResetTests
             fixture.Uut.Should().BeEquivalentTo(items, "the dictionary should have been reset to the given values");
             
             fixture.AssertUutWasReset(
-                oldItems: testCase.InitialItems,
-                newItems: items);
+                removedItems:   testCase.InitialItems,
+                addedItems:     items);
         }
     }
 }

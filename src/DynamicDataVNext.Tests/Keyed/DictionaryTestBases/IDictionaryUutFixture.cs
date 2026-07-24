@@ -39,8 +39,8 @@ public interface IDictionaryUutFixture<out TUutFixture, out TUut>
         int     addedValue);
 
     void AssertItemWasRefreshed(
-        string  key,
-        int     value);
+        string  refreshedKey,
+        int     refreshedValue);
 
     void AssertItemWasRemoved(
         string  removedKey,
@@ -48,23 +48,14 @@ public interface IDictionaryUutFixture<out TUutFixture, out TUut>
 
     void AssertItemsWereAdded(IReadOnlyList<KeyValuePair<string, int>> addedItems);
 
-    // void AssertItemsWereRemoved(
-    //     IReadOnlyList<int>  removedItems,
-    //     string              because);
-
     void AssertUutDidNothing();
 
-    void AssertUutWasCleared(IReadOnlyList<KeyValuePair<string, int>> items);
+    void AssertUutWasCleared(IReadOnlyList<KeyValuePair<string, int>> removedItems);
 
     void AssertUutWasReset(
-        IReadOnlyList<KeyValuePair<string, int>> oldItems,
-        IReadOnlyList<KeyValuePair<string, int>> newItems);
+        IReadOnlyList<KeyValuePair<string, int>> removedItems,
+        IReadOnlyList<KeyValuePair<string, int>> addedItems);
 
-    // void AssertUutWasUpdated(
-    //     IReadOnlyList<int>  removedItems,
-    //     IReadOnlyList<int>  addedItems,
-    //     string              itemsRemovedBecause);
-    
     bool RefreshUut(string key);
     
     void ResetUut(

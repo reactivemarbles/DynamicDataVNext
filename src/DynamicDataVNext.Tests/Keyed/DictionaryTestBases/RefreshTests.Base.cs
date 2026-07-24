@@ -29,8 +29,8 @@ public static partial class RefreshTests
             fixture.Uut.Should().BeEquivalentTo(testCase.InitialItems, "the collection should not have changed");
             
             fixture.AssertItemWasRefreshed(
-                key:    testCase.Key,
-                value:  fixture.Uut[testCase.Key]);
+                refreshedKey:   testCase.Key,
+                refreshedValue: fixture.Uut[testCase.Key]);
         }
         
         [TestCaseSource(typeof(RefreshTests), nameof(WhenDictionaryDoesNotContainKey_TestCases))]

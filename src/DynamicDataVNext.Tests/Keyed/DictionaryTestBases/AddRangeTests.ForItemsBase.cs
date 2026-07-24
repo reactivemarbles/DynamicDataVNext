@@ -87,8 +87,8 @@ public static partial class AddRangeTests
             fixture.Uut.Should().BeEquivalentTo(items, "the dictionary should have been reset to the given items");
             
             fixture.AssertUutWasReset(
-                oldItems:   Array.Empty<KeyValuePair<string, int>>(),
-                newItems:   items);
+                removedItems:   Array.Empty<KeyValuePair<string, int>>(),
+                addedItems:     items);
         }
 
         [Test]
