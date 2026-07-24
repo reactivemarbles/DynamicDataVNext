@@ -9,8 +9,8 @@ namespace DynamicDataVNext;
 /// <typeparam name="TKey">The type of the item keys in the collection.</typeparam>
 /// <typeparam name="TValue">The type of the item values in the collection.</typeparam>
 public interface IObservableDictionary<TKey, TValue>
-    : IDictionary<TKey, TValue>,
-        IObservable<KeyedChange<TKey, TValue>>
+    : IObservableCollection<KeyValuePair<TKey, TValue>>,
+        IDictionary<TKey, TValue>
 {
     /// <summary>
     /// The stream of changes describing mutations made to the collection.
