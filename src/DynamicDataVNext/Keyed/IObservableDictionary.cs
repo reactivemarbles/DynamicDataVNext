@@ -46,7 +46,7 @@ public interface IObservableDictionary<TKey, TValue>
     /// <summary>
     /// Signals that an item within the collection has, itself, mutated, triggering a <see cref="KeyedChangeType.Refreshment"/> notification to be published via <see cref="ChangeStream"/>.
     /// </summary>
-    /// <param name="key">The key of the item that was refreshed.</param>
+    /// <param name="key">The key of the item that was mutated.</param>
     /// <returns><see langword="false"/> if the collection does not actually contain <paramref name="key"/>. Otherwise, <see langword="true"/>.</returns>
     bool Refresh(TKey key);
 

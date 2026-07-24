@@ -235,7 +235,7 @@ public partial class ChangeTrackingHashSet<T>
     /// <summary>
     /// Signals that the given item within the collection has, itself, mutated, triggering a <see cref="DistinctChangeType.Refreshment"/> record to be added to <see cref="BufferedChanges"/>.
     /// </summary>
-    /// <param name="item">The item that was refreshed.</param>
+    /// <param name="item">The item that was mutated.</param>
     /// <returns><see langword="false"/> if the collection does not actually contain <paramref name="item"/>. Otherwise, <see langword="true"/>.</returns>
     /// <exception cref="ImmutableRefreshException">Throws if <see cref="Options"/>.<see cref="DistinctItemOptions.ItemsAreMutable"/> is <see langword="false"/>.</exception>
     public bool Refresh(T item)
@@ -278,7 +278,6 @@ public partial class ChangeTrackingHashSet<T>
     /// Performs a <see cref="ChangeSetType.Reset"/> operation upon the collection, by removing any existing items within the collection, and replacing them with the given items. 
     /// </summary>
     /// <param name="items">The new set of items to be loaded into the collection.</param>
-    /// <typeparam name="TItems">The type of the collection of given items.</typeparam>
     /// <exception cref="ArgumentNullException">Throws for <paramref name="items"/>.</exception>
     /// <remarks>
     /// Any duplicate items within <paramref name="items"/> are automatically ignored.

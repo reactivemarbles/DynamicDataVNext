@@ -51,6 +51,7 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
     /// <inheritdoc cref="ChangeTrackingDictionary{TKey, TValue}(System.Collections.Generic.IEqualityComparer{TKey}, KeyedItemOptions)"/>
     /// <param name="items">The initial set of items to be loaded into the collection. Duplicate items are ignored.</param>
     /// <exception cref="ArgumentNullException">Throws for <paramref name="items"/>.</exception>
+    /// <exception cref="ArgumentException">Throws if <paramref name="items"/> contains any key values that are <see langword="null"/> or duplicated.</exception>
     public ChangeTrackingDictionary(
             IEnumerable<KeyValuePair<TKey, TValue>> items,
             IEqualityComparer<TKey>?                comparer    = null,
@@ -128,13 +129,12 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
         => _items.Values;
 
     /// <inheritdoc/>
+    /// <exception cref="ArgumentException">Throws if <paramref name="item"/> has a key value of <see langword="null"/> or that already exists in the collection.</exception>
     public void Add(KeyValuePair<TKey, TValue> item)
     {
         try
         {
             _items.Add(item.Key, item.Value);
-
-            _bufferedChanges.Add(KeyedChange.CreateAddition(item));
         }
         catch (ArgumentException exception) when (exception.ParamName is not nameof(item))
         {
@@ -151,10 +151,8 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
         try
         {
             _items.Add(key, value);
-
-            _bufferedChanges.Add(KeyedChange.CreateAddition(key, value));
         }
-        catch (ArgumentException exception) when (exception.ParamName is null)
+        catch (ArgumentException exception) when (exception.ParamName is not nameof(key))
         {
             throw new ArgumentException(
                 paramName:      nameof(key),
@@ -168,7 +166,7 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
     /// </summary>
     /// <param name="items">The key and value pairings to be added to the collection.</param>
     /// <exception cref="ArgumentNullException">Throws for <paramref name="items"/>.</exception>
-    /// <exception cref="ArgumentException">Throws if <paramref name="items"/> contains any key values that already exist within the collection.</exception>
+    /// <exception cref="ArgumentException">Throws if <paramref name="items"/> contains any key values that are <see langword="null"/>, duplicated, or already in the collection.</exception>
     public void AddRange(IEnumerable<KeyValuePair<TKey, TValue>> items)
     {
         ArgumentNullException.ThrowIfNull(items);
@@ -194,9 +192,8 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
     /// </summary>
     /// <param name="values">The values to use as <see cref="KeyValuePair{TKey, TValue}.Value"/> for each new item.</param>
     /// <param name="keySelector">A selector to select a <see cref="KeyValuePair{TKey, TValue}.Key"/> value for each new item.</param>
-    /// <exception cref="ArgumentNullException">Throws for <paramref name="keySelector"/>.</exception>
     /// <exception cref="ArgumentNullException">Throws for <paramref name="values"/> and <paramref name="keySelector"/>.</exception>
-    /// <exception cref="ArgumentException">Throws if <paramref name="keySelector"/> returns a key that already exists within the collection.</exception>
+    /// <exception cref="ArgumentException">Throws if <paramref name="keySelector"/> returns <see langword="null"/>, a duplicated key value, or a key value that already exists within the collection.</exception>
     public void AddRange(
         IEnumerable<TValue> values,
         Func<TValue, TKey>  keySelector)
@@ -243,6 +240,7 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
     }
 
     /// <inheritdoc/>
+    /// <exception cref="ArgumentException">Throws if <paramref name="item"/> has a key value of <see langword="null"/> or that already exists in the collection.</exception>
     public bool Contains(KeyValuePair<TKey, TValue> item)
     {
         try
@@ -289,7 +287,8 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
     /// <summary>
     /// Signals that an item within the collection has, itself, mutated, triggering a <see cref="KeyedChangeType.Refreshment"/> record to be added to <see cref="BufferedChanges"/>.
     /// </summary>
-    /// <param name="key">The key of the item that was refreshed.</param>
+    /// <param name="key">The key of the item that was mutated.</param>
+    /// <exception cref="ArgumentNullException">Throws for <paramref name="key"/>.</exception>
     /// <returns><see langword="false"/> if the collection does not actually contain <paramref name="key"/>. Otherwise, <see langword="true"/>.</returns>
     public bool Refresh(TKey key)
     {
@@ -305,6 +304,7 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
     }
 
     /// <inheritdoc/>
+    /// <exception cref="ArgumentException">Throws if <paramref name="item"/> has a key value of <see langword="null"/>.</exception>
     public bool Remove(KeyValuePair<TKey, TValue> item)
     {
         try
@@ -345,8 +345,6 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
     /// </summary>
     /// <param name="values">The values to use as <see cref="KeyValuePair{TKey, TValue}.Value"/> for the new set of items to be loaded into the collection.</param>
     /// <param name="keySelector">A selector to select a <see cref="KeyValuePair{TKey, TValue}.Key"/> value for each new item.</param>
-    /// <typeparam name="TValues">The type of the collection of given values.</typeparam>
-    /// <exception cref="ArgumentNullException">Throws for <paramref name="keySelector"/>.</exception>
     /// <exception cref="ArgumentNullException">Throws for <paramref name="values"/> and <paramref name="keySelector"/>.</exception>
     public void Reset<TValues>(
             TValues             values,
@@ -414,7 +412,7 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
                 _bufferedChanges.Add(KeyedChange.CreateAddition(key, value));
             }
         }
-        catch (Exception exception)
+        catch
         {
             // Before we rollback the change buffer, use it to put back all the items we removed.
             _items.Clear();
@@ -425,19 +423,13 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
             }
             
             checkpoint.Restore();
-            
-            if (exception is ArgumentException { ParamName: not nameof(keySelector) } )
-                throw new ArgumentException(
-                    paramName:      nameof(keySelector),
-                    message:        exception.Message,
-                    innerException: exception);
-
             throw;
         }
     }
 
     /// <inheritdoc cref="IDictionary{TKey, TValue}.TryGetValue(TKey, out TValue)"/>
-    public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value)
+    public bool TryGetValue(            TKey    key,
+            [MaybeNullWhen(false)]  out TValue  value)
         => _items.TryGetValue(key, out value);
 
     bool ICollection<KeyValuePair<TKey, TValue>>.IsReadOnly

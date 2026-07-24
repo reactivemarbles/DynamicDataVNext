@@ -6,7 +6,7 @@ namespace DynamicDataVNext;
 public partial class ChangeTrackingDictionary<TKey, TValue>
 {
     /// <summary>
-    /// Buffers a sequence of changes that have been made to a <see cref="ChangeTrackingDictionary{TKey, TValue}"/>, and allows them to be captured into a <see cref="KeyedChangeSet{TKey, TValue}"/>.
+    /// Buffers a sequence of changes that have been made to a <see cref="ChangeTrackingDictionary{TKey, TValue}"/>, and allows them to be captured into a <see cref="KeyedChangeSet{TKey, TItem}"/>.
     /// </summary>
     public class BufferedChangeCollection
         : IReadOnlyList<KeyedChange<TKey, TValue>>
@@ -32,9 +32,9 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
             => _bufferedChangeSet.Changes.GetEnumerator();
 
         /// <summary>
-        /// Captures the current sequence of changes within the collection into a <see cref="KeyedChangeSet{TKey, TValue}"/>, and removes them from the collection.
+        /// Captures the current sequence of changes within the collection into a <see cref="KeyedChangeSet{TKey, TItem}"/>, and removes them from the collection.
         /// </summary>
-        /// <returns>A <see cref="KeyedChangeSet{TKey, TValue}"/> containing the changes that were removed from the collection.</returns>
+        /// <returns>A <see cref="KeyedChangeSet{TKey, TItem}"/> containing the changes that were removed from the collection.</returns>
         public KeyedChangeSet<TKey, TValue> CaptureAndClear()
             => _bufferedChangeSet.BuildAndClear();
         
