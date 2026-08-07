@@ -26,6 +26,13 @@ public interface IObservableCache<TKey, TItem>
     void AddRange(IEnumerable<TItem> items);
 
     /// <summary>
+    /// Merges a range of items into the collection by either adding or replacing each one, based on whether an item with the same key is already present.
+    /// </summary>
+    /// <param name="items">The items to be added or replaced</param>
+    /// <exception cref="ArgumentNullException">Throws for <paramref name="items"/>.</exception>
+    void MergeRange(IEnumerable<TItem> items);
+
+    /// <summary>
     /// Signals that an item within the collection has, itself, mutated, triggering a <see cref="KeyedChangeType.Refreshment"/> notification to be published via <see cref="ChangeStream"/>.
     /// </summary>
     /// <param name="item">The item that was mutated.</param>

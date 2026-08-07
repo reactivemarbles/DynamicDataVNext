@@ -7,16 +7,8 @@ namespace DynamicDataVNext;
 public interface ICache<TKey, TItem>
     : ICollection<TItem>
 {
-    /// <summary>
-    /// Accesses the item in the collection (if any) for the given key.
-    /// </summary>
-    /// <param name="key">The key of the item to be accessed.</param>
-    /// <exception cref="KeyNotFoundException">Throws when <paramref name="key"/> does not exist within the collection, during a retrieval.</exception>
-    /// <returns>The item in the collection with the given key.</returns>
-    /// <remarks>
-    /// When assigning a value to a given key, the key need not be already-present within the collection.
-    /// </remarks>
-    TItem this[TKey key] { get; set; }
+    /// <inheritdoc cref="IReadOnlyCache{TKey, TItem}.this[TKey]"/>
+    TItem this[TKey key] { get; }
     
     /// <summary>
     /// Retrieves the current set of keys present within the collection.
@@ -37,6 +29,12 @@ public interface ICache<TKey, TItem>
     /// <param name="key">The key to check for.</param>
     /// <returns><see langword="false"/> if the collection does not actually contain <paramref name="key"/>. Otherwise, <see langword="true"/>.</returns>
     bool ContainsKey(TKey key);
+
+    /// <summary>
+    /// Merges an item into the cache by either adding it, or replacing it, if an item with the same key is already present.
+    /// </summary>
+    /// <param name="item">The item to be added or replaced</param>
+    void Merge(TItem item);
 
     /// <summary>
     /// Attempts to remove an item from the collection, by its key.
