@@ -13,8 +13,21 @@ public static partial class AddTests
         where TUutFixture : IDictionaryUutFixture<TUutFixture, TUut>
         where TUut : IDictionary<string, int>
     {
+        [TestCaseSource(typeof(AddTests), nameof(WhenDictionaryIsNotEmptyAndKeyIsNotInDictionary_TestCases))]
+        public void WhenDictionaryIsNotEmptyAndKeyIsNotInDictionary_AddsItem(SingleItemOperationTestCase testCase)
+        {
+            using var fixture = TUutFixture.Create(items: testCase.InitialItems);
+                
+            fixture.Uut.Add(testCase.Key, testCase.Value);
+            
+            fixture.Uut.Keys.Should().Contain(testCase.Key, "the given item should have been added to the set");
+            fixture.Uut.Values.Should().Contain(testCase.Value, "the given item should have been added to the set");
+
+            fixture.AssertItemWasAdded(testCase.Key, testCase.Value);
+        }
+        
         [TestCaseSource(typeof(AddTests), nameof(WhenKeyIsInDictionary_TestCases))]
-        public void WhenKeyIsInDictionary_ThrowsException(SingleItemOperationTestCase testCase)
+        public void WhenKeyIsInDictionary_DoesNothingAndThrowsException(SingleItemOperationTestCase testCase)
         {
             using var fixture = TUutFixture.Create(items: testCase.InitialItems);
                 
@@ -33,21 +46,8 @@ public static partial class AddTests
             fixture.AssertUutDidNothing();
         }
         
-        [TestCaseSource(typeof(AddTests), nameof(WhenKeyIsNotInDictionary_TestCases))]
-        public void WhenKeyIsNotInDictionary_AddsItem(SingleItemOperationTestCase testCase)
-        {
-            using var fixture = TUutFixture.Create(items: testCase.InitialItems);
-                
-            fixture.Uut.Add(testCase.Key, testCase.Value);
-            
-            fixture.Uut.Keys.Should().Contain(testCase.Key, "the given item should have been added to the set");
-            fixture.Uut.Values.Should().Contain(testCase.Value, "the given item should have been added to the set");
-
-            fixture.AssertItemWasAdded(testCase.Key, testCase.Value);
-        }
-        
         [TestCaseSource(typeof(AddTests), nameof(WhenKeyIsNull_TestCases))]
-        public void WhenKeyIsNull_ThrowsException(IReadOnlyList<KeyValuePair<string, int>> initialItems)
+        public void WhenKeyIsNull_DoesNothingAndThrowsException(IReadOnlyList<KeyValuePair<string, int>> initialItems)
         {
             using var fixture = TUutFixture.Create(items: initialItems);
                 

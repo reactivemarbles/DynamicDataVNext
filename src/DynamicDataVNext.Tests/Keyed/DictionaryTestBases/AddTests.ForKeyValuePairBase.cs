@@ -14,7 +14,7 @@ public static partial class AddTests
         where TUut : IDictionary<string, int>
     {
         [TestCaseSource(typeof(AddTests), nameof(WhenKeyIsInDictionary_TestCases))]
-        public void WhenItemKeyIsInDictionary_ThrowsException(SingleItemOperationTestCase testCase)
+        public void WhenItemKeyIsInDictionary_DoesNothingAndThrowsException(SingleItemOperationTestCase testCase)
         {
             using var fixture = TUutFixture.Create(items: testCase.InitialItems);
                 
@@ -31,8 +31,8 @@ public static partial class AddTests
             fixture.AssertUutDidNothing();
         }
         
-        [TestCaseSource(typeof(AddTests), nameof(WhenKeyIsNotInDictionary_TestCases))]
-        public void WhenItemKeyIsNotInDictionary_AddsItem(SingleItemOperationTestCase testCase)
+        [TestCaseSource(typeof(AddTests), nameof(WhenDictionaryIsNotEmptyAndKeyIsNotInDictionary_TestCases))]
+        public void WhenDictionaryIsNotEmptyAndKeyIsNotInDictionary_AddsItem(SingleItemOperationTestCase testCase)
         {
             using var fixture = TUutFixture.Create(items: testCase.InitialItems);
                 
@@ -45,7 +45,7 @@ public static partial class AddTests
         }
         
         [TestCaseSource(typeof(AddTests), nameof(WhenKeyIsNull_TestCases))]
-        public void WhenKeyIsNull_ThrowsException(IReadOnlyList<KeyValuePair<string, int>> initialItems)
+        public void WhenKeyIsNull_DoesNothingAndThrowsException(IReadOnlyList<KeyValuePair<string, int>> initialItems)
         {
             using var fixture = TUutFixture.Create(items: initialItems);
                 

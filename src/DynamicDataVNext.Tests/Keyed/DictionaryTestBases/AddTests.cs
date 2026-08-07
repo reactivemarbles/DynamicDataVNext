@@ -42,7 +42,7 @@ public static partial class AddTests
                 .SetName("{m}(Key exists with different value)"),
         };
 
-    public static readonly IReadOnlyList<TestCaseData> WhenKeyIsNotInDictionary_TestCases
+    public static readonly IReadOnlyList<TestCaseData> WhenDictionaryIsNotEmptyAndKeyIsNotInDictionary_TestCases
         = new[]
         {
             new TestCaseData(new SingleItemOperationTestCase()

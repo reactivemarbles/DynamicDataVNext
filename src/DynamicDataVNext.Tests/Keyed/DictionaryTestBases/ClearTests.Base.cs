@@ -24,7 +24,7 @@ public static partial class ClearTests
         }
             
         [TestCaseSource(typeof(ClearTests), nameof(WhenDictionaryIsNotEmpty_TestCases))]
-        public void WhenDictionaryIsNotEmpty_ClearsSet(IReadOnlyList<KeyValuePair<string, int>> initialItems)
+        public void WhenDictionaryIsNotEmpty_ClearsDictionary(IReadOnlyList<KeyValuePair<string, int>> initialItems)
         {
             using var fixture = TUutFixture.Create(items: initialItems);
                 
