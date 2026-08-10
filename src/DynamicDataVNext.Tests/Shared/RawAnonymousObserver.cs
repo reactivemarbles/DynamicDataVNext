@@ -1,5 +1,3 @@
-using System;
-
 namespace DynamicDataVNext.Tests;
 
 internal static class RawAnonymousObserver

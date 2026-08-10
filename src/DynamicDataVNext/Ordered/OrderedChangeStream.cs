@@ -1,5 +1,3 @@
-using System;
-
 namespace DynamicDataVNext;
 
 /// <summary>

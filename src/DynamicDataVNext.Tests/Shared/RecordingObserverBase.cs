@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-
-using ReactiveUI.Primitives.Concurrency;
-using ReactiveUI.Primitives.Core;
-
 namespace DynamicDataVNext.Tests;
 
 // Using a custom implementation of IObserver<> to bypass normal RX safeguards, allowing us to detect and test for invalid behaviors.

@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-
 namespace DynamicDataVNext;
 
 public partial class ChangeTrackingHashSet<T>

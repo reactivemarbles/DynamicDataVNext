@@ -1,5 +1,3 @@
-using System;
-
 namespace DynamicDataVNext;
 
 // We COULD just ignore refresh changes for immutable items, but in a scenario where we know that items are immutable,

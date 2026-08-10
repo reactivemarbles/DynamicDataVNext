@@ -1,7 +1,3 @@
-using AwesomeAssertions;
-
-using NUnit.Framework;
-
 namespace DynamicDataVNext.Tests.Keyed.KeyedChangeSetTests;
 
 [TestFixture]

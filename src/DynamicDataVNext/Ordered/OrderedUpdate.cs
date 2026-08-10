@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DynamicDataVNext;
+﻿namespace DynamicDataVNext;
 
 /// <summary>
 /// Describes an item within a collection of ordered items being replaced by another, and moved at the same time.

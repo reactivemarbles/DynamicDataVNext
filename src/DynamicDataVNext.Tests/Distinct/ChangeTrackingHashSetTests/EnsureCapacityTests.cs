@@ -1,5 +1,3 @@
-using NUnit.Framework;
-
 namespace DynamicDataVNext.Tests.Distinct.ChangeTrackingHashSetTests;
 
 [TestFixture]

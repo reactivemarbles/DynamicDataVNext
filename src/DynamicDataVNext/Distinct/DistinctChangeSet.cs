@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Immutable;
-
-namespace DynamicDataVNext;
+﻿namespace DynamicDataVNext;
 
 /// <summary>
 /// Contains convenience methods for creating and manipulating <see cref="DistinctChangeSet{T}"/> structures.

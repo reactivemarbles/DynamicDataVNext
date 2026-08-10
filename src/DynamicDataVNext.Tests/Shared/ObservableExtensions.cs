@@ -1,7 +1,3 @@
-using System;
-
-using ReactiveUI.Primitives.Concurrency;
-
 namespace DynamicDataVNext.Tests;
 
 public static class ObservableExtensions

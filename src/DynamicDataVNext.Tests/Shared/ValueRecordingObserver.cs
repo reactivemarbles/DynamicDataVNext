@@ -1,7 +1,3 @@
-using System.Collections.Generic;
-
-using ReactiveUI.Primitives.Concurrency;
-
 namespace DynamicDataVNext.Tests;
 
 public sealed class ValueRecordingObserver<T>

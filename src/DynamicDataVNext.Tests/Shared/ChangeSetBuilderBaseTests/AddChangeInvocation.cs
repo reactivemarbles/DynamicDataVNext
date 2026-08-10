@@ -1,5 +1,3 @@
-using System;
-
 namespace DynamicDataVNext.Tests.ChangeSetBuilderBaseTests;
 
 public readonly struct AddChangeInvocation<TChange, TChangeType>

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace DynamicDataVNext;
+﻿namespace DynamicDataVNext;
 
 /// <summary>
 /// Describes an item within a keyed collection.

@@ -1,6 +1,3 @@
-using AwesomeAssertions;
-using NUnit.Framework;
-
 namespace DynamicDataVNext.Tests.Distinct.DistinctChangeTests;
 
 [TestFixture]

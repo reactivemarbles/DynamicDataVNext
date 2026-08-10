@@ -1,9 +1,3 @@
-using System.Collections.Immutable;
-
-using ReactiveUI.Primitives;
-
-using BenchmarkDotNet.Attributes;
-
 namespace DynamicDataVNext.Benchmarks.Distinct.ObservableHashSet;
 
 [MemoryDiagnoser]

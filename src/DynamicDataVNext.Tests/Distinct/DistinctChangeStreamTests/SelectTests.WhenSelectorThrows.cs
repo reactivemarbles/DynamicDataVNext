@@ -1,11 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
-
-using ReactiveUI.Primitives.Signals;
-
-using AwesomeAssertions;
-using NUnit.Framework;
-
 namespace DynamicDataVNext.Tests.Distinct.DistinctChangeStreamTests;
 
 public partial class SelectTests

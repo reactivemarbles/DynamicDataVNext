@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-
-using NUnit.Framework;
-
 namespace DynamicDataVNext.Tests.Distinct.SetTestBases;
 
 public partial class IntersectWithTests

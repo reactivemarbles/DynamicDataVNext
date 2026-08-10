@@ -1,12 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-
-using ReactiveUI.Primitives;
-
-using Bogus;
-
 namespace DynamicDataVNext.Benchmarks.Distinct;
 
 public static class IntegerMutations

@@ -1,8 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
-
-using AwesomeAssertions;
-
 using DynamicDataVNext.Tests.Distinct.SetTestBases;
 
 namespace DynamicDataVNext.Tests.Distinct.ChangeTrackingHashSetTests;

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DynamicDataVNext;
+﻿namespace DynamicDataVNext;
 
 /// <summary>
 /// Contains convenience methods for creating <see cref="KeyedChange{TKey, TItem}"/> values.

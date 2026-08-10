@@ -1,12 +1,3 @@
-using System;
-using System.Collections.Generic;
-
-using ReactiveUI.Primitives;
-using ReactiveUI.Primitives.Signals;
-
-using AwesomeAssertions;
-using NUnit.Framework;
-
 namespace DynamicDataVNext.Tests.Distinct.ReactiveHashSetTests;
 
 public partial class ConstructorTests

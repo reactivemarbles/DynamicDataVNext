@@ -1,5 +1,3 @@
-using AwesomeAssertions.Execution;
-
 namespace DynamicDataVNext.Tests.Distinct;
 
 public static class DistinctChangeSetExtensions

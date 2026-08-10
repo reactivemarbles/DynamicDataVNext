@@ -1,7 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
 
-using AwesomeAssertions;
-using NUnit.Framework;
 
 namespace DynamicDataVNext.Tests.Distinct.ObservableHashSetTests;
 

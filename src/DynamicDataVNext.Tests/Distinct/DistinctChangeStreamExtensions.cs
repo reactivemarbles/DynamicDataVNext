@@ -1,11 +1,3 @@
-using System;
-using System.Collections.Generic;
-
-using ReactiveUI.Primitives;
-using ReactiveUI.Primitives.Concurrency;
-
-using AwesomeAssertions;
-
 namespace DynamicDataVNext.Tests.Distinct;
 
 public static class DistinctChangeStreamExtensions

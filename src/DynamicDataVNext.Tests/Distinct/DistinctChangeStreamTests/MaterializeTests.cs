@@ -1,10 +1,3 @@
-using System;
-
-using ReactiveUI.Primitives.Signals;
-
-using AwesomeAssertions;
-using NUnit.Framework;
-
 namespace DynamicDataVNext.Tests.Distinct.DistinctChangeStreamTests;
 
 [TestFixture]

@@ -1,6 +1,4 @@
-﻿using System.Collections.Immutable;
-
-namespace DynamicDataVNext;
+﻿namespace DynamicDataVNext;
 
 public readonly partial record struct KeyedChangeSet<TKey, TItem>
 {

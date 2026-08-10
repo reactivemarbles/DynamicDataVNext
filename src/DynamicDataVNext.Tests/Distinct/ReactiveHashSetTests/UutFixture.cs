@@ -1,8 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
-
-using ReactiveUI.Primitives.Signals;
-
 using DynamicDataVNext.Tests.Distinct.SetTestBases;
 
 namespace DynamicDataVNext.Tests.Distinct.ReactiveHashSetTests;

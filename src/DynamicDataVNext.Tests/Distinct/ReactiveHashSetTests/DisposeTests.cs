@@ -1,8 +1,3 @@
-using ReactiveUI.Primitives.Signals;
-
-using AwesomeAssertions;
-using NUnit.Framework;
-
 namespace DynamicDataVNext.Tests.Distinct.ReactiveHashSetTests;
 
 [TestFixture]

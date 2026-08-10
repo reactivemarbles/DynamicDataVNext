@@ -1,5 +1,3 @@
-using System.Linq;
-
 namespace DynamicDataVNext.Tests.ChangeSetBuilderBaseTests;
 
 public abstract partial class CreateCheckpointTestsBase<TUutAdapter, TChangeSet, TChange, TChangeType>

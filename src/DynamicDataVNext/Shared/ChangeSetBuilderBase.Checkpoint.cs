@@ -1,5 +1,3 @@
-using System;
-
 namespace DynamicDataVNext;
 
 public partial class ChangeSetBuilderBase<TChangeSet, TChange, TChangeType>

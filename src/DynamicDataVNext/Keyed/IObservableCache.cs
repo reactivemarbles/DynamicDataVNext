@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace DynamicDataVNext;
+﻿namespace DynamicDataVNext;
 
 /// <summary>
 /// Describes a collection of keyed items, and which publishes notifications about mutations made to itself or its items.

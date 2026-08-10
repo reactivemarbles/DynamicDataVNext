@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace DynamicDataVNext;
 
 // Placeholder. Will be replaced by ReactiveUI.Primitives

@@ -1,5 +1,3 @@
-using System;
-
 namespace DynamicDataVNext.Tests.ChangeSetBuilderBaseTests;
 
 public class ChangesEnsureCapacityTestsBase<TUutAdapter, TChangeSet, TChange, TChangeType>

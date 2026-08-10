@@ -1,10 +1,3 @@
-using System;
-using System.Collections.Generic;
-
-using ReactiveUI.Primitives;
-
-using AwesomeAssertions;
-
 using DynamicDataVNext.Tests.Distinct.SetTestBases;
 
 namespace DynamicDataVNext.Tests.Distinct.ObservableHashSetTests;

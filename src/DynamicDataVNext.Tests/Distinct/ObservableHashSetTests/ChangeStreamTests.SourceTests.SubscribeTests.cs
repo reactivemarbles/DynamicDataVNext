@@ -1,11 +1,3 @@
-using System;
-
-using ReactiveUI.Primitives;
-using ReactiveUI.Primitives.Concurrency;
-
-using AwesomeAssertions;
-using NUnit.Framework;
-
 namespace DynamicDataVNext.Tests.Distinct.ObservableHashSetTests;
 
 public static partial class ChangeStreamTests

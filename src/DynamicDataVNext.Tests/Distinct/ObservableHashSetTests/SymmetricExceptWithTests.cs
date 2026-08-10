@@ -1,8 +1,3 @@
-using System;
-
-using AwesomeAssertions;
-using NUnit.Framework;
-
 namespace DynamicDataVNext.Tests.Distinct.ObservableHashSetTests;
 
 public partial class SymmetricExceptWithTests

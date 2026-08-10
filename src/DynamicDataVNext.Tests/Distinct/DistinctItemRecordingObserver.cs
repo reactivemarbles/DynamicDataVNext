@@ -1,7 +1,3 @@
-using System.Collections.Generic;
-
-using ReactiveUI.Primitives.Concurrency;
-
 namespace DynamicDataVNext.Tests.Distinct;
 
 public sealed class DistinctItemRecordingObserver<T>

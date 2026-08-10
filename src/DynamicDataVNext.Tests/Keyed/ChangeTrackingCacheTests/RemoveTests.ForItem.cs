@@ -1,6 +1,5 @@
 using DynamicDataVNext.Tests.Keyed.CacheTestBases;
 
-using NUnit.Framework;
 
 namespace DynamicDataVNext.Tests.Keyed.ChangeTrackingCacheTests;
 

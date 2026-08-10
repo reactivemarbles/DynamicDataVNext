@@ -1,5 +1,3 @@
-using System.Collections.Immutable;
-
 namespace DynamicDataVNext.Benchmarks.Distinct;
 
 public sealed class ExceptWithMutation<TItem>

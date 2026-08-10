@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Immutable;
-
-namespace DynamicDataVNext;
+﻿namespace DynamicDataVNext;
 
 /// <summary>
 /// Describes an object capable of efficiently collecting individual changes, over time, to be assembled into an optimal, valid change set.

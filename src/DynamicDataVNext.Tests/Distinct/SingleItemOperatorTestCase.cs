@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace DynamicDataVNext.Tests.Distinct;
 
 public class SingleItemOperatorTestCase

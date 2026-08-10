@@ -1,5 +1,3 @@
-using AwesomeAssertions.Execution;
-
 namespace DynamicDataVNext.Tests.Ordered;
 
 public static class OrderedChangeSetExtensions

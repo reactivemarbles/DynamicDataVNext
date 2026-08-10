@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using BenchmarkDotNet.Attributes;
-
-namespace DynamicDataVNext.Benchmarks.IterationStrategies;
+﻿namespace DynamicDataVNext.Benchmarks.IterationStrategies;
 
 [MemoryDiagnoser]
 public class IterationStrategies_Array

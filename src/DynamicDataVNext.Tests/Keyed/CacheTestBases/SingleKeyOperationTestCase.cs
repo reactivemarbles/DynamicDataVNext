@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace DynamicDataVNext.Tests.Keyed.CacheTestBases;
 
 public class SingleKeyOperationTestCase

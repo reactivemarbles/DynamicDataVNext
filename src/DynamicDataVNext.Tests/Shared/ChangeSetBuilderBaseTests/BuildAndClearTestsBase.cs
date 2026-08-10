@@ -1,10 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using AwesomeAssertions;
-using NUnit.Framework;
-
 namespace DynamicDataVNext.Tests.ChangeSetBuilderBaseTests;
 
 public abstract class BuildAndClearTestsBase<TUutAdapter, TChangeSet, TChange, TChangeType>

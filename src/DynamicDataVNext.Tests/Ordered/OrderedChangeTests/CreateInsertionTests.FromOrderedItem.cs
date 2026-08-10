@@ -1,5 +1,3 @@
-using NUnit.Framework;
-
 namespace DynamicDataVNext.Tests.Ordered.OrderedChangeTests;
 
 public static partial class CreateInsertionTests
