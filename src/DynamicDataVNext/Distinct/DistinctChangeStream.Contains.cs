@@ -1,6 +1,8 @@
 using System;
-using System.Reactive;
-using System.Reactive.Linq;
+
+using ReactiveUI.Primitives;
+using ReactiveUI.Primitives.Advanced;
+using ReactiveUI.Primitives.Signals;
 
 namespace DynamicDataVNext;
 
@@ -22,12 +24,12 @@ public static partial class DistinctChangeStream
                     T                       item)
         => stream.Options.ItemsAreMutable
             ? throw new NotSupportedException("Mutable items are not yet supported")
-            : Observable.Create<bool>(downstreamObserver =>
+            : Signal.Create<bool>(downstreamObserver =>
             {
                 var hasInitialized  = false;
                 var result          = false;
                 
-                var subscription = stream.Source.SubscribeSafe(Observer.Create<DistinctChangeSet<T>>(
+                var subscription = stream.Source.SubscribeSafe(Witness.Create<DistinctChangeSet<T>>(
                     onNext:         changeSet =>
                     {
                         var priorResult = result;

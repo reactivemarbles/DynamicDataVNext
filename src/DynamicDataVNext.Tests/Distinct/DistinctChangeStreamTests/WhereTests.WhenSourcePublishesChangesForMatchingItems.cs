@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
+
+using ReactiveUI.Primitives.Signals;
 
 using AwesomeAssertions;
 using NUnit.Framework;
@@ -158,14 +158,14 @@ public partial class WhereTests
         DistinctChangeSet<int>  changeSet,
         IReadOnlyList<int>      finalItems)
     {
-        using var source = new Subject<DistinctChangeSet<int>>(); 
+        using var source = new Signal<DistinctChangeSet<int>>(); 
         
         var stream = new DistinctChangeStream<int>()
         {
             Comparer    = EqualityComparer<int>.Default,
             Options     = options,
-            Source      = Observable.Concat(
-                Observable.Return(DistinctChangeSet.CreateForReset(initialItems)),
+            Source      = Signal.Concat(
+                Signal.Return(DistinctChangeSet.CreateForReset(initialItems)),
                 source)
         };
         

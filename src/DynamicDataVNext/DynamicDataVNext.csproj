@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <PackageReference Include="System.Reactive" />
+    <PackageReference Include="ReactiveUI.Primitives" />
   </ItemGroup>
 
 </Project>

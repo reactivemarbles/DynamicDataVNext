@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Subjects;
+
+using ReactiveUI.Primitives.Signals;
 
 using AwesomeAssertions;
 using NUnit.Framework;
@@ -60,7 +61,7 @@ public partial class WhereTests
         IReadOnlyList<WhenPredicateThrows_Item> items,
         DistinctItemOptions                     options)
     {
-        using var source = new Subject<DistinctChangeSet<WhenPredicateThrows_Item>>(); 
+        using var source = new Signal<DistinctChangeSet<WhenPredicateThrows_Item>>(); 
         
         var stream = new DistinctChangeStream<WhenPredicateThrows_Item>()
         {

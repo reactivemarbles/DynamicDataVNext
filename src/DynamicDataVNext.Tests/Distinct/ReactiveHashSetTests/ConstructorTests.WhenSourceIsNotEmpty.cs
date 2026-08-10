@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
+
+using ReactiveUI.Primitives;
+using ReactiveUI.Primitives.Signals;
+
 using AwesomeAssertions;
 using NUnit.Framework;
 
@@ -100,10 +102,10 @@ public partial class ConstructorTests
     [TestCaseSource(nameof(WhenSourceIsNotEmpty_TestCases))]
     public void WhenSourceIsNotEmpty_ResultMatchesSource(ChangeOperationTestCase testCase)
     {
-        using var sourceSource = new Subject<DistinctChangeSet<int>>();
+        using var sourceSource = new Signal<DistinctChangeSet<int>>();
 
         using var uut = new ReactiveHashSet<int>(
-            source:     Observable
+            source:     Signal
                 .Return(DistinctChangeSet.CreateForReset(addedItems: testCase.InitialItems))
                 .Concat(sourceSource),
             comparer:   EqualityComparer<int>.Default,

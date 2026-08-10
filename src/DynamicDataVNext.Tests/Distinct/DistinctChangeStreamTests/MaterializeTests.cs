@@ -1,5 +1,6 @@
 using System;
-using System.Reactive.Subjects;
+
+using ReactiveUI.Primitives.Signals;
 
 using AwesomeAssertions;
 using NUnit.Framework;
@@ -12,7 +13,7 @@ public class MaterializeTests
     [Test]
     public void Always_ResultIsConstructedFromStream()
     {
-        using var source = new Subject<DistinctChangeSet<string>>(); 
+        using var source = new Signal<DistinctChangeSet<string>>(); 
 
         var stream = new DistinctChangeStream<string>()
         {

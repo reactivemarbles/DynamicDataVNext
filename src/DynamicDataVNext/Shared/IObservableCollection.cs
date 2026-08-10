@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Reactive;
+
+using ReactiveUI.Primitives;
 
 namespace DynamicDataVNext;
 
@@ -14,7 +15,7 @@ public interface IObservableCollection<T>
     /// <summary>
     /// An event that occurs after any mutation of the collection occurs.
     /// </summary>
-    IObservable<Unit> CollectionChanged { get; }
+    IObservable<RxVoid> CollectionChanged { get; }
  
     /// <summary>
     /// Temporarily pauses the publication of notifications, allowing change notifications to be buffered and published in batches.

@@ -1,10 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reactive;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
 using System.Threading;
+
+using ReactiveUI.Primitives;
+using ReactiveUI.Primitives.Advanced;
+using ReactiveUI.Primitives.Signals;
 
 namespace DynamicDataVNext;
 
@@ -37,7 +38,7 @@ public sealed class ReactiveHashSet<T>
         {
             Comparer    = comparer ?? EqualityComparer<T>.Default,
             Options     = options,
-            Source      = Observable.Create<DistinctChangeSet<T>>(downstreamObserver =>
+            Source      = Signal.Create<DistinctChangeSet<T>>(downstreamObserver =>
             {
                 downstreamObserver.OnNext(DistinctChangeSet.CreateForReset(addedItems: _items));
                 
@@ -45,7 +46,7 @@ public sealed class ReactiveHashSet<T>
             })
         };
 
-        _sourceSubscription = source.SubscribeSafe(Observer.Create<DistinctChangeSet<T>>(
+        _sourceSubscription = source.SubscribeSafe(Witness.Create<DistinctChangeSet<T>>(
             onNext:         changeSet =>
             {
                 if (changeSet.Type is ChangeSetType.Empty)
@@ -77,7 +78,7 @@ public sealed class ReactiveHashSet<T>
         => _items.Count;
     
     /// <inheritdoc/>
-    public IObservable<Unit> CollectionChanged
+    public IObservable<RxVoid> CollectionChanged
         => _collectionChanged;
     
     /// <inheritdoc/>
@@ -136,8 +137,8 @@ public sealed class ReactiveHashSet<T>
         => _items.GetEnumerator();
 
     private readonly DistinctChangeStream<T>        _changeStream;
-    private readonly Subject<DistinctChangeSet<T>>  _changeStreamSourceSource;
-    private readonly Subject<Unit>                  _collectionChanged;
+    private readonly Signal<DistinctChangeSet<T>>   _changeStreamSourceSource;
+    private readonly Signal<RxVoid>                 _collectionChanged;
     private readonly HashSet<T>                     _items;
     private readonly IDisposable                    _sourceSubscription;
     

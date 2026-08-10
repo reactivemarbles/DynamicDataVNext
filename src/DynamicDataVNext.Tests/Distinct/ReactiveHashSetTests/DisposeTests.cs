@@ -1,5 +1,4 @@
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
+using ReactiveUI.Primitives.Signals;
 
 using AwesomeAssertions;
 using NUnit.Framework;
@@ -12,7 +11,7 @@ public class DisposeTests
     [Test]
     public void Always_UnsubscribesFromSource()
     {
-        using var source = new Subject<DistinctChangeSet<int>>();
+        using var source = new Signal<DistinctChangeSet<int>>();
         
         var uut = new ReactiveHashSet<int>(source);
         
@@ -24,7 +23,7 @@ public class DisposeTests
     [Test]
     public void WhenChangeStreamSourceHasSubscribers_SubscribersReceiveCompletion()
     {
-        var source = Observable.Never<DistinctChangeSet<int>>();
+        var source = Signal.Never<DistinctChangeSet<int>>();
 
         var uut = new ReactiveHashSet<int>(source);
         
@@ -39,7 +38,7 @@ public class DisposeTests
     [Test]
     public void WhenCollectionChangedHasSubscribers_SubscribersReceiveCompletion()
     {
-        var source = Observable.Never<DistinctChangeSet<int>>();
+        var source = Signal.Never<DistinctChangeSet<int>>();
 
         var uut = new ReactiveHashSet<int>(source);
         
@@ -56,7 +55,7 @@ public class DisposeTests
     {
         var items = new[] { 1, 2, 3 };
         
-        var source = Observable.Return(DistinctChangeSet.CreateForReset(addedItems: items));
+        var source = Signal.Return(DistinctChangeSet.CreateForReset(addedItems: items));
 
         var uut = new ReactiveHashSet<int>(source);
         

@@ -1,8 +1,7 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
+
+using ReactiveUI.Primitives;
+using ReactiveUI.Primitives.Signals;
 
 using AwesomeAssertions;
 using NUnit.Framework;
@@ -20,9 +19,9 @@ public partial class CountTests
         {
             Comparer    = EqualityComparer<int>.Default,
             Source      = isSourceEmpty
-                ? Observable.Never<DistinctChangeSet<int>>()
-                : Observable.Return(DistinctChangeSet.CreateForReset(new[] { 1, 2, 3 }))
-                    .Concat(Observable.Never<DistinctChangeSet<int>>())
+                ? Signal.Never<DistinctChangeSet<int>>()
+                : Signal.Return(DistinctChangeSet.CreateForReset(new[] { 1, 2, 3 }))
+                    .Concat(Signal.Never<DistinctChangeSet<int>>())
         };
         
         using var subscription = stream.Count()
@@ -36,7 +35,7 @@ public partial class CountTests
     [Test]
     public void WhenSourceCompletesAsynchronously_CompletionPropagates()
     {
-        using var streamSource = new Subject<DistinctChangeSet<int>>();
+        using var streamSource = new Signal<DistinctChangeSet<int>>();
         
         var stream = new DistinctChangeStream<int>()
         {
@@ -65,7 +64,7 @@ public partial class CountTests
         var stream = new DistinctChangeStream<int>()
         {
             Comparer    = EqualityComparer<int>.Default,
-            Source      = Observable.Empty<DistinctChangeSet<int>>()
+            Source      = Signal.Empty<DistinctChangeSet<int>>()
         };
         
         using var subscription = stream.Count()
@@ -79,7 +78,7 @@ public partial class CountTests
     [Test]
     public void WhenSourceFailsAsynchronously_ErrorPropagates()
     {
-        using var streamSource = new Subject<DistinctChangeSet<int>>();
+        using var streamSource = new Signal<DistinctChangeSet<int>>();
         
         var stream = new DistinctChangeStream<int>()
         {
@@ -111,7 +110,7 @@ public partial class CountTests
         var stream = new DistinctChangeStream<int>()
         {
             Comparer    = EqualityComparer<int>.Default,
-            Source      = Observable.Throw<DistinctChangeSet<int>>(error)
+            Source      = Signal.Throw<DistinctChangeSet<int>>(error)
         };
         
         using var subscription = stream.Count()

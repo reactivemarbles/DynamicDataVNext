@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Reactive;
+
+using ReactiveUI.Primitives;
 
 namespace DynamicDataVNext;
 
@@ -12,5 +13,5 @@ public interface IObservableReadOnlyCollection<out T>
     : IReadOnlyCollection<T>
 {
     /// <inheritdoc cref="IObservableCollection{T}.CollectionChanged"/>
-    IObservable<Unit> CollectionChanged { get; }
+    IObservable<RxVoid> CollectionChanged { get; }
 }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
-using System.Reactive.Subjects;
+
+using ReactiveUI.Primitives.Signals;
 
 using AwesomeAssertions;
 using NUnit.Framework;
@@ -19,7 +20,7 @@ public partial class SelectTests
     [TestCaseSource(nameof(WhenSourceFailsAsynchronously_TestCases))]
     public void WhenSourceFailsAsynchronously_ErrorPropagates(DistinctItemSelectionOptions options)
     {
-        using var streamSource = new Subject<DistinctChangeSet<int>>();
+        using var streamSource = new Signal<DistinctChangeSet<int>>();
         
         var stream = new DistinctChangeStream<int>()
         {

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
+
+using ReactiveUI.Primitives;
+using ReactiveUI.Primitives.Signals;
 
 using AwesomeAssertions;
 using NUnit.Framework;
@@ -21,7 +22,7 @@ public partial class SelectTests
     [TestCaseSource(nameof(WhenSelectionIsNotDeterministic_TestCases))]
     public void WhenSelectionIsNotDeterministic_SelectorIsOnlyInvokedOncePerItem(DistinctItemSelectionOptions options)
     {
-        using var source = new Subject<DistinctChangeSet<int>>(); 
+        using var source = new Signal<DistinctChangeSet<int>>(); 
         
         var items = new[]
         {
@@ -31,8 +32,8 @@ public partial class SelectTests
         var stream = new DistinctChangeStream<int>()
         {
             Comparer    = EqualityComparer<int>.Default,
-            Source      = Observable.Concat(
-                Observable.Return(DistinctChangeSet.CreateForReset(items)),
+            Source      = Signal.Concat(
+                Signal.Return(DistinctChangeSet.CreateForReset(items)),
                 source)
         };
         

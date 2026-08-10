@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Subjects;
+
+using ReactiveUI.Primitives.Signals;
 
 using AwesomeAssertions;
 using NUnit.Framework;
@@ -52,7 +53,7 @@ public partial class SelectTests
         IReadOnlyList<WhenSelectorThrows_Item>  items,
         DistinctItemSelectionOptions            options)
     {
-        using var source = new Subject<DistinctChangeSet<WhenSelectorThrows_Item>>(); 
+        using var source = new Signal<DistinctChangeSet<WhenSelectorThrows_Item>>(); 
         
         var stream = new DistinctChangeStream<WhenSelectorThrows_Item>()
         {

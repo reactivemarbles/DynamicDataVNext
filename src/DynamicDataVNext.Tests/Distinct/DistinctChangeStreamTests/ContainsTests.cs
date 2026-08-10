@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
+
+using ReactiveUI.Primitives.Signals;
 
 using AwesomeAssertions;
 using NUnit.Framework;
@@ -19,10 +19,10 @@ public partial class ContainsTests
         {
             Comparer    = EqualityComparer<int>.Default,
             Source      = isSourceEmpty
-                ? Observable.Never<DistinctChangeSet<int>>()
-                : Observable.Concat(
-                    Observable.Return(DistinctChangeSet.CreateForReset(new[] { 1, 2, 3 })),
-                    Observable.Never<DistinctChangeSet<int>>())
+                ? Signal.Never<DistinctChangeSet<int>>()
+                : Signal.Concat(
+                    Signal.Return(DistinctChangeSet.CreateForReset(new[] { 1, 2, 3 })),
+                    Signal.Never<DistinctChangeSet<int>>())
         };
         
         using var subscription = stream.Contains(default)
@@ -39,12 +39,12 @@ public partial class ContainsTests
         var stream = new DistinctChangeStream<string>()
         {
             Comparer    = StringComparer.OrdinalIgnoreCase,
-            Source      = Observable.Concat(
-                Observable.Return(DistinctChangeSet.CreateForReset(new[]
+            Source      = Signal.Concat(
+                Signal.Return(DistinctChangeSet.CreateForReset(new[]
                 {
                     "Test"
                 })),
-                Observable.Never<DistinctChangeSet<string>>())
+                Signal.Never<DistinctChangeSet<string>>())
         };
         
         using var subscription = stream.Contains("test")
@@ -63,7 +63,7 @@ public partial class ContainsTests
         {
             Comparer    = EqualityComparer<int>.Default,
             Options     = new() { ItemsAreMutable = true },
-            Source      = Observable.Never<DistinctChangeSet<int>>()
+            Source      = Signal.Never<DistinctChangeSet<int>>()
         };
         
         var result = FluentActions.Invoking(
@@ -77,7 +77,7 @@ public partial class ContainsTests
     [Test]
     public void WhenSourceCompletesAsynchronously_CompletionPropagates()
     {
-        using var streamSource = new Subject<DistinctChangeSet<int>>();
+        using var streamSource = new Signal<DistinctChangeSet<int>>();
         
         var stream = new DistinctChangeStream<int>()
         {
@@ -106,7 +106,7 @@ public partial class ContainsTests
         var stream = new DistinctChangeStream<int>()
         {
             Comparer    = EqualityComparer<int>.Default,
-            Source      = Observable.Empty<DistinctChangeSet<int>>()
+            Source      = Signal.Empty<DistinctChangeSet<int>>()
         };
         
         using var subscription = stream.Contains(default)
@@ -120,7 +120,7 @@ public partial class ContainsTests
     [Test]
     public void WhenSourceFailsAsynchronously_ErrorPropagates()
     {
-        using var streamSource = new Subject<DistinctChangeSet<int>>();
+        using var streamSource = new Signal<DistinctChangeSet<int>>();
         
         var stream = new DistinctChangeStream<int>()
         {
@@ -152,7 +152,7 @@ public partial class ContainsTests
         var stream = new DistinctChangeStream<int>()
         {
             Comparer    = EqualityComparer<int>.Default,
-            Source      = Observable.Throw<DistinctChangeSet<int>>(error)
+            Source      = Signal.Throw<DistinctChangeSet<int>>(error)
         };
         
         using var subscription = stream.Contains(default)

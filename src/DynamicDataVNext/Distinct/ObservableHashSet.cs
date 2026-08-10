@@ -2,9 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Reactive;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
+
+using ReactiveUI.Primitives;
+using ReactiveUI.Primitives.Signals;
 
 namespace DynamicDataVNext;
 
@@ -83,7 +83,7 @@ public sealed partial class ObservableHashSet<T>
     }            
 
     /// <inheritdoc cref="IObservableCollection{T}.CollectionChanged"/>
-    public IObservable<Unit> CollectionChanged
+    public IObservable<RxVoid> CollectionChanged
         => _collectionChanged;
 
     /// <inheritdoc/>
@@ -308,13 +308,13 @@ public sealed partial class ObservableHashSet<T>
             return;
 
         _collectionChangesCaptured.OnNext(changes);
-        _collectionChanged.OnNext(Unit.Default);
+        _collectionChanged.OnNext(default);
     }
 
-    private readonly BehaviorSubject<bool>          _areNotificationsSuspended;
+    private readonly StateSignal<bool>              _areNotificationsSuspended;
     private readonly DistinctChangeStream<T>        _changeStream;
-    private readonly Subject<Unit>                  _collectionChanged;
-    private readonly Subject<DistinctChangeSet<T>>  _collectionChangesCaptured;
+    private readonly Signal<RxVoid>                 _collectionChanged;
+    private readonly Signal<DistinctChangeSet<T>>   _collectionChangesCaptured;
     private readonly ChangeTrackingHashSet<T>       _items;
 
     private bool _hasDisposed;

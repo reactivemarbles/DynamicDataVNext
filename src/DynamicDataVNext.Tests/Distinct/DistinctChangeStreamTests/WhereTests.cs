@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
+
+using ReactiveUI.Primitives.Signals;
 
 using AwesomeAssertions;
 using NUnit.Framework;
@@ -14,14 +14,14 @@ public partial class WhereTests
     [Test]
     public void WhenAdditionContainsFirstMatchingItem_NotificationPropagatesAsReset()
     {
-        using var source = new Subject<DistinctChangeSet<int>>(); 
+        using var source = new Signal<DistinctChangeSet<int>>(); 
         
         var stream = new DistinctChangeStream<int>()
         {
             Comparer    = EqualityComparer<int>.Default,
             Options     = new() { ItemsAreMutable = true },
-            Source      = Observable.Concat(
-                Observable.Return(DistinctChangeSet.CreateForReset(new[] { 1, 3, 5 })),
+            Source      = Signal.Concat(
+                Signal.Return(DistinctChangeSet.CreateForReset(new[] { 1, 3, 5 })),
                 source)
         };
         
@@ -49,7 +49,7 @@ public partial class WhereTests
     [Test]
     public void WhenItemsAreMutable_PredicateIsOnlyInvokedOncePerItem()
     {
-        using var source = new Subject<DistinctChangeSet<int>>(); 
+        using var source = new Signal<DistinctChangeSet<int>>(); 
         
         var items = new[]
         {
@@ -60,8 +60,8 @@ public partial class WhereTests
         {
             Comparer    = EqualityComparer<int>.Default,
             Options     = new() { ItemsAreMutable = true },
-            Source      = Observable.Concat(
-                Observable.Return(DistinctChangeSet.CreateForReset(items)),
+            Source      = Signal.Concat(
+                Signal.Return(DistinctChangeSet.CreateForReset(items)),
                 source)
         };
         
@@ -103,7 +103,7 @@ public partial class WhereTests
     [Test]
     public void WhenRemovalContainsLastMatchingItem_NotificationPropagatesAsClear()
     {
-        using var source = new Subject<DistinctChangeSet<int>>(); 
+        using var source = new Signal<DistinctChangeSet<int>>(); 
         
         var items = new[]
         {
@@ -114,8 +114,8 @@ public partial class WhereTests
         {
             Comparer    = EqualityComparer<int>.Default,
             Options     = new() { ItemsAreMutable = true },
-            Source      = Observable.Concat(
-                Observable.Return(DistinctChangeSet.CreateForReset(items)),
+            Source      = Signal.Concat(
+                Signal.Return(DistinctChangeSet.CreateForReset(items)),
                 source)
         };
         

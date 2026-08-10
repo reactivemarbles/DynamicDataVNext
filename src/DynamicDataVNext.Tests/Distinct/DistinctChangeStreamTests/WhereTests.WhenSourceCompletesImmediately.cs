@@ -1,5 +1,6 @@
 using System.Collections.Generic;
-using System.Reactive.Linq;
+
+using ReactiveUI.Primitives.Signals;
 
 using AwesomeAssertions;
 using NUnit.Framework;
@@ -24,7 +25,7 @@ public partial class WhereTests
         {
             Comparer    = EqualityComparer<int>.Default,
             Options     = options,
-            Source      = Observable.Empty<DistinctChangeSet<int>>()
+            Source      = Signal.Empty<DistinctChangeSet<int>>()
         };
         
         using var subscription = stream.Where(IsEven)

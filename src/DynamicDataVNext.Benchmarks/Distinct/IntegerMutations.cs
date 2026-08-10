@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Reactive;
+
+using ReactiveUI.Primitives;
 
 using Bogus;
 
@@ -30,7 +31,7 @@ public static class IntegerMutations
         
         mutations.Add(new ResetMutation<int>()
         {
-            Items = Enumerable.Repeat(Unit.Default, maxItemRangeSize)
+            Items = Enumerable.Repeat(RxVoid.Default, maxItemRangeSize)
                 .Select(_ => faker.Random.Int(1,  maxItem))
                 .Distinct()
                 .ToImmutableArray()
@@ -52,13 +53,13 @@ public static class IntegerMutations
                 MutationType.Clear                 => new ClearMutation<int>(),
                 MutationType.ExceptWith            => new ExceptWithMutation<int>()
                 {
-                    Other = Enumerable.Repeat(Unit.Default, faker.Random.Int(1, maxItemRangeSize))
+                    Other = Enumerable.Repeat(RxVoid.Default, faker.Random.Int(1, maxItemRangeSize))
                         .Select(_ => faker.Random.Int(1, maxItem))
                         .ToImmutableArray()
                 },
                 MutationType.IntersectWith         => new IntersectWithMutation<int>()
                 {
-                    Other = Enumerable.Repeat(Unit.Default, faker.Random.Int(1, maxItemRangeSize))
+                    Other = Enumerable.Repeat(RxVoid.Default, faker.Random.Int(1, maxItemRangeSize))
                         .Select(_ => faker.Random.Int(1, maxItem))
                         .ToImmutableArray()
                 },
@@ -68,19 +69,19 @@ public static class IntegerMutations
                 },
                 MutationType.Reset                 => new ResetMutation<int>()
                 {
-                    Items = Enumerable.Repeat(Unit.Default, faker.Random.Int(1, maxItemRangeSize))
+                    Items = Enumerable.Repeat(RxVoid.Default, faker.Random.Int(1, maxItemRangeSize))
                         .Select(_ => faker.Random.Int(1, maxItem))
                         .ToImmutableArray()
                 },
                 MutationType.SymmetricExceptWith   => new SymmetricExceptWithMutation<int>()
                 {
-                    Other = Enumerable.Repeat(Unit.Default, faker.Random.Int(1, maxItemRangeSize))
+                    Other = Enumerable.Repeat(RxVoid.Default, faker.Random.Int(1, maxItemRangeSize))
                         .Select(_ => faker.Random.Int(1, maxItem))
                         .ToImmutableArray()
                 },
                 MutationType.UnionWith             => new UnionWithMutation<int>()
                 {
-                    Other = Enumerable.Repeat(Unit.Default, faker.Random.Int(1, maxItemRangeSize))
+                    Other = Enumerable.Repeat(RxVoid.Default, faker.Random.Int(1, maxItemRangeSize))
                         .Select(_ => faker.Random.Int(1, maxItem))
                         .ToImmutableArray()
                 },

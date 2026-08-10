@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
 using System.Linq;
+
+using ReactiveUI.Primitives.Signals;
 
 using AwesomeAssertions;
 using NUnit.Framework;
@@ -67,13 +67,13 @@ public partial class CountTests
     [TestCaseSource(nameof(WhenItemsAreAdded_TestCases))]
     public void WhenItemsAreAdded_ResultIncreases(OperatorTestCase testCase)
     {
-        using var streamSource = new Subject<DistinctChangeSet<int>>();
+        using var streamSource = new Signal<DistinctChangeSet<int>>();
         
         var stream = new DistinctChangeStream<int>()
         {
             Comparer    = EqualityComparer<int>.Default,
-            Source      = Observable.Concat(
-                Observable.Return(DistinctChangeSet.CreateForReset(testCase.Items)),
+            Source      = Signal.Concat(
+                Signal.Return(DistinctChangeSet.CreateForReset(testCase.Items)),
                 streamSource)
         };
         

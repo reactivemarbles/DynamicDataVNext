@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive;
+
+using ReactiveUI.Primitives;
 
 using AwesomeAssertions;
 
@@ -198,7 +199,7 @@ public static partial class UutFixture
             _collectionChangedResults.RecordedValues.Should().ContainSingle("a single change operation was performed");
         }
         
-        private readonly ValueRecordingObserver<Unit>       _collectionChangedResults;
+        private readonly ValueRecordingObserver<RxVoid>     _collectionChangedResults;
         private readonly IDisposable                        _collectionChangedSubscription;
         private readonly ObservableHashSet<int>             _uut;
         private readonly DistinctItemRecordingObserver<int> _uutResults;

@@ -1,5 +1,7 @@
 using System;
-using System.Reactive.Linq;
+
+using ReactiveUI.Primitives;
+using ReactiveUI.Primitives.Signals;
 
 namespace DynamicDataVNext;
 
@@ -22,7 +24,7 @@ public static partial class DistinctChangeStream
     {
         return stream with
         {
-            Source = Observable.Create<DistinctChangeSet<T>>(stream.Options.ItemsAreMutable
+            Source = Signal.Create<DistinctChangeSet<T>>(stream.Options.ItemsAreMutable
                 ? SubscribeMutable
                 : SubscribeImmutable)
         };

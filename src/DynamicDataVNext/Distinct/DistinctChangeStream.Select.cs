@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Reactive.Linq;
+
+using ReactiveUI.Primitives;
+using ReactiveUI.Primitives.Signals;
 
 namespace DynamicDataVNext;
 
@@ -84,7 +86,7 @@ public static partial class DistinctChangeStream
         {
             Comparer    = resolvedComparer,
             Options     = resolvedItemOptions,
-            Source      = Observable.Create<DistinctChangeSet<TOut>>((resolvedOptions.Type is ItemSelectionType.Deterministic)
+            Source      = Signal.Create<DistinctChangeSet<TOut>>((resolvedOptions.Type is ItemSelectionType.Deterministic)
                 ? SubscribeDeterministic
                 : SubscribeNonDeterministic)
         };

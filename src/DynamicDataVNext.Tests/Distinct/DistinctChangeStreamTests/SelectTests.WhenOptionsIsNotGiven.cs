@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Reactive.Linq;
 using System.Reflection;
+
+using ReactiveUI.Primitives.Signals;
 
 using AwesomeAssertions;
 using NUnit.Framework;
@@ -66,7 +67,7 @@ public partial class SelectTests
         {
             Comparer    = EqualityComparer<TOut>.Default,
             Options     = streamOptions,
-            Source      = Observable.Never<DistinctChangeSet<TOut>>()
+            Source      = Signal.Never<DistinctChangeSet<TOut>>()
         };
         
         var result = stream.Select(static item => item);

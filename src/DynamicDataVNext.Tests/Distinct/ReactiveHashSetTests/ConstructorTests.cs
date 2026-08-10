@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
+
+using ReactiveUI.Primitives;
+using ReactiveUI.Primitives.Signals;
 
 using AwesomeAssertions;
 using NUnit.Framework;
@@ -16,10 +17,10 @@ public partial class ConstructorTests
     {
         var initialItems = new[] { 1, 2, 3 };
         
-        using var sourceSource = new Subject<DistinctChangeSet<int>>();
+        using var sourceSource = new Signal<DistinctChangeSet<int>>();
 
         using var uut = new ReactiveHashSet<int>(
-            source:     Observable
+            source:     Signal
                 .Return(DistinctChangeSet.CreateForReset(addedItems: initialItems))
                 .Concat(sourceSource),
             comparer:   EqualityComparer<int>.Default,
@@ -60,7 +61,7 @@ public partial class ConstructorTests
     [Test]
     public void WhenSourceCompletesAsynchronously_CompletionPropagates()
     {
-        using var source = new Subject<DistinctChangeSet<int>>();
+        using var source = new Signal<DistinctChangeSet<int>>();
 
         using var uut = new ReactiveHashSet<int>(
             source:     source,
@@ -85,7 +86,7 @@ public partial class ConstructorTests
     [Test]
     public void WhenSourceCompletesImmediately_CompletionPropagates()
     {
-        var source = Observable.Empty<DistinctChangeSet<int>>();
+        var source = Signal.Empty<DistinctChangeSet<int>>();
 
         using var uut = new ReactiveHashSet<int>(
             source:     source,
@@ -105,7 +106,7 @@ public partial class ConstructorTests
     [Test]
     public void WhenSourceFailsAsynchronously_ErrorPropagates()
     {
-        using var source = new Subject<DistinctChangeSet<int>>();
+        using var source = new Signal<DistinctChangeSet<int>>();
 
         using var uut = new ReactiveHashSet<int>(
             source:     source,
@@ -134,7 +135,7 @@ public partial class ConstructorTests
     public void WhenSourceFailsImmediately_ErrorPropagates()
     {
         var error = new TestException();
-        var source = Observable.Throw<DistinctChangeSet<int>>(error);
+        var source = Signal.Throw<DistinctChangeSet<int>>(error);
 
         using var uut = new ReactiveHashSet<int>(
             source:     source,
@@ -172,7 +173,7 @@ public partial class ConstructorTests
     public void WhenSourceIsEmpty_ResultIsEmpty()
     {
         using var uut = new ReactiveHashSet<int>(
-            source:     Observable.Empty<DistinctChangeSet<int>>(),
+            source:     Signal.Empty<DistinctChangeSet<int>>(),
             comparer:   EqualityComparer<int>.Default,
             options:    default);
 
@@ -187,7 +188,7 @@ public partial class ConstructorTests
         var comparer = EqualityComparer<int>.Create(static (x, y) => x == y);
         
         using var uut = new ReactiveHashSet<int>(
-            source:     Observable.Empty<DistinctChangeSet<int>>(),
+            source:     Signal.Empty<DistinctChangeSet<int>>(),
             comparer:   comparer,
             options:    default);
 
@@ -203,7 +204,7 @@ public partial class ConstructorTests
         };
         
         using var uut = new ReactiveHashSet<int>(
-            source:     Observable.Empty<DistinctChangeSet<int>>(),
+            source:     Signal.Empty<DistinctChangeSet<int>>(),
             comparer:   EqualityComparer<int>.Default,
             options:    options);
 

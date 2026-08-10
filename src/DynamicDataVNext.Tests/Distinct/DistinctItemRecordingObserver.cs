@@ -1,5 +1,6 @@
 using System.Collections.Generic;
-using System.Reactive.Concurrency;
+
+using ReactiveUI.Primitives.Concurrency;
 
 namespace DynamicDataVNext.Tests.Distinct;
 
@@ -7,9 +8,9 @@ public sealed class DistinctItemRecordingObserver<T>
     : RecordingObserverBase<DistinctChangeSet<T>>
 {
     public DistinctItemRecordingObserver(
-            IScheduler              scheduler,
+            ISequencer              sequencer,
             IEqualityComparer<T>?   comparer    = null)
-        : base(scheduler)
+        : base(sequencer)
     {
         _recordedChangeSets = new();
         _recordedItems      = new(comparer: comparer);

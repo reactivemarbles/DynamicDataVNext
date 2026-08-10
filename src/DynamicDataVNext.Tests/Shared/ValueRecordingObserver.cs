@@ -1,5 +1,6 @@
 using System.Collections.Generic;
-using System.Reactive.Concurrency;
+
+using ReactiveUI.Primitives.Concurrency;
 
 namespace DynamicDataVNext.Tests;
 
@@ -8,8 +9,8 @@ public sealed class ValueRecordingObserver<T>
 {
     private readonly List<T> _recordedValues;
 
-    public ValueRecordingObserver(IScheduler scheduler)
-            : base(scheduler)
+    public ValueRecordingObserver(ISequencer sequencer)
+            : base(sequencer)
         => _recordedValues = new();
 
     public IReadOnlyList<T> RecordedValues

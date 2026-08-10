@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Linq;
+
+using ReactiveUI.Primitives.Signals;
 
 using DynamicDataVNext.Tests.Distinct.SetTestBases;
 
@@ -27,8 +28,8 @@ public sealed class UutFixture
         
         _uut = new(
             source:     (initialItems.Length is 0)
-                ? Observable.Empty<DistinctChangeSet<int>>()
-                : Observable.Return(DistinctChangeSet.CreateForReset(addedItems: initialItems)),
+                ? Signal.Empty<DistinctChangeSet<int>>()
+                : Signal.Return(DistinctChangeSet.CreateForReset(addedItems: initialItems)),
             comparer:   comparer,
             options:    options);
     }

@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Reactive;
-using System.Reactive.Concurrency;
+
+using ReactiveUI.Primitives.Concurrency;
+using ReactiveUI.Primitives.Core;
 
 namespace DynamicDataVNext.Tests;
 
@@ -9,10 +10,10 @@ namespace DynamicDataVNext.Tests;
 public abstract class RecordingObserverBase<T>
     : IObserver<T>
 {
-    protected RecordingObserverBase(IScheduler scheduler)
+    protected RecordingObserverBase(ISequencer sequencer)
     {
         _recordedNotifications  = new();
-        _scheduler              = scheduler;
+        _sequencer              = sequencer;
     }
 
     public Exception? Error
@@ -24,7 +25,7 @@ public abstract class RecordingObserverBase<T>
     public bool HasFinalized
         => _hasCompleted || (_error is not null);
 
-    public IReadOnlyList<Recorded<Notification<T>>> RecordedNotifications
+    public IReadOnlyList<Recorded<Spark<T>>> RecordedNotifications
         => _recordedNotifications;
 
     public virtual void ClearNotifications()
@@ -40,8 +41,8 @@ public abstract class RecordingObserverBase<T>
     {
         _recordedNotifications.Add(new()
         {
-            Time    = _scheduler.Now.Ticks,
-            Value   = Notification.CreateOnCompleted<T>()
+            Time    = _sequencer.Now.Ticks,
+            Value   = Spark.CreateOnCompleted<T>()
         });
 
         _hasCompleted = true;
@@ -51,8 +52,8 @@ public abstract class RecordingObserverBase<T>
     {
         _recordedNotifications.Add(new()
         {
-            Time    = _scheduler.Now.Ticks,
-            Value   = Notification.CreateOnError<T>(error)
+            Time    = _sequencer.Now.Ticks,
+            Value   = Spark.CreateOnError<T>(error)
         });
 
         if (!HasFinalized)
@@ -63,15 +64,15 @@ public abstract class RecordingObserverBase<T>
     {
         _recordedNotifications.Add(new()
         {
-            Time    = _scheduler.Now.Ticks,
-            Value   = Notification.CreateOnNext(value)
+            Time    = _sequencer.Now.Ticks,
+            Value   = Spark.CreateOnNext(value)
         });
 
         OnNext(value);
     }
 
-    private readonly List<Recorded<Notification<T>>>    _recordedNotifications;
-    private readonly IScheduler                         _scheduler;
+    private readonly List<Recorded<Spark<T>>>   _recordedNotifications;
+    private readonly ISequencer                 _sequencer;
 
     private Exception?  _error;
     private bool        _hasCompleted;

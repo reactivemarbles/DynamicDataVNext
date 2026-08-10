@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Reactive.Concurrency;
+
+using ReactiveUI.Primitives;
+using ReactiveUI.Primitives.Concurrency;
+
 using AwesomeAssertions;
 
 namespace DynamicDataVNext.Tests.Distinct;
@@ -10,10 +13,10 @@ public static class DistinctChangeStreamExtensions
     public static IDisposable RecordItems<T>(
         this    DistinctChangeStream<T>             stream,
         out     DistinctItemRecordingObserver<T>    observer,
-                IScheduler?                         scheduler = null)
+                ISequencer?                         sequencer = null)
     {
         observer = new DistinctItemRecordingObserver<T>(
-            scheduler:  scheduler ?? DefaultScheduler.Instance,
+            sequencer:  sequencer ?? Sequencer.Default,
             comparer:   stream.Comparer);
 
         return stream.Source.Subscribe(observer);

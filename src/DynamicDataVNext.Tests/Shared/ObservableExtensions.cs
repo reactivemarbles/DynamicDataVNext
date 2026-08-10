@@ -1,5 +1,6 @@
 using System;
-using System.Reactive.Concurrency;
+
+using ReactiveUI.Primitives.Concurrency;
 
 namespace DynamicDataVNext.Tests;
 
@@ -8,9 +9,9 @@ public static class ObservableExtensions
     public static IDisposable RecordValues<T>(
         this    IObservable<T>              source,
         out     ValueRecordingObserver<T>   observer,
-                IScheduler?                 scheduler = null)
+                ISequencer?                 scheduler = null)
     {
-        observer = new ValueRecordingObserver<T>(scheduler ?? DefaultScheduler.Instance);
+        observer = new ValueRecordingObserver<T>(scheduler ?? Sequencer.Default);
 
         return source.Subscribe(observer);
     }

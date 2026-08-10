@@ -1,6 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Reactive.Concurrency;
+
+using ReactiveUI.Primitives;
+using ReactiveUI.Primitives.Concurrency;
 
 using AwesomeAssertions;
 using NUnit.Framework;
@@ -33,7 +34,7 @@ public static partial class ChangeStreamTests
             {
                 var uut = new ObservableHashSet<int>();
                 
-                var observer = new ValueRecordingObserver<DistinctChangeSet<int>>(Scheduler.Default);
+                var observer = new ValueRecordingObserver<DistinctChangeSet<int>>(Sequencer.Default);
 
                 var result = uut.ChangeStream.Source.Subscribe(observer);
 
@@ -53,7 +54,7 @@ public static partial class ChangeStreamTests
                 
                 var suspension = uut.SuspendNotifications();
                 
-                var observer = new ValueRecordingObserver<DistinctChangeSet<int>>(Scheduler.Default);
+                var observer = new ValueRecordingObserver<DistinctChangeSet<int>>(Sequencer.Default);
 
                 var result = uut.ChangeStream.Source.Subscribe(observer);
 

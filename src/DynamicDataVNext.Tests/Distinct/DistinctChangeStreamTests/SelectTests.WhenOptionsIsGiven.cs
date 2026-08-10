@@ -1,5 +1,6 @@
 using System.Collections.Generic;
-using System.Reactive.Linq;
+
+using ReactiveUI.Primitives.Signals;
 
 using AwesomeAssertions;
 using NUnit.Framework;
@@ -33,7 +34,7 @@ public partial class SelectTests
         var stream = new DistinctChangeStream<int>()
         {
             Comparer    = EqualityComparer<int>.Default,
-            Source      = Observable.Never<DistinctChangeSet<int>>()
+            Source      = Signal.Never<DistinctChangeSet<int>>()
         };
         
         var result = stream.Select(

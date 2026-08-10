@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
+
+using ReactiveUI.Primitives.Signals;
 
 using AwesomeAssertions;
 using NUnit.Framework;
@@ -29,13 +29,13 @@ public partial class ContainsTests
     [TestCaseSource(nameof(WhenTargetItemIsRemoved_TestCases))]
     public void WhenTargetItemIsRemoved_ResultChangesToFalse(SingleItemOperationTestCase testCase)
     {
-        using var streamSource = new Subject<DistinctChangeSet<int>>();
+        using var streamSource = new Signal<DistinctChangeSet<int>>();
         
         var stream = new DistinctChangeStream<int>()
         {
             Comparer    = EqualityComparer<int>.Default,
-            Source      = Observable.Concat(
-                Observable.Return(DistinctChangeSet.CreateForReset(testCase.Items)),
+            Source      = Signal.Concat(
+                Signal.Return(DistinctChangeSet.CreateForReset(testCase.Items)),
                 streamSource)
         };
         

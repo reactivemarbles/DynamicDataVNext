@@ -1,6 +1,8 @@
 using System;
-using System.Reactive;
-using System.Reactive.Linq;
+
+using ReactiveUI.Primitives;
+using ReactiveUI.Primitives.Advanced;
+using ReactiveUI.Primitives.Signals;
 
 namespace DynamicDataVNext;
 
@@ -16,12 +18,12 @@ public static partial class DistinctChangeStream
     /// The result of this operation is considered a state stream, rather than an event stream. It will always publish an initial notification, immediately upon subscription.
     /// </remarks>
     public static IObservable<int> Count<T>(this DistinctChangeStream<T> stream)
-        => Observable.Create<int>(downstreamObserver =>
+        => Signal.Create<int>(downstreamObserver =>
         {
             var hasInitialized  = false;
             var result          = 0;
             
-            var subscription = stream.Source.SubscribeSafe(Observer.Create<DistinctChangeSet<T>>(
+            var subscription = stream.Source.SubscribeSafe(Witness.Create<DistinctChangeSet<T>>(
                 onNext:         changeSet =>
                 {
                     var priorResult = result;
