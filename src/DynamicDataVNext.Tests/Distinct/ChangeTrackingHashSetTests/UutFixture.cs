@@ -7,25 +7,25 @@ public sealed class UutFixture
         IReadOnlySetUutFixture<UutFixture, ChangeTrackingHashSet<int>>
 {
     public static UutFixture Create(
-            IEqualityComparer<int>?     comparer    = null,
-            DistinctItemOptions  options     = default)
+            IEqualityComparer<int>? comparer    = null,
+            DistinctItemOptions     options     = default)
         => new(new ChangeTrackingHashSet<int>(
             comparer:   comparer,
             options:    options));
 
     public static UutFixture Create(
-            int                         capacity,
-            IEqualityComparer<int>?     comparer    = null,
-            DistinctItemOptions  options     = default)
+            int                     capacity,
+            IEqualityComparer<int>? comparer    = null,
+            DistinctItemOptions     options     = default)
         => new(new ChangeTrackingHashSet<int>(
             capacity:   capacity,
             comparer:   comparer,
             options:    options));
 
     public static UutFixture Create(
-            IEnumerable<int>            items,
-            IEqualityComparer<int>?     comparer    = null,
-            DistinctItemOptions  options     = default)
+            IEnumerable<int>        items,
+            IEqualityComparer<int>? comparer    = null,
+            DistinctItemOptions     options     = default)
         => new(new ChangeTrackingHashSet<int>(
             items:      items,
             comparer:   comparer,

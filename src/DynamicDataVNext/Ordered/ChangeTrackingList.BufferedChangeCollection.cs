@@ -1,17 +1,17 @@
 namespace DynamicDataVNext;
 
-public partial class ChangeTrackingHashSet<T>
+public partial class ChangeTrackingList<T>
 {
     /// <summary>
     /// Buffers a sequence of changes that have been made to a <see cref="ChangeTrackingHashSet{T}"/>, and allows them to be captured into a <see cref="DistinctChangeSet{T}"/>.
     /// </summary>
     public class BufferedChangeCollection
-        : IReadOnlyList<DistinctChange<T>>
+        : IReadOnlyList<OrderedChange<T>>
     {
         internal BufferedChangeCollection(bool isSourceEmpty)
             => _bufferedChangeSet = new(isSourceEmpty);
         
-        public DistinctChange<T> this[int index]
+        public OrderedChange<T> this[int index]
             => _bufferedChangeSet.Changes[index];
 
         /// <inheritdoc/>
@@ -25,22 +25,25 @@ public partial class ChangeTrackingHashSet<T>
             => _bufferedChangeSet.CurrentType;
 
         /// <inheritdoc/>
-        public IEnumerator<DistinctChange<T>> GetEnumerator()
+        public IEnumerator<OrderedChange<T>> GetEnumerator()
             => _bufferedChangeSet.Changes.GetEnumerator();
 
         /// <summary>
         /// Captures the current sequence of changes within the collection into a <see cref="DistinctChangeSet{T}"/>, and removes them from the collection.
         /// </summary>
         /// <returns>A <see cref="DistinctChangeSet{T}"/> containing the changes that were removed from the collection.</returns>
-        public DistinctChangeSet<T> CaptureAndClear()
+        public OrderedChangeSet<T> CaptureAndClear()
             => _bufferedChangeSet.BuildAndClear();
         
         internal void Add(
-                DistinctChange<T>   change,
+                OrderedChange<T>    change,
                 bool                isSourceEmpty = false)
             => _bufferedChangeSet.AddChange(
                 change:         change,
                 isSourceEmpty:  isSourceEmpty);
+        
+        internal OrderedChangeSet<T>.Builder.Checkpoint CreateCheckpoint()
+            => _bufferedChangeSet.CreateCheckpoint();
         
         internal void EnsureCapacity(int capacity)
             => _bufferedChangeSet.Changes.EnsureCapacity(capacity);
@@ -48,6 +51,6 @@ public partial class ChangeTrackingHashSet<T>
         IEnumerator IEnumerable.GetEnumerator()
             => _bufferedChangeSet.Changes.GetEnumerator();
         
-        private readonly DistinctChangeSet<T>.Builder _bufferedChangeSet;
+        private readonly OrderedChangeSet<T>.Builder _bufferedChangeSet;
     }
 }

@@ -4,4 +4,4 @@ namespace DynamicDataVNext.Tests.Keyed.ChangeTrackingCacheTests;
 
 [TestFixture]
 public sealed class CopyToTests
-    : CacheTestBases.CopyToTests.Base<UutFixture, ChangeTrackingCache<string, TestItem>>;
+    : CacheTestBases.CopyToTestsBase<UutFixture, ChangeTrackingCache<string, TestItem>>;

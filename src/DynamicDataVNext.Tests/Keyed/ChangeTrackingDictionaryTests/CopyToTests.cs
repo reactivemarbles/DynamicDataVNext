@@ -2,4 +2,4 @@ namespace DynamicDataVNext.Tests.Keyed.ChangeTrackingDictionaryTests;
 
 [TestFixture]
 public class CopyToTests
-    : Keyed.DictionaryTestBases.CopyToTests.Base<UutFixture, ChangeTrackingDictionary<string, int>>;
+    : Keyed.DictionaryTestBases.CopyToTestsBase<UutFixture, ChangeTrackingDictionary<string, int>>;
