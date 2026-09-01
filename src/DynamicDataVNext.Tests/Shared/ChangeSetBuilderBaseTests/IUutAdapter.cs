@@ -10,12 +10,14 @@ public interface IUutAdapter<TChangeSet, TChange, TChangeType>
     static abstract TChange CreateAddition(int item); 
 
     static abstract ChangeSetBuilderBase<TChangeSet, TChange, TChangeType> CreateUut(
-        int  initialCapacity,
-        bool isSourceEmpty);
+        int initialCapacity,
+        int sourceCount);
 
-    static abstract ChangeSetBuilderBase<TChangeSet, TChange, TChangeType> CreateUut(bool isSourceEmpty);
+    static abstract ChangeSetBuilderBase<TChangeSet, TChange, TChangeType> CreateUut(int sourceCount);
 
     static abstract TChange CreateNone(); 
 
-    static abstract TChange CreateRemoval(int item);
+    static abstract TChange CreateRemoval(
+        int sourceCount,
+        int item);
 }

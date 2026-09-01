@@ -14,20 +14,22 @@ public class UutAdapter
             item:   item);
 
     public static ChangeSetBuilderBase<OrderedChangeSet<int>, OrderedChange<int>, OrderedChangeType> CreateUut(
-            int     initialCapacity,
-            bool    isSourceEmpty)
+            int initialCapacity,
+            int sourceCount)
         => new OrderedChangeSet<int>.Builder(
             initialCapacity:    initialCapacity,
-            isSourceEmpty:      isSourceEmpty);
+            sourceCount:        sourceCount);
 
-    public static ChangeSetBuilderBase<OrderedChangeSet<int>, OrderedChange<int>, OrderedChangeType> CreateUut(bool isSourceEmpty)
-        => new OrderedChangeSet<int>.Builder(isSourceEmpty);
+    public static ChangeSetBuilderBase<OrderedChangeSet<int>, OrderedChange<int>, OrderedChangeType> CreateUut(int sourceCount)
+        => new OrderedChangeSet<int>.Builder(sourceCount);
 
     public static OrderedChange<int> CreateNone()
         => default;
 
-    public static OrderedChange<int> CreateRemoval(int item)
+    public static OrderedChange<int> CreateRemoval(
+            int sourceCount,
+            int item)
         => OrderedChange.CreateRemoval(
-            index:  0,
+            index:  sourceCount - 1,
             item:   item);
 }

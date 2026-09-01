@@ -19,24 +19,23 @@ public abstract partial class ChangeSetBuilderBase<TChangeSet, TChange, TChangeT
     /// <summary>
     /// Constructs a new builder, with no collected changes.
     /// </summary>
-    /// <param name="isSourceEmpty">A flag indicating whether the source collection that changes will refer to is currently empty.</param>
-    protected ChangeSetBuilderBase(bool isSourceEmpty)
+    /// <param name="sourceCount">The initial value to use for <see cref="SourceCount"/>.</param>
+    protected ChangeSetBuilderBase(int sourceCount)
     {
         _changes        = new();
-        _isSourceEmpty  = isSourceEmpty;
         _currentType    = ChangeSetType.Empty;
+        _sourceCount    = sourceCount;
     }
 
-    /// <inheritdoc cref="ChangeSetBuilderBase{TChange,TChangeType,TChangeSet}(bool)"/>
-    /// <param name="isSourceEmpty">A flag indicating whether the source collection that changes will refer to is currently empty.</param>
+    /// <inheritdoc cref="ChangeSetBuilderBase{TChange,TChangeType,TChangeSet}(int)"/>
     /// <param name="initialCapacity">The initial value to use for <see cref="Changes.Capacity"/>.</param>
     protected ChangeSetBuilderBase(
-        int     initialCapacity,
-        bool    isSourceEmpty)
+        int initialCapacity,
+        int sourceCount)
     {
         _changes        = new(initialCapacity);
-        _isSourceEmpty  = isSourceEmpty;
         _currentType    = ChangeSetType.Empty;
+        _sourceCount    = sourceCount;
     }
 
     /// <summary>
@@ -52,53 +51,54 @@ public abstract partial class ChangeSetBuilderBase<TChangeSet, TChange, TChangeT
         => _currentType;
     
     /// <summary>
-    /// A flag indicating whether the source collection is currently empty.
+    /// The current value of <see cref="IReadOnlyCollection{T}.Count"/>, for the collection whose changes are being tracked.
     /// </summary>
-    public bool IsSourceEmpty
-        => _isSourceEmpty;
+    /// <remarks>
+    /// Used to help track when specialized changeset types, such as <see cref="ChangeSetType.Reset"/> or <see cref="ChangeSetType.Clear"/> can be generated.
+    /// </remarks>
+    public int SourceCount
+        => _sourceCount;
 
     /// <summary>
     /// Adds a given change to <see cref="Changes"/>.
     /// </summary>
     /// <param name="change">The change to be added.</param>
-    /// <param name="isSourceEmpty">A flag indicating whether the source collection is empty, after applying this change. I.E. whether this change removes the final item within the source collection.</param>
-    /// <exception cref="ArgumentException">Throws when <paramref name="change"/> is invalid, or when the values of <paramref name="change"/> and <paramref name="isSourceEmpty"/> are incompatible.</exception>
-    public void AddChange(
-        TChange change,
-        bool    isSourceEmpty = false)
+    /// <exception cref="ArgumentException">Throws when <paramref name="change"/> is invalid or inconsistent with the current state of the source collection.</exception>
+    public void AddChange(TChange change)
     {
         var category = change.Category;
 
-        _changesHasNonRemovals = category switch
+        switch (category)
         {
-            ChangeCategory.None                             => throw new ArgumentException($"Change type {change.Type} not supported", nameof(change)),
-            ChangeCategory.Removal when _isSourceEmpty      => throw new ArgumentException($"A change of category {change.Category} cannot be applied to an empty collection", nameof(change)),
-            not ChangeCategory.Removal when isSourceEmpty   => throw new ArgumentException($"A collection cannot be emptied by a change of category {change.Category}", nameof(isSourceEmpty)),
-            not ChangeCategory.Removal                      => true,
-            _                                               => _changesHasNonRemovals
-        };
+            case ChangeCategory.Addition:
+                ++_sourceCount;
+                _changesHasNonRemovals = true;
+                break;
+
+            case ChangeCategory.Removal:
+                if (_sourceCount is 0)
+                    throw new ArgumentException($"A change of category {change.Category} cannot be applied to an empty collection", nameof(change));
+                --_sourceCount;
+                break;
+
+            case ChangeCategory.Other:
+                _changesHasNonRemovals = true;
+                break;
+
+            default:
+                throw new ArgumentException($"Change type {change.Type} not supported", nameof(change));
+        }
 
         _changes.Add(change);
 
-        // If the change set consists of only removals that leave the source collection empty, that's a clear
-        if (isSourceEmpty && !_changesHasNonRemovals)
-            _currentType = ChangeSetType.Clear;
-        else
-        {
-            // Additions to an empty source collection, or following a clear, should count as a reset
-            if (    (category is ChangeCategory.Addition)
-                    &&  (       _isSourceEmpty
-                                ||  (_currentType is ChangeSetType.Clear)))
-            {
-                _currentType                = ChangeSetType.Reset;
-                _firstResetAdditionIndex    = _changes.Count - 1;
-            }
-            // As soon as we see a non-addition, it's no longer a reset, it's gotta just be an update
-            else if ((category is not ChangeCategory.Addition) || (_currentType is not ChangeSetType.Reset))
-                _currentType = ChangeSetType.Update;
-        }
+        _currentType = OnChangeAdded(change);
 
-        _isSourceEmpty = isSourceEmpty;
+        // If this is the first addition within a Reset, record it. 
+        if (        (category is ChangeCategory.Addition)
+                &&  (_currentType is ChangeSetType.Reset)
+                &&  (       (_changes.Count is 1)
+                        ||  (_changes[^2].Category is not ChangeCategory.Addition)))
+            _firstResetAdditionIndex = _changes.Count - 1;
     }
 
     /// <summary>
@@ -118,24 +118,24 @@ public abstract partial class ChangeSetBuilderBase<TChangeSet, TChange, TChangeT
             type:                       _currentType,
             firstResetAdditionIndex:    _firstResetAdditionIndex);
         
-        Clear(_isSourceEmpty);
+        Clear(sourceCount: _sourceCount);
 
         return changeSet;
     }
 
     /// <summary>
-    /// Resets the builder to an empty state, by clearing <see cref="Changes"/> and setting <see cref="CurrentType"/> to <see cref="ChangeSetType.Empty"/>.
+    /// Resets the builder to an empty state, by clearing <see cref="Changes"/>, setting <see cref="CurrentType"/> to <see cref="ChangeSetType.Empty"/>, and resetting <see cref="SourceCount"/>.
     /// </summary>
-    /// <param name="isSourceEmpty">A flag indicating whether the source collection to which future changes will refer is currently empty.</param>
+    /// <param name="sourceCount">The value to which <see cref="SourceCount"/> is to be reset.</param>
     /// <remarks>
     /// <para>Note that this operation invalidates any previously-created <see cref="Checkpoint"/>s.</para>
     /// </remarks>
-    public void Clear(bool isSourceEmpty)
+    public void Clear(int sourceCount)
     {
         _changes.Clear();
         
         _firstResetAdditionIndex    = 0;
-        _isSourceEmpty              = isSourceEmpty;
+        _sourceCount                = sourceCount;
         _changesHasNonRemovals      = false;
         _currentType                = ChangeSetType.Empty;
 
@@ -165,11 +165,43 @@ public abstract partial class ChangeSetBuilderBase<TChangeSet, TChange, TChangeT
         ChangeSetType           type,
         int                     firstResetAdditionIndex);
 
+    /// <summary>
+    /// A handler to be invoked after a new change has been added to <see cref="Changes"/>.
+    /// </summary>
+    /// <param name="change">The change that was added.</param>
+    /// <returns>The new value to use for <see cref="CurrentType"/>.</returns>
+    /// <remarks>
+    /// Allows consumers to inject custom logic for identifying special changeset types, such as <see cref="ChangeSetType.Reset"/> and <see cref="ChangeSetType.Clear"/>.
+    /// </remarks>
+    protected virtual ChangeSetType OnChangeAdded(TChange change)
+    {
+        var category = change.Category;
+
+        // If the change set consists of only removals and leaves the source collection empty, that's a clear
+        if ((_sourceCount is 0) && !_changesHasNonRemovals)
+            return ChangeSetType.Clear;
+
+        // Additions to an empty source collection, or following a clear, should count as a reset
+        if (        (category is ChangeCategory.Addition)
+                &&  (       (       (_currentType is ChangeSetType.Empty)
+                                &&  (_sourceCount is 1))
+                        ||  (_currentType is ChangeSetType.Clear)))
+            return ChangeSetType.Reset;
+
+        // If the changes currently represent a reset, and then we see a non-addition, it's no longer a reset, it's gotta just be an update.
+        if (        (_currentType is not ChangeSetType.Reset)
+                ||  (category is not ChangeCategory.Addition))
+            return ChangeSetType.Update;
+
+        // Otherwise, no change. The type continues to be either a Reset or an Update.
+        return _currentType;
+    }
+
     private readonly ChangeCollection _changes;
 
+    private bool            _changesHasNonRemovals;
     private int             _checkpointNonce;
     private ChangeSetType   _currentType;
     private int             _firstResetAdditionIndex;
-    private bool            _isSourceEmpty;
-    private bool            _changesHasNonRemovals;
+    private int             _sourceCount;
 }

@@ -26,8 +26,7 @@ public static partial class DistinctChangeStream
         
         IDisposable SubscribeImmutable(IObserver<DistinctChangeSet<T>> downstreamObserver)
         {
-            var matchingItemCount = 0;
-            var changeSetBuilder = new DistinctChangeSet<T>.Builder(isSourceEmpty: true);
+            var changeSetBuilder = new DistinctChangeSet<T>.Builder(sourceCount: 0);
             
             return stream.Source
                 .Select(changeSet =>
@@ -51,13 +50,7 @@ public static partial class DistinctChangeStream
                         if (!predicate.Invoke(change.Item))
                             continue;
                         
-                        matchingItemCount += (change.Type is DistinctChangeType.Addition)
-                            ? 1
-                            : -1;
-                        
-                        changeSetBuilder.AddChange(
-                            change:         change,
-                            isSourceEmpty:  matchingItemCount is 0);
+                        changeSetBuilder.AddChange(change);
                     }
                     
                     return changeSetBuilder.BuildAndClear(willBuilderBeReused: true);

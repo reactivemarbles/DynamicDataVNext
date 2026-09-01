@@ -14,19 +14,21 @@ public class UutAdapter
             item:   item);
 
     public static ChangeSetBuilderBase<KeyedChangeSet<int, int>, KeyedChange<int, int>, KeyedChangeType> CreateUut(
-            int     initialCapacity,
-            bool    isSourceEmpty)
+            int initialCapacity,
+            int sourceCount)
         => new KeyedChangeSet<int, int>.Builder(
             initialCapacity:    initialCapacity,
-            isSourceEmpty:      isSourceEmpty);
+            sourceCount:        sourceCount);
 
-    public static ChangeSetBuilderBase<KeyedChangeSet<int, int>, KeyedChange<int, int>, KeyedChangeType> CreateUut(bool isSourceEmpty)
-        => new KeyedChangeSet<int, int>.Builder(isSourceEmpty);
+    public static ChangeSetBuilderBase<KeyedChangeSet<int, int>, KeyedChange<int, int>, KeyedChangeType> CreateUut(int sourceCount)
+        => new KeyedChangeSet<int, int>.Builder(sourceCount);
 
     public static KeyedChange<int, int> CreateNone()
         => default;
 
-    public static KeyedChange<int, int> CreateRemoval(int item)
+    public static KeyedChange<int, int> CreateRemoval(
+            int sourceCount,
+            int item)
         => KeyedChange.CreateRemoval(
             key:    item + 10,
             item:   item);

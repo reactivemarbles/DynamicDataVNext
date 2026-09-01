@@ -52,7 +52,7 @@ public partial class ChangeTrackingList<T>
     {
         _orderedItems       = orderedItems;
         _options            = options;
-        _bufferedChanges    = new(isSourceEmpty: orderedItems.Count is 0);
+        _bufferedChanges    = new(sourceCount: orderedItems.Count);
     }            
 
     /// <summary>
@@ -148,11 +148,9 @@ public partial class ChangeTrackingList<T>
     {
         // Buffer removals in reverse, to avoid internal copies and allocations, within _orderedItems.
         for (var i = _orderedItems.Count - 1; i >= 0; --i)
-            _bufferedChanges.Add(
-                change:         OrderedChange.CreateRemoval(
-                    index:  i,
-                    item:   _orderedItems[i]),
-                isSourceEmpty:  i == 0);
+            _bufferedChanges.Add(OrderedChange.CreateRemoval(
+                index:  i,
+                item:   _orderedItems[i]));
     
         _orderedItems.Clear();
     }
@@ -378,11 +376,9 @@ public partial class ChangeTrackingList<T>
         
         _orderedItems.RemoveAt(index);
         
-        _bufferedChanges.Add(
-            change:         OrderedChange.CreateRemoval(
-                index:  index,
-                item:   item),
-            isSourceEmpty:  _orderedItems.Count is 0);
+        _bufferedChanges.Add(OrderedChange.CreateRemoval(
+            index:  index,
+            item:   item));
             
         return true;
     }
@@ -394,11 +390,9 @@ public partial class ChangeTrackingList<T>
         
         _orderedItems.RemoveAt(index);
         
-        _bufferedChanges.Add(
-            change:         OrderedChange.CreateRemoval(
-                index:  index,
-                item:   item),
-            isSourceEmpty:  _orderedItems.Count is 0);
+        _bufferedChanges.Add(OrderedChange.CreateRemoval(
+            index:  index,
+            item:   item));
     }
     
     /// <summary>
@@ -439,12 +433,9 @@ public partial class ChangeTrackingList<T>
         var lastRemovalIndex = _bufferedChanges.Count + _orderedItems.Count - 1;
         // Remove items in reverse order, to eliminate the need for shuffles after each removal.
         for (var i = _orderedItems.Count - 1; i >= 0; --i)
-            _bufferedChanges.Add(
-                change:         OrderedChange.CreateRemoval(
-                    index:  i,
-                    item:   _orderedItems[i]),
-                // Report the collection as empty upon the last removal
-                isSourceEmpty:  _bufferedChanges.Count == lastRemovalIndex);
+            _bufferedChanges.Add(OrderedChange.CreateRemoval(
+                index:  i,
+                item:   _orderedItems[i]));
 
         _orderedItems.Clear();
 

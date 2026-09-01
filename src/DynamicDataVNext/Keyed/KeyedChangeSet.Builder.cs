@@ -9,17 +9,17 @@ public readonly partial record struct KeyedChangeSet<TKey, TItem>
         : ChangeSetBuilderBase<KeyedChangeSet<TKey, TItem>, KeyedChange<TKey, TItem>, KeyedChangeType>
     {
         /// <inheritdoc/>
-        public Builder(bool isSourceEmpty)
-            : base(isSourceEmpty)
+        public Builder(int sourceCount)
+            : base(sourceCount)
         { }
 
         /// <inheritdoc/>
         public Builder(
-            int     initialCapacity,
-            bool    isSourceEmpty)
+            int initialCapacity,
+            int sourceCount)
             : base(
                 initialCapacity,
-                isSourceEmpty)
+                sourceCount)
         { }
 
         protected override KeyedChangeSet<TKey, TItem> CreateChangeSet(

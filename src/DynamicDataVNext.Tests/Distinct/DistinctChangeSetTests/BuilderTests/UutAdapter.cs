@@ -12,18 +12,20 @@ public class UutAdapter
         => DistinctChange.CreateAddition(item);
 
     public static ChangeSetBuilderBase<DistinctChangeSet<int>, DistinctChange<int>, DistinctChangeType> CreateUut(
-            int     initialCapacity,
-            bool    isSourceEmpty)
+            int initialCapacity,
+            int sourceCount)
         => new DistinctChangeSet<int>.Builder(
             initialCapacity:    initialCapacity,
-            isSourceEmpty:      isSourceEmpty);
+            sourceCount:        sourceCount);
 
-    public static ChangeSetBuilderBase<DistinctChangeSet<int>, DistinctChange<int>, DistinctChangeType> CreateUut(bool isSourceEmpty)
-        => new DistinctChangeSet<int>.Builder(isSourceEmpty);
+    public static ChangeSetBuilderBase<DistinctChangeSet<int>, DistinctChange<int>, DistinctChangeType> CreateUut(int sourceCount)
+        => new DistinctChangeSet<int>.Builder(sourceCount);
 
     public static DistinctChange<int> CreateNone()
         => default;
 
-    public static DistinctChange<int> CreateRemoval(int item)
+    public static DistinctChange<int> CreateRemoval(
+            int sourceCount,
+            int item)
         => DistinctChange.CreateRemoval(item);
 }

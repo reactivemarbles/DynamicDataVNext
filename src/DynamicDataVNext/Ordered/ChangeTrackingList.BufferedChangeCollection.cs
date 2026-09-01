@@ -8,8 +8,8 @@ public partial class ChangeTrackingList<T>
     public class BufferedChangeCollection
         : IReadOnlyList<OrderedChange<T>>
     {
-        internal BufferedChangeCollection(bool isSourceEmpty)
-            => _bufferedChangeSet = new(isSourceEmpty);
+        internal BufferedChangeCollection(int sourceCount)
+            => _bufferedChangeSet = new(sourceCount);
         
         public OrderedChange<T> this[int index]
             => _bufferedChangeSet.Changes[index];
@@ -35,12 +35,8 @@ public partial class ChangeTrackingList<T>
         public OrderedChangeSet<T> CaptureAndClear()
             => _bufferedChangeSet.BuildAndClear();
         
-        internal void Add(
-                OrderedChange<T>    change,
-                bool                isSourceEmpty = false)
-            => _bufferedChangeSet.AddChange(
-                change:         change,
-                isSourceEmpty:  isSourceEmpty);
+        internal void Add(OrderedChange<T> change)
+            => _bufferedChangeSet.AddChange(change);
         
         internal OrderedChangeSet<T>.Builder.Checkpoint CreateCheckpoint()
             => _bufferedChangeSet.CreateCheckpoint();

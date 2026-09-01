@@ -9,23 +9,23 @@ public readonly partial record struct DistinctChangeSet<T>
         : ChangeSetBuilderBase<DistinctChangeSet<T>, DistinctChange<T>, DistinctChangeType>
     {
         /// <inheritdoc/>
-        public Builder(bool isSourceEmpty)
-            : base(isSourceEmpty)
+        public Builder(int sourceCount)
+            : base(sourceCount)
         { }
 
         /// <inheritdoc/>
         public Builder(
-            int     initialCapacity,
-            bool    isSourceEmpty)
+            int initialCapacity,
+            int sourceCount)
             : base(
                 initialCapacity,
-                isSourceEmpty)
+                sourceCount)
         { }
 
         protected override DistinctChangeSet<T> CreateChangeSet(
-            ImmutableArray<DistinctChange<T>>   changes,
-            ChangeSetType                       type,
-            int                                 firstResetAdditionIndex)
+                ImmutableArray<DistinctChange<T>>   changes,
+                ChangeSetType                       type,
+                int                                 firstResetAdditionIndex)
             => new()
             {
                 Changes            = changes,

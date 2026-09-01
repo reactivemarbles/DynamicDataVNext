@@ -59,7 +59,7 @@ public partial class ChangeTrackingHashSet<T>
     {
         _items              = items;
         _options            = options;
-        _bufferedChanges    = new(isSourceEmpty: items.Count is 0);
+        _bufferedChanges    = new(sourceCount: items.Count);
     }            
 
     /// <summary>
@@ -111,20 +111,14 @@ public partial class ChangeTrackingHashSet<T>
             return;
 
         // We will add exactly one remove change for each item in the set.
-        var finalPendingChangeCount = _bufferedChanges.Count + _items.Count;
+        _bufferedChanges.EnsureCapacity(_bufferedChanges.Count + _items.Count);
 
-        _bufferedChanges.EnsureCapacity(finalPendingChangeCount);
-
-        var lastChangeIndex = finalPendingChangeCount - 1;
         foreach (var item in _items)
-            _bufferedChanges.Add(
-                change:         new()
-                {
-                    Item = item,
-                    Type = DistinctChangeType.Removal
-                },
-                // The set will be empty upon the last removal
-                isSourceEmpty:  _bufferedChanges.Count == lastChangeIndex);
+            _bufferedChanges.Add(new()
+            {
+                Item = item,
+                Type = DistinctChangeType.Removal
+            });
 
         _items.Clear();
     }
@@ -144,7 +138,7 @@ public partial class ChangeTrackingHashSet<T>
     /// <inheritdoc/>
     public void ExceptWith(IEnumerable<T> other)
     {
-        ArgumentNullException.ThrowIfNull(other, nameof(other));
+        ArgumentNullException.ThrowIfNull(other);
 
         // Can't remove items from the set if it's empty
         if (_items.Count is 0)
@@ -155,14 +149,11 @@ public partial class ChangeTrackingHashSet<T>
 
         foreach (var item in other)
             if (_items.Remove(item))
-                _bufferedChanges.Add(
-                    change:         new()
-                    {
-                        Item = item,
-                        Type = DistinctChangeType.Removal
-                    },
-                    // Since we're removing items as we go, we can just check if the set is empty
-                    isSourceEmpty:  _items.Count is 0);
+                _bufferedChanges.Add(new()
+                {
+                    Item = item,
+                    Type = DistinctChangeType.Removal
+                });
     }
 
     /// <inheritdoc cref="HashSet{T}.GetEnumerator()"/>
@@ -172,7 +163,7 @@ public partial class ChangeTrackingHashSet<T>
     /// <inheritdoc/>
     public void IntersectWith(IEnumerable<T> other)
     {
-        ArgumentNullException.ThrowIfNull(other, nameof(other));
+        ArgumentNullException.ThrowIfNull(other);
 
         // Can't remove items from the set if it's empty
         if (_items.Count is 0)
@@ -192,16 +183,12 @@ public partial class ChangeTrackingHashSet<T>
             if (_items.Remove(item))
                 newItems.Add(item);
         
-        var lastChangeIndex = _bufferedChanges.Count + _items.Count - 1;
         foreach (var item in _items)
-            _bufferedChanges.Add(
-                change:         new()
-                {
-                    Item = item,
-                    Type = DistinctChangeType.Removal
-                },
-                // If the new set of items is empty, report it when adding the last remove change
-                isSourceEmpty:  (newItems.Count is 0) && (_bufferedChanges.Count == lastChangeIndex));
+            _bufferedChanges.Add(new()
+            {
+                Item = item,
+                Type = DistinctChangeType.Removal
+            });
 
         _items = newItems;
     }
@@ -240,13 +227,11 @@ public partial class ChangeTrackingHashSet<T>
         if (!_items.Contains(item))
             return false;
 
-        _bufferedChanges.Add(
-            change:         new()
-            {
-                Item = item,
-                Type = DistinctChangeType.Refreshment
-            },
-            isSourceEmpty:  _items.Count is 0);
+        _bufferedChanges.Add(new()
+        {
+            Item = item,
+            Type = DistinctChangeType.Refreshment
+        });
 
         return true;
     }
@@ -257,13 +242,11 @@ public partial class ChangeTrackingHashSet<T>
         if (!_items.Remove(item))
             return false;
 
-        _bufferedChanges.Add(
-            change:         new()
-            {
-                Item = item,
-                Type = DistinctChangeType.Removal
-            },
-            isSourceEmpty:  _items.Count is 0);
+        _bufferedChanges.Add(new()
+        {
+            Item = item,
+            Type = DistinctChangeType.Removal
+        });
 
         return true;
     }
@@ -303,16 +286,12 @@ public partial class ChangeTrackingHashSet<T>
         // We'll be adding a change for each item in the current set, and each item in the new set
         _bufferedChanges.EnsureCapacity(_bufferedChanges.Count +_items.Count + itemsCount);
         
-        var lastRemovalIndex = _bufferedChanges.Count +_items.Count - 1;
         foreach (var item in _items)
-            _bufferedChanges.Add(
-                change:         new()
-                {
-                    Item = item,
-                    Type = DistinctChangeType.Removal
-                },
-                // Report the collection as empty upon the last removal
-                isSourceEmpty:  _bufferedChanges.Count == lastRemovalIndex);
+            _bufferedChanges.Add(new()
+            {
+                Item = item,
+                Type = DistinctChangeType.Removal
+            });
 
         _items.Clear();
 
@@ -339,8 +318,7 @@ public partial class ChangeTrackingHashSet<T>
             _items.EnsureCapacity(_items.Count + otherCount);
 
         // At most, we'll be adding a change to remove every current item, and add every new item
-        var priorPendingChangeCount = _bufferedChanges.Count;
-        _bufferedChanges.EnsureCapacity(priorPendingChangeCount + _items.Count + otherCount);
+        _bufferedChanges.EnsureCapacity(_bufferedChanges.Count + _items.Count + otherCount);
 
         // As we iterate over the items, we'll cache all the items to be added, instead of adding them right
         // away. That way, we can perform all removes first, which is slightly more optimal for downstream
@@ -350,14 +328,11 @@ public partial class ChangeTrackingHashSet<T>
         foreach (var item in other)
         {
             if (_items.Remove(item))
-                _bufferedChanges.Add(
-                    change:         new()
-                    {
-                        Item = item,
-                        Type = DistinctChangeType.Removal
-                    },
-                    // Since we're removing items one-at-a-time, we can just report whenever a removal leaves the set empty
-                    isSourceEmpty:  _items.Count is 0);
+                _bufferedChanges.Add(new()
+                {
+                    Item = item,
+                    Type = DistinctChangeType.Removal
+                });
             else
                 itemsToAdd.Add(item);
         }
@@ -376,7 +351,7 @@ public partial class ChangeTrackingHashSet<T>
     /// <inheritdoc/>
     public void UnionWith(IEnumerable<T> other)
     {
-        ArgumentNullException.ThrowIfNull(other, nameof(other));
+        ArgumentNullException.ThrowIfNull(other);
 
         if(other.TryGetNonEnumeratedCount(out var otherCount) && (otherCount is 0))
             return;

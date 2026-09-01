@@ -60,7 +60,7 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
     {
         _items              = items;
         _options            = options;
-        _bufferedChanges    = new(isSourceEmpty: items.Count is 0);
+        _bufferedChanges    = new(sourceCount: items.Count);
     }            
 
     /// <inheritdoc cref="IDictionary{TKey, TValue}.this[TKey]"/>
@@ -225,16 +225,10 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
             return;
         
         // We will add exactly one remove change for each item in the collection.
-        var finalPendingChangeCount = _bufferedChanges.Count + _items.Count;
+        _bufferedChanges.EnsureCapacity(_bufferedChanges.Count + _items.Count);
         
-        _bufferedChanges.EnsureCapacity(finalPendingChangeCount);
-        
-        var lastChangeIndex = finalPendingChangeCount - 1;
         foreach (var item in _items)
-            _bufferedChanges.Add(
-                change:         KeyedChange.CreateRemoval(item),
-                // The set will be empty upon the last removal
-                isSourceEmpty:  _bufferedChanges.Count == lastChangeIndex);
+            _bufferedChanges.Add(KeyedChange.CreateRemoval(item));
         
         _items.Clear();
     }
@@ -320,9 +314,7 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
                 innerException: exception);
         }
 
-        _bufferedChanges.Add(
-            change:         KeyedChange.CreateRemoval(item),
-            isSourceEmpty:  _items.Count is 0);
+        _bufferedChanges.Add(KeyedChange.CreateRemoval(item));
 
         return true;
     }
@@ -333,9 +325,7 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
         if (!_items.Remove(key, out var value))
             return false;
 
-        _bufferedChanges.Add(
-            change:         KeyedChange.CreateRemoval(key, value),
-            isSourceEmpty:  _items.Count is 0);
+        _bufferedChanges.Add(KeyedChange.CreateRemoval(key, value));
 
         return true;
     }
@@ -395,10 +385,7 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
         var priorBufferedChangeCount = _bufferedChanges.Count; 
         var lastRemovalIndex = _bufferedChanges.Count + _items.Count - 1;
         foreach (var item in _items)
-            _bufferedChanges.Add(
-                change:         KeyedChange.CreateRemoval(item),
-                // Report the collection as empty upon the last removal
-                isSourceEmpty:  _bufferedChanges.Count == lastRemovalIndex);
+            _bufferedChanges.Add(KeyedChange.CreateRemoval(item));
 
         _items.Clear();
 

@@ -8,8 +8,8 @@ public partial class ChangeTrackingHashSet<T>
     public class BufferedChangeCollection
         : IReadOnlyList<DistinctChange<T>>
     {
-        internal BufferedChangeCollection(bool isSourceEmpty)
-            => _bufferedChangeSet = new(isSourceEmpty);
+        internal BufferedChangeCollection(int sourceCount)
+            => _bufferedChangeSet = new(sourceCount);
         
         public DistinctChange<T> this[int index]
             => _bufferedChangeSet.Changes[index];
@@ -35,12 +35,8 @@ public partial class ChangeTrackingHashSet<T>
         public DistinctChangeSet<T> CaptureAndClear()
             => _bufferedChangeSet.BuildAndClear();
         
-        internal void Add(
-                DistinctChange<T>   change,
-                bool                isSourceEmpty = false)
-            => _bufferedChangeSet.AddChange(
-                change:         change,
-                isSourceEmpty:  isSourceEmpty);
+        internal void Add(DistinctChange<T> change)
+            => _bufferedChangeSet.AddChange(change);
         
         internal void EnsureCapacity(int capacity)
             => _bufferedChangeSet.Changes.EnsureCapacity(capacity);

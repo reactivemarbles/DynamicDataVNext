@@ -1,8 +1,5 @@
-using DynamicDataVNext.Tests.ChangeSetBuilderBaseTests;
-
 namespace DynamicDataVNext.Tests.Keyed.KeyedChangeSetTests.BuilderTests;
 
 [TestFixture]
 public sealed class AddChangeTests
-    : AddChangeTestsBase<UutAdapter, KeyedChangeSet<int, int>, KeyedChange<int, int>, KeyedChangeType>
-{ }
+    : ChangeSetBuilderBaseTests.AddChangeTests.Base<UutAdapter, KeyedChangeSet<int, int>, KeyedChange<int, int>, KeyedChangeType>;

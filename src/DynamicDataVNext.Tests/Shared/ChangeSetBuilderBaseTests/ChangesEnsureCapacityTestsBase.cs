@@ -10,6 +10,6 @@ public class ChangesEnsureCapacityTestsBase<TUutAdapter, TChangeSet, TChange, TC
     protected override ChangeSetBuilderBase<TChangeSet, TChange, TChangeType>.ChangeCollection CreateUut(int initialCapacity)
         => TUutAdapter.CreateUut(
                 initialCapacity:    initialCapacity,
-                isSourceEmpty:      false)
+                sourceCount:        0)
             .Changes;
 }

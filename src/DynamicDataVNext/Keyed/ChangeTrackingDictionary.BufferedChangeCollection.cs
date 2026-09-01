@@ -8,8 +8,8 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
     public class BufferedChangeCollection
         : IReadOnlyList<KeyedChange<TKey, TValue>>
     {
-        internal BufferedChangeCollection(bool isSourceEmpty)
-            => _bufferedChangeSet = new(isSourceEmpty);
+        internal BufferedChangeCollection(int sourceCount)
+            => _bufferedChangeSet = new(sourceCount);
         
         public KeyedChange<TKey, TValue> this[int index]
             => _bufferedChangeSet.Changes[index];
@@ -35,12 +35,8 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
         public KeyedChangeSet<TKey, TValue> CaptureAndClear()
             => _bufferedChangeSet.BuildAndClear();
         
-        internal void Add(
-                KeyedChange<TKey, TValue>   change,
-                bool                        isSourceEmpty = false)
-            => _bufferedChangeSet.AddChange(
-                change:         change,
-                isSourceEmpty:  isSourceEmpty);
+        internal void Add(KeyedChange<TKey, TValue> change)
+            => _bufferedChangeSet.AddChange(change);
                 
         internal KeyedChangeSet<TKey, TValue>.Builder.Checkpoint CreateCheckpoint()
             => _bufferedChangeSet.CreateCheckpoint();

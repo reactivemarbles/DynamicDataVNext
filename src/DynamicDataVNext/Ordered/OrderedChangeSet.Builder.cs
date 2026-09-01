@@ -9,17 +9,17 @@ public readonly partial record struct OrderedChangeSet<T>
         : ChangeSetBuilderBase<OrderedChangeSet<T>, OrderedChange<T>, OrderedChangeType>
     {
         /// <inheritdoc/>
-        public Builder(bool isSourceEmpty)
-            : base(isSourceEmpty)
+        public Builder(int sourceCount)
+            : base(sourceCount)
         { }
 
         /// <inheritdoc/>
         public Builder(
-            int     initialCapacity,
-            bool    isSourceEmpty)
+            int initialCapacity,
+            int sourceCount)
             : base(
                 initialCapacity,
-                isSourceEmpty)
+                sourceCount)
         { }
 
         protected override OrderedChangeSet<T> CreateChangeSet(
@@ -32,5 +32,28 @@ public readonly partial record struct OrderedChangeSet<T>
                 FirstAdditionIndex = firstResetAdditionIndex,
                 Type               = type
             };
+
+        protected override ChangeSetType OnChangeAdded(OrderedChange<T> change)
+        {
+            // List-land has an extra requirement for clears, that changes have to be listed in reverse order.
+            // We could maybe make BuildAndClear() overridable and override it to reorder and rebuild clears properly,
+            // but I doubt it'd be worth the performance cost. Maybe someday someone can benchmark it and see.
+ 
+            if (Changes.Count is 1)
+                _areRemovalsInReverseOrder = true;
+        
+            if (        (change.Type is not OrderedChangeType.Removal)
+                    ||  (change.AsRemoval().Index != SourceCount))
+                _areRemovalsInReverseOrder = false;
+
+            var baseResult = base.OnChangeAdded(change);
+            
+            return (        (baseResult is ChangeSetType.Clear)
+                        &&  !_areRemovalsInReverseOrder)
+                ? ChangeSetType.Update
+                : baseResult;
+        }
+        
+        private bool _areRemovalsInReverseOrder;
     }
 }

@@ -1,7 +1,5 @@
-using DynamicDataVNext.Tests.ChangeSetBuilderBaseTests;
-
 namespace DynamicDataVNext.Tests.Distinct.DistinctChangeSetTests.BuilderTests;
 
 [TestFixture]
 public sealed class AddChangeTests
-    : AddChangeTestsBase<UutAdapter, DistinctChangeSet<int>, DistinctChange<int>, DistinctChangeType>;
+    : ChangeSetBuilderBaseTests.AddChangeTests.Base<UutAdapter, DistinctChangeSet<int>, DistinctChange<int>, DistinctChangeType>;

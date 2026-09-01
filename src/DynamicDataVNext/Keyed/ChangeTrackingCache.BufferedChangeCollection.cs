@@ -8,8 +8,8 @@ public partial class ChangeTrackingCache<TKey, TItem>
     public class BufferedChangeCollection
         : IReadOnlyList<KeyedChange<TKey, TItem>>
     {
-        internal BufferedChangeCollection(bool isSourceEmpty)
-            => _bufferedChangeSet = new(isSourceEmpty);
+        internal BufferedChangeCollection(int sourceCount)
+            => _bufferedChangeSet = new(sourceCount);
         
         public KeyedChange<TKey, TItem> this[int index]
             => _bufferedChangeSet.Changes[index];
@@ -35,12 +35,8 @@ public partial class ChangeTrackingCache<TKey, TItem>
         public KeyedChangeSet<TKey, TItem> CaptureAndClear()
             => _bufferedChangeSet.BuildAndClear();
         
-        internal void Add(
-                KeyedChange<TKey, TItem>    change,
-                bool                        isSourceEmpty = false)
-            => _bufferedChangeSet.AddChange(
-                change:         change,
-                isSourceEmpty:  isSourceEmpty);
+        internal void Add(KeyedChange<TKey, TItem> change)
+            => _bufferedChangeSet.AddChange(change);
                 
         internal KeyedChangeSet<TKey, TItem>.Builder.Checkpoint CreateCheckpoint()
             => _bufferedChangeSet.CreateCheckpoint();
