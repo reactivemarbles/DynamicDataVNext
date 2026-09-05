@@ -1,5 +1,4 @@
 namespace DynamicDataVNext.Tests.Keyed.ChangeTrackingDictionaryTests;
 
 [TestFixture]
-public class ResetTests
-    : Keyed.DictionaryTestBases.ResetTests.Base<UutFixture, ChangeTrackingDictionary<string, int>>;
+public static partial class ResetTests;

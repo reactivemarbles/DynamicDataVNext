@@ -69,6 +69,17 @@ public static partial class UutFixture
             _results.RecordedItems.Should().BeEquivalentTo(_uut, options => options.WithoutStrictOrdering(), "collecting published changes should reproduce the source collection");
         }
 
+        public void AssertItemWasRefreshed(int refreshedItem)
+        {
+            _results.HasFinalized.Should().BeFalse("the set can still be changed");
+            _results.RecordedChangeSets.Should().ContainSingle("a single change operation was performed");
+            _results.RecordedChangeSets[0].Changes.Should().ContainSingle("a single item should have been refreshed");
+            _results.RecordedChangeSets[0].Changes[0].Type.Should().Be(DistinctChangeType.Refreshment, "a single item should have been refreshed");
+            _results.RecordedChangeSets[0].Changes[0].Item.Should().Be(refreshedItem, "the given item should have been refreshed");
+            _results.RecordedChangeSets[0].Type.Should().Be(ChangeSetType.Update, "refreshing an item should produce an update");
+            _results.RecordedItems.Should().BeEquivalentTo(_uut, options => options.WithoutStrictOrdering(), "collecting published changes should reproduce the source collection");
+        }
+
         public void AssertItemWasRemoved(int removedItem)
         {
             _results.HasFinalized.Should().BeFalse("the set can still be changed");
@@ -146,9 +157,6 @@ public static partial class UutFixture
             _results.RecordedItems.Should().BeEquivalentTo(_uut, options => options.WithoutStrictOrdering(), "collecting published changes should reproduce the source collection");
         }
         
-        public void ResetUut(IEnumerable<int> items)
-            => _uut.Reset(items);
-
         private readonly DistinctItemRecordingObserver<int> _results;
         private readonly IDisposable                        _subscription;
         private readonly ObservableHashSet<int>             _uut;

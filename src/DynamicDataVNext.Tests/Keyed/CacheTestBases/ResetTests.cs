@@ -2,7 +2,7 @@ namespace DynamicDataVNext.Tests.Keyed.CacheTestBases;
 
 public static partial class ResetTests
 {
-    public static readonly IReadOnlyList<TestCaseData> WhenItemsIsEmptyAndCacheIsNot_TestCases
+    public static readonly IReadOnlyList<TestCaseData> WhenCacheIsNotEmpty_TestCases
         = new[]
         {
             new TestCaseData((object?)new TestItem[] { new() { Key = "1" } })

@@ -4,7 +4,8 @@ public static partial class RefreshTests
 {
     public abstract class Base<TUutFixture, TUut>
         where TUutFixture : ICacheUutFixture<TUutFixture, TUut>
-        where TUut : ICache<string, TestItem>
+        where TUut : ICache<string, TestItem>,
+            IRefreshableCache<string, TestItem>
     {
         [TestCaseSource(typeof(RefreshTests), nameof(WhenCacheContainsItem_TestCases))]
         public void WhenCacheContainsItem_RefreshesItemAndReturnsTrue(SingleItemOperationTestCase testCase)
@@ -17,7 +18,7 @@ public static partial class RefreshTests
                     ItemsAreMutable = true
                 });
             
-            var result = fixture.RefreshUutItem(testCase.Item);
+            var result = fixture.Uut.Refresh(testCase.Item);
             
             result.Should().BeTrue("the collection contains the given item");
             
@@ -37,7 +38,7 @@ public static partial class RefreshTests
                     ItemsAreMutable = true
                 });
             
-            var result = fixture.RefreshUutItem(testCase.Item);
+            var result = fixture.Uut.Refresh(testCase.Item);
             
             result.Should().BeFalse("the collection does not contain the given item");
             
@@ -59,7 +60,7 @@ public static partial class RefreshTests
 
             var result = FluentActions.Invoking(() =>
                 {
-                    _ = fixture.RefreshUutItem(new() { Key = null! });
+                    _ = fixture.Uut.Refresh(new() { Key = null! });
                 })
                 .Should().Throw<ArgumentException>()
                 .WithParameterName("item")
@@ -85,7 +86,7 @@ public static partial class RefreshTests
 
             var result = FluentActions.Invoking(() =>
                 {
-                    _ = fixture.RefreshUutItem(item);
+                    _ = fixture.Uut.Refresh(item);
                 })
                 .Should().Throw<ImmutableRefreshException>()
                 .Which;

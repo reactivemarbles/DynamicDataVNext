@@ -65,6 +65,23 @@ public sealed class UutFixture
         _uut.BufferedChanges.Should().BeEmpty("all changes should have been captured from the buffer");
     }
 
+    public void AssertItemWasRefreshed(int refreshedItem)
+    {
+        _uut.BufferedChanges.Should().ContainSingle("a single change was made");
+        _uut.BufferedChanges[0].Type.Should().Be(DistinctChangeType.Refreshment, "a single refreshment was performed");
+        _uut.BufferedChanges[0].Item.Should().Be(refreshedItem, "the given item should have been refreshedItem");
+        _uut.BufferedChanges.CurrentSetType.Should().Be(ChangeSetType.Update, "refreshing an item should produce an update");
+
+        var capturedChangeSet = _uut.BufferedChanges.CaptureAndClear();
+        
+        capturedChangeSet.Changes.Should().ContainSingle("a single change was made");
+        capturedChangeSet.Changes[0].Type.Should().Be(DistinctChangeType.Refreshment, "a single refreshment was performed");
+        capturedChangeSet.Changes[0].Item.Should().Be(refreshedItem, "the given item should have been refreshedItem");
+        capturedChangeSet.Type.Should().Be(ChangeSetType.Update, "refreshing an item should produce an update");
+        
+        _uut.BufferedChanges.Should().BeEmpty("all changes should have been captured from the buffer");
+    }
+
     public void AssertItemWasRemoved(int removedItem)
     {
         _uut.BufferedChanges.Should().ContainSingle("a single change was made");
@@ -175,8 +192,5 @@ public sealed class UutFixture
         _uut.BufferedChanges.Should().BeEmpty("all changes should have been captured from the buffer");
     }
     
-    public void ResetUut(IEnumerable<int> items)
-        => _uut.Reset(items);
-
     private readonly ChangeTrackingHashSet<int> _uut;
 }

@@ -19,8 +19,6 @@ public interface IListUutFixture<out TUutFixture, out TUut>
     
     OrderedItemOptions UutOptions { get; }
 
-    void AddRangeToUut(IEnumerable<string?> items);
-
     void AssertItemsWereInserted(
         int                     insertionIndex,
         IReadOnlyList<string?>  insertedItems);
@@ -35,6 +33,10 @@ public interface IListUutFixture<out TUutFixture, out TUut>
         int     oldIndex,
         int     newIndex,
         string? movedItem);
+
+    void AssertItemWasRefreshed(
+        int     refreshmentIndex,
+        string? refreshedItem);
 
     void AssertItemWasRemoved(
         int     removalIndex,
@@ -52,14 +54,4 @@ public interface IListUutFixture<out TUutFixture, out TUut>
     void AssertUutWasReset(
         IReadOnlyList<string?> removedItems,
         IReadOnlyList<string?> insertedItems);
-
-    void InsertRangeIntoUut(
-        int                     index,
-        IEnumerable<string?>    items);
-        
-    void MoveItemWithinUut(
-        int oldIndex,
-        int newIndex);
-        
-    void ResetUut(IEnumerable<string?> items);
 }

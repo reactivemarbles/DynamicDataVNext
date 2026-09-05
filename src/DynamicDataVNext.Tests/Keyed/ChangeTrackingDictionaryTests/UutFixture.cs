@@ -46,14 +46,6 @@ public sealed class UutFixture
     public KeyedItemOptions UutOptions
         => _uut.Options;
 
-    public void AddRangeToUut(IEnumerable<KeyValuePair<string, int>> items)
-        => _uut.AddRange(items);
-
-    public void AddRangeToUut(
-            IEnumerable<int>    values,
-            Func<int, string>   keySelector)
-        => _uut.AddRange(values, keySelector);
-
     public void AssertItemWasAdded(
         string  addedKey,
         int     addedValue)
@@ -196,14 +188,6 @@ public sealed class UutFixture
     }
 
     public void Dispose() { }
-
-    public bool RefreshUut(string key)
-        => _uut.Refresh(key);
-
-    public void ResetUut(
-            IEnumerable<int>    values,
-            Func<int, string>   keySelector)
-        => _uut.Reset(values, keySelector);
 
     private readonly ChangeTrackingDictionary<string, int> _uut;
 }

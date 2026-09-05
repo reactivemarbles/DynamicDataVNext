@@ -9,7 +9,7 @@ public static partial class CreateRefreshmentTests
         protected override KeyedChange<int, int> InvokeUut(
                 int key,
                 int item)
-            => KeyedChange.CreateRemoval(new KeyedItem<int, int>()
+            => KeyedChange.CreateRefreshment(new KeyedItem<int, int>()
             {
                 Key     = key,
                 Item    = item

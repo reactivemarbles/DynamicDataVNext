@@ -2,9 +2,10 @@ namespace DynamicDataVNext.Tests.Keyed.DictionaryTestBases;
 
 public static partial class ResetTests
 {
-    public abstract class Base<TUutFixture, TUut>
+    public abstract class ForValuesAndKeySelectorBase<TUutFixture, TUut>
         where TUutFixture : IDictionaryUutFixture<TUutFixture, TUut>
-        where TUut : IDictionary<string, int>
+        where TUut : IDictionary<string, int>,
+            IRangeAwareDictionary<string, int>
     {
         [TestCaseSource(typeof(ResetTests), nameof(WhenKeySelectorReturnsNull_TestCases))]
         public void WhenKeySelectorReturnsNull_DoesNothingAndThrowsException(ValueRangeOperationTestCase testCase)
@@ -13,7 +14,7 @@ public static partial class ResetTests
                 
             var result = FluentActions.Invoking(() =>
                 {
-                    fixture.ResetUut(testCase.Values, testCase.KeySelector);
+                    fixture.Uut.Reset(testCase.Values, testCase.KeySelector);
                 })
                 .Should().Throw<ArgumentException>()
                 .WithParameterName("keySelector")
@@ -31,7 +32,7 @@ public static partial class ResetTests
         {
             using var fixture = TUutFixture.Create();
                 
-            fixture.ResetUut(
+            fixture.Uut.Reset(
                 values:         Array.Empty<int>(),
                 keySelector:    static value => value.ToString());
             
@@ -40,12 +41,12 @@ public static partial class ResetTests
             fixture.AssertUutDidNothing();
         }
 
-        [TestCaseSource(typeof(ResetTests), nameof(WhenValuesIsEmptyAndDictionaryIsNot_TestCases))]
+        [TestCaseSource(typeof(ResetTests), nameof(WhenDictionaryIsNotEmpty_TestCases))]
         public void WhenValuesIsEmptyAndDictionaryIsNot_ClearsDictionary(IReadOnlyList<KeyValuePair<string, int>> initialItems)
         {
             using var fixture = TUutFixture.Create(initialItems);
                 
-            fixture.ResetUut(
+            fixture.Uut.Reset(
                 values:         Array.Empty<int>(),
                 keySelector:    static value => value.ToString());
             
@@ -59,7 +60,7 @@ public static partial class ResetTests
         {
             using var fixture = TUutFixture.Create(items: testCase.InitialItems);
                 
-            fixture.ResetUut(testCase.Values, testCase.KeySelector);
+            fixture.Uut.Reset(testCase.Values, testCase.KeySelector);
             
             var items = testCase.Values
                 .Select(value => new KeyValuePair<string, int>(
@@ -72,6 +73,28 @@ public static partial class ResetTests
             fixture.AssertUutWasReset(
                 removedItems:   testCase.InitialItems,
                 addedItems:     items);
+        }
+
+        [TestCaseSource(typeof(ResetTests), nameof(WhenDictionaryIsNotEmpty_TestCases))]
+        public void WhenValuesIsNull_DoesNothingAndThrowsException(IReadOnlyList<KeyValuePair<string, int>> initialItems)
+        {
+            using var fixture = TUutFixture.Create(items: initialItems);
+                
+            var result = FluentActions.Invoking(() =>
+                {
+                    fixture.Uut.Reset<IEnumerable<int>>(
+                        values:         null!,
+                        keySelector:    static value => value.ToString());
+                })
+                .Should().Throw<ArgumentException>()
+                .WithParameterName("values")
+                .Which;
+                
+            Console.WriteLine(result);
+            
+            fixture.Uut.Should().BeEquivalentTo(initialItems, "the collection should not have been changed");
+            
+            fixture.AssertUutDidNothing();
         }
     }
 }

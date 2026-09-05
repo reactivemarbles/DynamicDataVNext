@@ -4,14 +4,15 @@ public static partial class AddRangeTests
 {
     public abstract class Base<TUutFixture, TUut>
         where TUutFixture : ICacheUutFixture<TUutFixture, TUut>
-        where TUut : ICache<string, TestItem>
+        where TUut : ICache<string, TestItem>,
+            IRangeAwareCache<TestItem>
     {
         [TestCaseSource(typeof(AddRangeTests), nameof(WhenCacheIsEmptyAndItemsIsNot_TestCases))]
         public void WhenCacheIsEmptyAndItemsIsNot_ResetsCache(IReadOnlyList<TestItem> items)
         {
             using var fixture = TUutFixture.Create(TestItem.SelectKey);
             
-            fixture.AddRangeToUut(items);
+            fixture.Uut.AddRange(items);
             
             fixture.Uut.Should().BeEquivalentTo(items, "the collection should not have been changed");
             
@@ -29,7 +30,7 @@ public static partial class AddRangeTests
             
             var result = fixture.Invoking(fixture =>
                 {
-                    fixture.AddRangeToUut(testCase.Items);
+                    fixture.Uut.AddRange(testCase.Items);
                 })
                 .Should().Throw<ArgumentException>()
                 .WithParameterName("items")
@@ -49,7 +50,7 @@ public static partial class AddRangeTests
                 keySelector:    TestItem.SelectKey,
                 items:          testCase.InitialItems);
             
-            fixture.AddRangeToUut(testCase.Items);
+            fixture.Uut.AddRange(testCase.Items);
             
             var finalItems = testCase.InitialItems
                 .Concat(testCase.Items)
@@ -67,7 +68,7 @@ public static partial class AddRangeTests
                 keySelector:    TestItem.SelectKey,
                 items:          initialItems);
             
-            fixture.AddRangeToUut(items: Array.Empty<TestItem>());
+            fixture.Uut.AddRange(items: Array.Empty<TestItem>());
         
             fixture.Uut.Should().BeEquivalentTo(initialItems, "the collection should not have been changed");
             
@@ -83,7 +84,7 @@ public static partial class AddRangeTests
             
             var result = fixture.Invoking(fixture =>
                 {
-                    fixture.AddRangeToUut(items: null!);
+                    fixture.Uut.AddRange(items: null!);
                 })
                 .Should().Throw<ArgumentNullException>()
                 .WithParameterName("items")
@@ -105,7 +106,7 @@ public static partial class AddRangeTests
             
             var result = fixture.Invoking(fixture =>
                 {
-                    fixture.AddRangeToUut(testCase.Items);
+                    fixture.Uut.AddRange(testCase.Items);
                 })
                 .Should().Throw<ArgumentException>()
                 .WithParameterName("items")

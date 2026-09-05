@@ -4,7 +4,8 @@ public static partial class InsertRangeTests
 {
     public abstract class Base<TUutFixture, TUut>
         where TUutFixture : IListUutFixture<TUutFixture, TUut>
-        where TUut : IList<string?>
+        where TUut : IList<string?>,
+            IRangeAwareList<string?>
     {
         [TestCase(1, int.MinValue,  TestName = "{m}(Min negative value)")]
         [TestCase(1, -1,            TestName = "{m}(Max negative value)")]
@@ -24,7 +25,7 @@ public static partial class InsertRangeTests
             
             var result = fixture.Invoking(fixture =>
                 {
-                    fixture.InsertRangeIntoUut(
+                    fixture.Uut.InsertRange(
                         index: index,
                         items: new[] { "1" });
                 })
@@ -64,7 +65,7 @@ public static partial class InsertRangeTests
             
             var result = fixture.Invoking(fixture =>
                 {
-                    fixture.InsertRangeIntoUut(
+                    fixture.Uut.InsertRange(
                         index: 0,
                         items: items);
                 })
@@ -99,7 +100,7 @@ public static partial class InsertRangeTests
             
             using var fixture = TUutFixture.Create();
             
-            fixture.InsertRangeIntoUut(
+            fixture.Uut.InsertRange(
                 index: 0,
                 items: items);
             
@@ -115,7 +116,7 @@ public static partial class InsertRangeTests
         {
             using var fixture = TUutFixture.Create(items: testCase.InitialItems);
             
-            fixture.InsertRangeIntoUut(
+            fixture.Uut.InsertRange(
                 index: testCase.Index,
                 items: testCase.Items);
             

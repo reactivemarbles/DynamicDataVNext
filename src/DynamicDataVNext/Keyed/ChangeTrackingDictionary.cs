@@ -8,6 +8,8 @@ namespace DynamicDataVNext;
 [DebuggerDisplay("Count = {Count}")]
 public partial class ChangeTrackingDictionary<TKey, TValue>
         : IDictionary<TKey, TValue>,
+            IRangeAwareDictionary<TKey, TValue>,
+            IRefreshableDictionary<TKey>,
             IReadOnlyDictionary<TKey, TValue>,
             IExpandableCollection
     where TKey : notnull
@@ -161,11 +163,7 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
         _bufferedChanges.Add(KeyedChange.CreateAddition(key, value));
     }
 
-    /// <summary>
-    /// Adds a range of items to the collection, as a single operation, triggering <see cref="KeyedChangeType.Addition"/> records to be added to <see cref="BufferedChanges"/>.
-    /// </summary>
-    /// <param name="items">The key and value pairings to be added to the collection.</param>
-    /// <exception cref="ArgumentNullException">Throws for <paramref name="items"/>.</exception>
+    /// <inheritdoc/>
     /// <exception cref="ArgumentException">Throws if <paramref name="items"/> contains any key values that are <see langword="null"/>, duplicated, or already in the collection.</exception>
     public void AddRange(IEnumerable<KeyValuePair<TKey, TValue>> items)
     {
@@ -187,12 +185,7 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
         }
     }
 
-    /// <summary>
-    /// Adds a range of items to the collection, as a single operation, triggering <see cref="KeyedChangeType.Addition"/> records to be added to <see cref="BufferedChanges"/>.
-    /// </summary>
-    /// <param name="values">The values to use as <see cref="KeyValuePair{TKey, TValue}.Value"/> for each new item.</param>
-    /// <param name="keySelector">A selector to select a <see cref="KeyValuePair{TKey, TValue}.Key"/> value for each new item.</param>
-    /// <exception cref="ArgumentNullException">Throws for <paramref name="values"/> and <paramref name="keySelector"/>.</exception>
+    /// <inheritdoc/>
     /// <exception cref="ArgumentException">Throws if <paramref name="keySelector"/> returns <see langword="null"/>, a duplicated key value, or a key value that already exists within the collection.</exception>
     public void AddRange(
         IEnumerable<TValue> values,
@@ -278,12 +271,8 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
     public Dictionary<TKey, TValue>.Enumerator GetEnumerator()
         => _items.GetEnumerator();
 
-    /// <summary>
-    /// Signals that an item within the collection has, itself, mutated, triggering a <see cref="KeyedChangeType.Refreshment"/> record to be added to <see cref="BufferedChanges"/>.
-    /// </summary>
-    /// <param name="key">The key of the item that was mutated.</param>
+    /// <inheritdoc/>
     /// <exception cref="ArgumentNullException">Throws for <paramref name="key"/>.</exception>
-    /// <returns><see langword="false"/> if the collection does not actually contain <paramref name="key"/>. Otherwise, <see langword="true"/>.</returns>
     public bool Refresh(TKey key)
     {
         if (!_options.ItemsAreMutable)
@@ -330,98 +319,52 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
         return true;
     }
 
-    /// <summary>
-    /// Performs a <see cref="ChangeSetType.Reset"/> operation upon the collection, by removing any existing items within the collection, and replacing them with the given items. 
-    /// </summary>
-    /// <param name="values">The values to use as <see cref="KeyValuePair{TKey, TValue}.Value"/> for the new set of items to be loaded into the collection.</param>
-    /// <param name="keySelector">A selector to select a <see cref="KeyValuePair{TKey, TValue}.Key"/> value for each new item.</param>
-    /// <exception cref="ArgumentNullException">Throws for <paramref name="values"/> and <paramref name="keySelector"/>.</exception>
-    /// <exception cref="ArgumentException">Throws if <paramref name="keySelector"/> returns <see langword="null"/>, a duplicated key value, or a key value that already exists within the collection.</exception>
-    public void Reset(
-        IEnumerable<TValue> values,
-        Func<TValue, TKey>  keySelector)
+    /// <inheritdoc/>
+    public void Reset<TItems>(TItems items)
+        where TItems : IEnumerable<KeyValuePair<TKey, TValue>>
     {
-        ArgumentNullException.ThrowIfNull(values);
-        ArgumentNullException.ThrowIfNull(keySelector);
-
-        // If there's no existing items to remove, this is equivalent to an AddRange().
-        if (_items.Count is 0)
-        {
-            try
-            {
-                AddRange_Internal(
-                    elements:       values,
-                    keySelector:    keySelector,
-                    valueSelector:  static value => value);
-            }
-            catch (ArgumentException exception)
-            {
-                throw new ArgumentException(
-                    paramName:      nameof(keySelector),
-                    message:        exception.Message,
-                    innerException: exception);
-            }
-            return;
-        }
-
-        if (values.TryGetNonEnumeratedCount(out var valuesCount))
-        {
-            // If there are no new items to add, this is equivalent to a Clear()
-            if (valuesCount is 0)
-            {
-                Clear();
-                return;
-            }
-            
-            // The final size of the collection will be the new value count. 
-            _items.EnsureCapacity(valuesCount);
-        }
-
-        // We'll be adding a change for each item in the current collection, and each item in the new collection
-        // (although we don't know for sure how many the new collection has)
-        _bufferedChanges.EnsureCapacity(_bufferedChanges.Count + _items.Count + valuesCount);
-
-        var checkpoint = _bufferedChanges.CreateCheckpoint();
-        var priorBufferedChangeCount = _bufferedChanges.Count; 
-        var lastRemovalIndex = _bufferedChanges.Count + _items.Count - 1;
-        foreach (var item in _items)
-            _bufferedChanges.Add(KeyedChange.CreateRemoval(item));
-
-        _items.Clear();
+        if (items is null)
+            throw new ArgumentNullException(nameof(items));
 
         try
         {
-            foreach(var value in values)
-            {
-                var key = keySelector.Invoke(value);
-                
-                try
-                {
-                    _items.Add(key, value);
-                }
-                catch (ArgumentException exception)
-                {
-                    throw new ArgumentException(
-                        paramName:      nameof(keySelector),
-                        message:        exception.Message,
-                        innerException: exception);
-                }
-                
-                _bufferedChanges.Add(KeyedChange.CreateAddition(key, value));
-            }
+            Reset_Internal<TItems, KeyValuePair<TKey, TValue>>(
+                elements:       items,
+                keySelector:    static item => item.Key,
+                valueSelector:  static item => item.Value);
         }
-        catch
+        catch (ArgumentException exception) when (exception.ParamName is not nameof(items)) 
         {
-            // Before we rollback the change buffer, use it to put back all the items we removed.
-            _items.Clear();
-            for (var i = priorBufferedChangeCount; i <= lastRemovalIndex; ++i)
-            {
-                var removal = _bufferedChanges[i].AsRemoval();
-                _items.Add(removal.Key, removal.Item);
-            }
-            
-            checkpoint.Restore();
-            throw;
+            throw new ArgumentException(
+                paramName:      nameof(items),
+                message:        exception.Message,
+                innerException: exception);
+        }
+    }
+
+    /// <inheritdoc/>
+    public void Reset<TValues>(
+            TValues             values,
+            Func<TValue, TKey>  keySelector)
+        where TValues : IEnumerable<TValue>
+    {
+        if (values is null)
+            throw new ArgumentNullException(nameof(values));
+        ArgumentNullException.ThrowIfNull(keySelector);
+
+        try
+        {
+            Reset_Internal(
+                elements:       values,
+                keySelector:    keySelector,
+                valueSelector:  static value => value);
+        }
+        catch (ArgumentException exception) when (exception.ParamName is not nameof(keySelector)) 
+        {
+            throw new ArgumentException(
+                paramName:      nameof(keySelector),
+                message:        exception.Message,
+                innerException: exception);
         }
     }
 
@@ -483,6 +426,73 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
             for (var i = priorBufferedChangeCount; i < _bufferedChanges.Count; ++i)
                 _items.Remove(_bufferedChanges[i].Key);
 
+            checkpoint.Restore();
+            throw;
+        }
+    }
+
+    private void Reset_Internal<TElements, TElement>(
+            TElements               elements,
+            Func<TElement, TKey>    keySelector,
+            Func<TElement, TValue>  valueSelector)
+        where TElements : IEnumerable<TElement>
+    {
+        // If there's no existing items to remove, this is equivalent to an AddRange().
+        if (_items.Count is 0)
+        {
+            AddRange_Internal(
+                elements:       elements,
+                keySelector:    keySelector,
+                valueSelector:  valueSelector);
+            return;
+        }
+
+        if (elements.TryGetNonEnumeratedCount(out var elementsCount))
+        {
+            // If there are no new items to add, this is equivalent to a Clear()
+            if (elementsCount is 0)
+            {
+                Clear();
+                return;
+            }
+            
+            // The final size of the collection will be the new value count. 
+            _items.EnsureCapacity(elementsCount);
+        }
+
+        // We'll be adding a change for each item in the current collection, and each item in the new collection
+        // (although we don't know for sure how many the new collection has)
+        _bufferedChanges.EnsureCapacity(_bufferedChanges.Count + _items.Count + elementsCount);
+
+        var checkpoint = _bufferedChanges.CreateCheckpoint();
+        var priorBufferedChangeCount = _bufferedChanges.Count; 
+        var lastRemovalIndex = _bufferedChanges.Count + _items.Count - 1;
+        foreach (var item in _items)
+            _bufferedChanges.Add(KeyedChange.CreateRemoval(item));
+
+        _items.Clear();
+
+        try
+        {
+            foreach(var element in elements)
+            {
+                var key     = keySelector   .Invoke(element);
+                var value   = valueSelector .Invoke(element);
+                
+                _items.Add(key, value);
+                _bufferedChanges.Add(KeyedChange.CreateAddition(key, value));
+            }
+        }
+        catch
+        {
+            // Before we rollback the change buffer, use it to put back all the items we removed.
+            _items.Clear();
+            for (var i = priorBufferedChangeCount; i <= lastRemovalIndex; ++i)
+            {
+                var removal = _bufferedChanges[i].AsRemoval();
+                _items.Add(removal.Key, removal.Item);
+            }
+            
             checkpoint.Restore();
             throw;
         }

@@ -8,7 +8,7 @@ public static partial class ContainsTests
             new TestCaseData(new SingleItemOperationTestCase()
                 {
                     Items   = new[] { 1 },
-                    Item    = 1 
+                    Item    = 1
                 })
                 .SetName("{m}(Single item in collection)"),
             new TestCaseData(new SingleItemOperationTestCase()

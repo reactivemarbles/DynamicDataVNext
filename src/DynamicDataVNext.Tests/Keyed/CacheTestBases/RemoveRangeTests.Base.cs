@@ -4,7 +4,8 @@ public static partial class RemoveRangeTests
 {
     public abstract class Base<TUutFixture, TUut>
         where TUutFixture : ICacheUutFixture<TUutFixture, TUut>
-        where TUut : ICache<string, TestItem>
+        where TUut : ICache<string, TestItem>,
+            IRangeAwareCache<TestItem>
     {
         [TestCaseSource(typeof(RemoveRangeTests), nameof(WhenCacheContainsAnyOfItems_TestCases))]
         public void WhenCacheContainsAnyOfItems_RemovesMatchingItems(ItemRangeOperationTestCase testCase)
@@ -13,7 +14,7 @@ public static partial class RemoveRangeTests
                 keySelector:    TestItem.SelectKey,
                 items:          testCase.InitialItems);
                 
-            fixture.RemoveRangeFromUut(testCase.Items);
+            fixture.Uut.RemoveRange(testCase.Items);
             
             var matchingItems = Enumerable.Intersect(
                     testCase.InitialItems,
@@ -35,7 +36,7 @@ public static partial class RemoveRangeTests
                 keySelector:    TestItem.SelectKey,
                 items:          testCase.InitialItems);
                 
-            fixture.RemoveRangeFromUut(testCase.Items);
+            fixture.Uut.RemoveRange(testCase.Items);
             
             fixture.Uut.Should().BeEquivalentTo(testCase.InitialItems, "the collection should not have been changed");
             
@@ -51,7 +52,7 @@ public static partial class RemoveRangeTests
                 
             var result = fixture.Invoking(fixture =>
                 {
-                    fixture.RemoveRangeFromUut(testCase.Items);
+                    fixture.Uut.RemoveRange(testCase.Items);
                 })
                 .Should().Throw<ArgumentException>()
                 .WithParameterName("items")

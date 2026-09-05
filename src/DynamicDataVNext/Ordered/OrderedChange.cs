@@ -16,10 +16,11 @@ public readonly partial record struct OrderedChange<T>
     public ChangeCategory Category
         => Type switch
         {
-            OrderedChangeType.None      => ChangeCategory.None,
-            OrderedChangeType.Insertion => ChangeCategory.Addition,
-            OrderedChangeType.Removal   => ChangeCategory.Removal,
-            _                           => ChangeCategory.Other
+            OrderedChangeType.None          => ChangeCategory.None,
+            OrderedChangeType.Insertion     => ChangeCategory.Addition,
+            OrderedChangeType.Refreshment   => ChangeCategory.Refreshment,
+            OrderedChangeType.Removal       => ChangeCategory.Removal,
+            _                               => ChangeCategory.Other
         };
 
     /// <inheritdoc/>

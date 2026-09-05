@@ -4,14 +4,15 @@ public static partial class AddRangeTests
 {
     public abstract class ForItemsBase<TUutFixture, TUut>
         where TUutFixture : IDictionaryUutFixture<TUutFixture, TUut>
-        where TUut : IDictionary<string, int>
+        where TUut : IDictionary<string, int>,
+            IRangeAwareDictionary<string, int>
     {
         [TestCaseSource(typeof(AddRangeTests), nameof(WhenItemsAndDictionaryAreNotEmptyAndKeysDoNotOverlap_TestCases))]
         public void WhenItemsAndDictionaryAreNotEmptyAndKeysDoNotOverlap_AddsItems(ItemRangeOperationTestCase testCase)
         {
             using var fixture = TUutFixture.Create(items: testCase.InitialItems);
                 
-            fixture.AddRangeToUut(testCase.Items);
+            fixture.Uut.AddRange(testCase.Items);
             
             fixture.Uut.Should().BeEquivalentTo(testCase.InitialItems.Concat(testCase.Items), "all given items should have been added to the dictionary");
             
@@ -25,7 +26,7 @@ public static partial class AddRangeTests
             
             var result = FluentActions.Invoking(() =>
                 {
-                    fixture.AddRangeToUut(testCase.Items);
+                    fixture.Uut.AddRange(testCase.Items);
                 })
                 .Should().Throw<ArgumentException>()
                 .WithParameterName("items")
@@ -45,7 +46,7 @@ public static partial class AddRangeTests
             
             var result = FluentActions.Invoking(() =>
                 {
-                    fixture.AddRangeToUut(testCase.Items);
+                    fixture.Uut.AddRange(testCase.Items);
                 })
                 .Should().Throw<ArgumentException>()
                 .WithParameterName("items")
@@ -63,7 +64,7 @@ public static partial class AddRangeTests
         {
             using var fixture = TUutFixture.Create(items: initialItems);
                 
-            fixture.AddRangeToUut(Array.Empty<KeyValuePair<string, int>>());
+            fixture.Uut.AddRange(Array.Empty<KeyValuePair<string, int>>());
             
             fixture.Uut.Should().BeEquivalentTo(initialItems, "the dictionary should have retained its initial items");
             
@@ -75,7 +76,7 @@ public static partial class AddRangeTests
         {
             using var fixture = TUutFixture.Create();
                 
-            fixture.AddRangeToUut(items);
+            fixture.Uut.AddRange(items);
             
             fixture.Uut.Should().BeEquivalentTo(items, "the dictionary should have been reset to the given items");
             
@@ -91,7 +92,7 @@ public static partial class AddRangeTests
                 
             var result = FluentActions.Invoking(() =>
                 {
-                    fixture.AddRangeToUut(items: null!);
+                    fixture.Uut.AddRange(items: null!);
                 })
                 .Should().Throw<ArgumentNullException>()
                 .WithParameterName("items")
@@ -109,7 +110,7 @@ public static partial class AddRangeTests
             
             var result = FluentActions.Invoking(() =>
                 {
-                    fixture.AddRangeToUut(testCase.Items);
+                    fixture.Uut.AddRange(testCase.Items);
                 })
                 .Should().Throw<ArgumentException>()
                 .WithParameterName("items")

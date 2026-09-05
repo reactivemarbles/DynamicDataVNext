@@ -27,6 +27,8 @@ public interface ISetUutFixture<out TUutFixture, out TUut>
 
     void AssertItemWasAdded(int addedItem);
 
+    void AssertItemWasRefreshed(int refreshedItem);
+
     void AssertItemWasRemoved(int removedItem);
 
     void AssertItemsWereAdded(IReadOnlyList<int> addedItems);
@@ -47,6 +49,4 @@ public interface ISetUutFixture<out TUutFixture, out TUut>
         IReadOnlyList<int>  removedItems,
         IReadOnlyList<int>  addedItems,
         string              itemsRemovedBecause);
-    
-    void ResetUut(IEnumerable<int> items);
 }

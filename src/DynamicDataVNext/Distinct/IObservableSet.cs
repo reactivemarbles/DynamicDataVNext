@@ -6,28 +6,12 @@
 /// <typeparam name="T">The type of the items in the collection.</typeparam>
 public interface IObservableSet<T>
     : IObservableCollection<T>,
+        IRangeAwareSet<T>,
+        IRefreshableSet<T>,
         ISet<T>
 {
     /// <summary>
     /// The stream of changes describing mutations made to the collection.
     /// </summary>
     DistinctChangeStream<T> ChangeStream { get; }
-
-    /// <summary>
-    /// Signals that the given item within the collection has, itself, mutated, triggering a <see cref="DistinctChangeType.Refreshment"/> notification to be published via <see cref="ChangeStream"/>.
-    /// </summary>
-    /// <param name="item">The item that was mutated.</param>
-    /// <returns><see langword="false"/> if the collection does not actually contain <paramref name="item"/>. Otherwise, <see langword="true"/>.</returns>
-    /// <exception cref="ImmutableRefreshException">Throws if <see cref="ChangeStream"/>.<see cref="DistinctChangeStream{T}.Options"/>.<see cref="DistinctItemOptions.ItemsAreMutable"/> is <see langword="false"/>.</exception>
-    bool Refresh(T item);
-    
-    /// <summary>
-    /// Performs a <see cref="ChangeSetType.Reset"/> operation upon the collection, by removing any existing items within the collection, and replacing them with the given items. 
-    /// </summary>
-    /// <param name="items">The new set of items to be loaded into the collection.</param>
-    /// <exception cref="ArgumentNullException">Throws for <paramref name="items"/>.</exception>
-    /// <remarks>
-    /// Any duplicate items within <paramref name="items"/> are automatically ignored.
-    /// </remarks>
-    void Reset(IEnumerable<T> items);
 }

@@ -81,6 +81,7 @@ public abstract partial class ChangeSetBuilderBase<TChangeSet, TChange, TChangeT
                 --_sourceCount;
                 break;
 
+            case ChangeCategory.Refreshment:
             case ChangeCategory.Other:
                 _changesHasNonRemovals = true;
                 break;

@@ -28,8 +28,6 @@ public interface ICacheUutFixture<out TUutFixture, out TUut>
     
     KeyedItemOptions UutOptions { get; }
 
-    void AddRangeToUut(IEnumerable<TestItem> items);
-    
     void AssertItemWasAdded(TestItem addedItem);
 
     void AssertItemWasRefreshed(TestItem refreshedItem);
@@ -57,14 +55,4 @@ public interface ICacheUutFixture<out TUutFixture, out TUut>
     void AssertUutWasReset(
         IReadOnlyList<TestItem> removedItems,
         IReadOnlyList<TestItem> addedItems);
-
-    void MergeRangeIntoUut(IEnumerable<TestItem> items);
-
-    bool RefreshUutItem(TestItem item);
-
-    bool RefreshUutKey(string key);
-    
-    void RemoveRangeFromUut(IEnumerable<TestItem> items);
-
-    void ResetUut(IEnumerable<TestItem> items);
 }

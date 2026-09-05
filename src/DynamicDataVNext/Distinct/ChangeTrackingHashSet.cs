@@ -7,6 +7,8 @@ namespace DynamicDataVNext;
 [DebuggerDisplay("Count = {Count}")]
 public partial class ChangeTrackingHashSet<T>
     : ISet<T>,
+        IRangeAwareSet<T>,
+        IRefreshableSet<T>,
         IReadOnlySet<T>,
         IExpandableCollection
 {
@@ -213,12 +215,7 @@ public partial class ChangeTrackingHashSet<T>
     public bool Overlaps(IEnumerable<T> other)
         => _items.Overlaps(other);
 
-    /// <summary>
-    /// Signals that the given item within the collection has, itself, mutated, triggering a <see cref="DistinctChangeType.Refreshment"/> record to be added to <see cref="BufferedChanges"/>.
-    /// </summary>
-    /// <param name="item">The item that was mutated.</param>
-    /// <returns><see langword="false"/> if the collection does not actually contain <paramref name="item"/>. Otherwise, <see langword="true"/>.</returns>
-    /// <exception cref="ImmutableRefreshException">Throws if <see cref="Options"/>.<see cref="DistinctItemOptions.ItemsAreMutable"/> is <see langword="false"/>.</exception>
+    /// <inheritdoc/>
     public bool Refresh(T item)
     {
         if (!_options.ItemsAreMutable)
@@ -251,15 +248,9 @@ public partial class ChangeTrackingHashSet<T>
         return true;
     }
 
-    /// <summary>
-    /// Performs a <see cref="ChangeSetType.Reset"/> operation upon the collection, by removing any existing items within the collection, and replacing them with the given items. 
-    /// </summary>
-    /// <param name="items">The new set of items to be loaded into the collection.</param>
-    /// <exception cref="ArgumentNullException">Throws for <paramref name="items"/>.</exception>
-    /// <remarks>
-    /// Any duplicate items within <paramref name="items"/> are automatically ignored.
-    /// </remarks>
-    public void Reset(IEnumerable<T> items)
+    /// <inheritdoc/>
+    public void Reset<TItems>(TItems items)
+        where TItems : IEnumerable<T>
     {
         ArgumentNullException.ThrowIfNull(items);
 

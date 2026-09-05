@@ -58,6 +58,9 @@ public static partial class UutFixture
         public void AssertItemWasAdded(int addedItem)
             => AssertChangePerformed();
 
+        public void AssertItemWasRefreshed(int refreshedItem)
+            => AssertChangePerformed();
+
         public void AssertItemWasRemoved(int removedItem)
             => AssertChangePerformed();
 
@@ -85,9 +88,6 @@ public static partial class UutFixture
                 IReadOnlyList<int>  addedItems,
                 string              itemsRemovedBecause)
             => AssertChangePerformed();
-
-        public void ResetUut(IEnumerable<int> items)
-            => _uut.Reset(items);
 
         private void AssertChangePerformed()
         {

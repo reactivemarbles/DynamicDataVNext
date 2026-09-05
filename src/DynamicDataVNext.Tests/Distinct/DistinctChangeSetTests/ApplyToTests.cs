@@ -1,5 +1,6 @@
 namespace DynamicDataVNext.Tests.Distinct.DistinctChangeSetTests;
 
+[TestFixture]
 public static partial class ApplyToTests
 {
     public class TestCase

@@ -4,14 +4,15 @@ public static partial class ResetTests
 {
     public abstract class Base<TUutFixture, TUut>
         where TUutFixture : ISetUutFixture<TUutFixture, TUut>
-        where TUut : ISet<int>
+        where TUut : ISet<int>,
+            IRangeAwareSet<int>
     {
         [Test]
         public void WhenItemsAndSetAreEmpty_DoesNothing()
         {
             using var fixture = TUutFixture.Create();
                 
-            fixture.ResetUut(Array.Empty<int>());
+            fixture.Uut.Reset(Array.Empty<int>());
             
             fixture.Uut.Should().BeEmpty("the set should remain empty");
             
@@ -23,7 +24,7 @@ public static partial class ResetTests
         {
             using var fixture = TUutFixture.Create(items);
                 
-            fixture.ResetUut(Array.Empty<int>());
+            fixture.Uut.Reset(Array.Empty<int>());
             
             fixture.Uut.Should().BeEmpty("the set should have been cleared");
             
@@ -35,7 +36,7 @@ public static partial class ResetTests
         {
             using var fixture = TUutFixture.Create(items: testCase.Items);
                 
-            fixture.ResetUut(testCase.Other);
+            fixture.Uut.Reset(testCase.Other);
             
             fixture.Uut.Should().BeEquivalentTo(testCase.Other, "the set should have been reset to the given set");
             

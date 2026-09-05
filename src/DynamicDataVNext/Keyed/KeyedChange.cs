@@ -19,6 +19,7 @@ public readonly partial record struct KeyedChange<TKey, TItem>
         {
             KeyedChangeType.None        => ChangeCategory.None,
             KeyedChangeType.Addition    => ChangeCategory.Addition,
+            KeyedChangeType.Refreshment => ChangeCategory.Refreshment,
             KeyedChangeType.Removal     => ChangeCategory.Removal,
             _                           => ChangeCategory.Other
         };

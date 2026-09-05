@@ -80,6 +80,19 @@ public static partial class UutFixture
             _uutResults.RecordedItems.Should().BeEquivalentTo(_uut, options => options.WithoutStrictOrdering(), "collecting published changes should reproduce the source collection");
         }
 
+        public void AssertItemWasRefreshed(int refreshedItem)
+        {
+            AssertNotificationsSuspendedAndResumed();
+
+            _uutResults.HasFinalized.Should().BeFalse("the set can still be changed");
+            _uutResults.RecordedChangeSets.Should().ContainSingle("a single change operation was performed");
+            _uutResults.RecordedChangeSets[0].Changes.Should().ContainSingle("a single item should have been refreshed");
+            _uutResults.RecordedChangeSets[0].Changes[0].Type.Should().Be(DistinctChangeType.Refreshment, "a single item should have been refreshed");
+            _uutResults.RecordedChangeSets[0].Changes[0].Item.Should().Be(refreshedItem, "the given item should have been refreshed");
+            _uutResults.RecordedChangeSets[0].Type.Should().Be(ChangeSetType.Update, "refreshing an item should produce an update");
+            _uutResults.RecordedItems.Should().BeEquivalentTo(_uut, options => options.WithoutStrictOrdering(), "collecting published changes should reproduce the source collection");
+        }
+
         public void AssertItemWasRemoved(int removedItem)
         {
             AssertNotificationsSuspendedAndResumed();
@@ -177,9 +190,6 @@ public static partial class UutFixture
             _uutResults.RecordedItems.Should().BeEquivalentTo(_uut, options => options.WithoutStrictOrdering(), "collecting published changes should reproduce the source collection");
         }
         
-        public void ResetUut(IEnumerable<int> items)
-            => _uut.Reset(items);
-
         private void AssertNotificationsSuspendedAndResumed()
         {
             _collectionChangedResults.RecordedNotifications.Should().BeEmpty("notifications should have been suspended");

@@ -9,6 +9,9 @@ namespace DynamicDataVNext;
 [DebuggerDisplay("Count = {Count}")]
 public partial class ChangeTrackingList<T>
     : IList<T>,
+        IRangeAwareList<T>,
+        IMovementAwareList,
+        IRefreshableList,
         IReadOnlyList<T>,
         IExpandableCollection
 {
@@ -105,7 +108,7 @@ public partial class ChangeTrackingList<T>
             item:   item));
     }
 
-    /// <inheritdoc cref="IObservableList{T}.AddRange(IEnumerable{T})"/>
+    // <inheritdoc/>
     public void AddRange(IEnumerable<T> items)
     {
         ArgumentNullException.ThrowIfNull(items);
@@ -205,7 +208,7 @@ public partial class ChangeTrackingList<T>
             item:   item));
     }
 
-    /// <inheritdoc cref="IObservableList{T}.InsertRange(int, IEnumerable{T})"/>
+    // <inheritdoc/>
     public void InsertRange(
         int             index,
         IEnumerable<T>  items)
@@ -287,7 +290,7 @@ public partial class ChangeTrackingList<T>
                 item:   _orderedItems[i]));
     }
 
-    /// <inheritdoc cref="IObservableList{T}.Move(int, int)"/>
+    // <inheritdoc/>
     public void Move(
         int oldIndex,
         int newIndex)
@@ -368,6 +371,17 @@ public partial class ChangeTrackingList<T>
     }
 
     /// <inheritdoc/>
+    public void RefreshAt(int index)
+    {
+        if (!_options.ItemsAreMutable)
+            throw new ImmutableRefreshException();
+    
+        _bufferedChanges.Add(OrderedChange.CreateRefreshment(
+            index:  index,
+            item:   _orderedItems[index]));
+    }
+    
+    /// <inheritdoc/>
     public bool Remove(T item)
     {
         var index = _orderedItems.IndexOf(item);
@@ -395,14 +409,59 @@ public partial class ChangeTrackingList<T>
             item:   item));
     }
     
-    /// <summary>
-    /// Performs a <see cref="ChangeSetType.Reset"/> operation upon the collection, by removing any existing items within the collection, and replacing them with the given items. 
-    /// </summary>
-    /// <param name="items">The new set of items to be loaded into the collection.</param>
-    /// <exception cref="ArgumentNullException">Throws for <paramref name="items"/>.</exception>
-    public void Reset(IEnumerable<T> items)
+    /// <inheritdoc/>
+    public void RemoveRange(
+        int index,
+        int count)
     {
-        ArgumentNullException.ThrowIfNull(items);
+        ArgumentOutOfRangeException.ThrowIfNegative(index);
+        ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(index, _orderedItems.Count);
+        ArgumentOutOfRangeException.ThrowIfNegative(count);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(count, _orderedItems.Count - index);
+
+        if (count is 0)
+            return;
+
+        _bufferedChanges.EnsureCapacity(_bufferedChanges.Count + count);
+        for (var i = index + count - 1; i >= index; --i)
+        {
+            _bufferedChanges.Add(OrderedChange.CreateRemoval(
+                index:  i,
+                item:   _orderedItems[i]));
+                
+            _orderedItems.RemoveAt(i);
+        }
+    }
+
+    public void RemoveRange2(
+        int index,
+        int count)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(index);
+        ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(index, _orderedItems.Count);
+        ArgumentOutOfRangeException.ThrowIfNegative(count);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(count, _orderedItems.Count - index);
+
+        if (count is 0)
+            return;
+
+        _bufferedChanges.EnsureCapacity(_bufferedChanges.Count + count);
+        for (var i = index + count - 1; i >= index; --i)
+        {
+            _bufferedChanges.Add(OrderedChange.CreateRemoval(
+                index:  i,
+                item:   _orderedItems[i]));
+        }
+
+        _orderedItems.RemoveRange(index, count);
+    }
+
+    /// <inheritdoc/>
+    public void Reset<TItems>(TItems items)
+        where TItems : IEnumerable<T>
+    {
+        if (items is null)
+            throw new ArgumentNullException(nameof(items));
 
         // If there's no existing items to remove, this is equivalent to an AddRange().
         if (_orderedItems.Count is 0)
@@ -476,7 +535,8 @@ public partial class ChangeTrackingList<T>
     IEnumerator<T> IEnumerable<T>.GetEnumerator()
         => _orderedItems.GetEnumerator();
 
-    private void AddRange_Internal(IEnumerable<T> items)
+    private void AddRange_Internal<TItems>(TItems items)
+        where TItems : IEnumerable<T>
     {
         if (items.TryGetNonEnumeratedCount(out var itemsCount))
         {

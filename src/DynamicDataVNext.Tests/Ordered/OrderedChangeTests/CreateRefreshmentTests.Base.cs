@@ -14,7 +14,7 @@ public static partial class CreateRefreshmentTests
                 index:  index,
                 item:   item);
         
-            result.Category.Should().Be(ChangeCategory.Other, "a refreshment change should have been generated");
+            result.Category.Should().Be(ChangeCategory.Refreshment, "a refreshment change should have been generated");
             result.Type.Should().Be(OrderedChangeType.Refreshment, "a refreshment change should have been generated");
             result.AsRefreshment().Index.Should().Be(index, "the given index should have been embedded into the generated change");
             result.AsRefreshment().Item.Should().Be(item, "the given item should have been embedded into the generated change");

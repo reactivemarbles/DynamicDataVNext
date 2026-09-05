@@ -6,7 +6,8 @@ public static partial class AddRangeTests
 {
     public abstract class Base<TUutFixture, TUut>
         where TUutFixture : IListUutFixture<TUutFixture, TUut>
-        where TUut : IList<string?>
+        where TUut : IList<string?>,
+            IRangeAwareList<string?>
     {
         [TestCaseSource(typeof(AddRangeTests), nameof(InitialITems_TestCases))]
         public void WhenItemsIsNull_DoesNothingAndThrowsException(IReadOnlyList<string?> initialItems)
@@ -15,7 +16,7 @@ public static partial class AddRangeTests
             
             var result = fixture.Invoking(fixture =>
                 {
-                    fixture.AddRangeToUut(null!);
+                    fixture.Uut.AddRange(null!);
                 })
                 .Should().Throw<ArgumentNullException>()
                 .WithParameterName("items")
@@ -33,7 +34,7 @@ public static partial class AddRangeTests
         {
             using var fixture = TUutFixture.Create(items: initialItems);
             
-            fixture.AddRangeToUut(Array.Empty<string?>());
+            fixture.Uut.AddRange(Array.Empty<string?>());
     
             fixture.Uut.Should().BeEquivalentTo(initialItems, static options => options.WithStrictOrdering(), "the collection should not have been changed");
             
@@ -65,7 +66,7 @@ public static partial class AddRangeTests
             
             var result = fixture.Invoking(fixture =>
                 {
-                    fixture.AddRangeToUut(items);
+                    fixture.Uut.AddRange(items);
                 })
                 .Should().Throw<TestException>()
                 .Which;
@@ -98,7 +99,7 @@ public static partial class AddRangeTests
             
             using var fixture = TUutFixture.Create();
             
-            fixture.AddRangeToUut(items);
+            fixture.Uut.AddRange(items);
             
             fixture.Uut.Should().BeEquivalentTo(items, static options => options.WithStrictOrdering(), "the collection should have been reset to the given items");
             
@@ -112,7 +113,7 @@ public static partial class AddRangeTests
         {
             using var fixture = TUutFixture.Create(items: testCase.InitialItems);
             
-            fixture.AddRangeToUut(testCase.Items);
+            fixture.Uut.AddRange(testCase.Items);
             
             var finalItems = Enumerable.Concat(
                 testCase.InitialItems,

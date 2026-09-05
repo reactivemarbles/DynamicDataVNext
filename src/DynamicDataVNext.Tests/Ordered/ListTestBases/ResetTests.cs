@@ -2,15 +2,6 @@ namespace DynamicDataVNext.Tests.Ordered.ListTestBases;
 
 public static partial class ResetTests
 {
-    public static readonly IReadOnlyList<TestCaseData> WhenItemsIsEmptyAndListIsNot_TestCases
-        = new[]
-        {
-            new TestCaseData((object)new[] { "1" })                         .SetName("{m}(Single non-null item in list)"),
-            new TestCaseData((object)new string?[] { null })                .SetName("{m}(Single null item in list)"),
-            new TestCaseData((object)new[] { "1", "2", "3" })               .SetName("{m}(Multiple non-null items in list)"),
-            new TestCaseData((object)new string?[] { null, null, null })    .SetName("{m}(Multiple null items in list)")
-        };
-
     public static readonly IReadOnlyList<TestCaseData> WhenItemsIsNotEmpty_TestCases
         = new[]
         {
@@ -104,5 +95,14 @@ public static partial class ResetTests
                     Items           = new string?[] { null, null, null }
                 })
                 .SetName("{m}(Multiple null items in list, Redundant reset)")
+        };
+
+    public static readonly IReadOnlyList<TestCaseData> WhenListIsNotEmpty_TestCases
+        = new[]
+        {
+            new TestCaseData((object)new[] { "1" })                         .SetName("{m}(Single non-null item in list)"),
+            new TestCaseData((object)new string?[] { null })                .SetName("{m}(Single null item in list)"),
+            new TestCaseData((object)new[] { "1", "2", "3" })               .SetName("{m}(Multiple non-null items in list)"),
+            new TestCaseData((object)new string?[] { null, null, null })    .SetName("{m}(Multiple null items in list)")
         };
 }

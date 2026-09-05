@@ -60,9 +60,6 @@ public sealed class UutFixture
     public KeyedItemOptions UutOptions
         => _uut.Options;
 
-    public void AddRangeToUut(IEnumerable<TestItem> items)
-        => _uut.AddRange(items);
-
     public void AssertItemWasAdded(TestItem addedItem)
     {
         var addedKey = _keySelector.Invoke(addedItem);
@@ -307,21 +304,6 @@ public sealed class UutFixture
     }
 
     public void Dispose() { }
-
-    public void MergeRangeIntoUut(IEnumerable<TestItem> items)
-        => _uut.MergeRange(items);
-
-    public bool RefreshUutItem(TestItem item)
-        => _uut.Refresh(item);
-
-    public bool RefreshUutKey(string key)
-        => _uut.RefreshKey(key);
-
-    public void RemoveRangeFromUut(IEnumerable<TestItem> items)
-        => _uut.RemoveRange(items);
-
-    public void ResetUut(IEnumerable<TestItem> items)
-        => _uut.Reset(items);
 
     private readonly Func<TestItem, string>                 _keySelector;
     private readonly ChangeTrackingCache<string, TestItem>  _uut;

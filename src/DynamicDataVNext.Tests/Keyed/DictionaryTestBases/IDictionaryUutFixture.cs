@@ -25,12 +25,6 @@ public interface IDictionaryUutFixture<out TUutFixture, out TUut>
     
     KeyedItemOptions UutOptions { get; }
 
-    void AddRangeToUut(IEnumerable<KeyValuePair<string, int>> items);
-
-    void AddRangeToUut(
-        IEnumerable<int>    values,
-        Func<int, string>   keySelector);
-    
     void AssertItemWasAdded(
         string  addedKey,
         int     addedValue);
@@ -57,10 +51,4 @@ public interface IDictionaryUutFixture<out TUutFixture, out TUut>
     void AssertUutWasReset(
         IReadOnlyList<KeyValuePair<string, int>> removedItems,
         IReadOnlyList<KeyValuePair<string, int>> addedItems);
-
-    bool RefreshUut(string key);
-    
-    void ResetUut(
-        IEnumerable<int>    values,
-        Func<int, string>   keySelector);
 }

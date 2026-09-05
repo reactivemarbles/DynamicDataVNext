@@ -20,6 +20,10 @@ public enum ChangeCategory
     /// </summary>
     Addition,
     /// <summary>
+    /// Describes an item within a collection being mutated.
+    /// </summary>
+    Refreshment,
+    /// <summary>
     /// Describes the removal of an item from a collection.
     /// </summary>
     Removal,

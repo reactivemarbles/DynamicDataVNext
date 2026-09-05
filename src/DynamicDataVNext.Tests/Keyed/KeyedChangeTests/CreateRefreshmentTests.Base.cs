@@ -12,10 +12,10 @@ public static partial class CreateRefreshmentTests
             
             var result = InvokeUut(key, item);
             
-            result.Category.Should().Be(ChangeCategory.Removal, "a removal change should have been generated");
-            result.Type.Should().Be(KeyedChangeType.Removal, "a removal change should have been generated");
-            result.AsRemoval().Key.Should().Be(key, "the given key should have been embedded in the generated change");
-            result.AsRemoval().Item.Should().Be(item, "the given item should have been embedded in the generated change");
+            result.Category.Should().Be(ChangeCategory.Refreshment, "a refreshment change should have been generated");
+            result.Type.Should().Be(KeyedChangeType.Refreshment, "a refreshment change should have been generated");
+            result.AsRefreshment().Key.Should().Be(key, "the given key should have been embedded in the generated change");
+            result.AsRefreshment().Item.Should().Be(item, "the given item should have been embedded in the generated change");
         }
         
         protected abstract KeyedChange<int, int> InvokeUut(

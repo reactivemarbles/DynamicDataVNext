@@ -2,7 +2,8 @@ namespace DynamicDataVNext.Tests.Ordered.ListTestBases;
 
 public abstract class MoveTestsBase<TUutFixture, TUut>
     where TUutFixture : IListUutFixture<TUutFixture, TUut>
-    where TUut : IList<string?>
+    where TUut : IList<string?>,
+        IMovementAwareList
 {
     [TestCase(1, int.MinValue,  TestName = "{m}(Min negative value)")]
     [TestCase(1, -1,            TestName = "{m}(Max negative value)")]
@@ -21,7 +22,7 @@ public abstract class MoveTestsBase<TUutFixture, TUut>
         
         var result = fixture.Invoking(fixture => 
             {
-                fixture.MoveItemWithinUut(
+                fixture.Uut.Move(
                     oldIndex:   0,
                     newIndex:   newIndex);
             })
@@ -54,7 +55,7 @@ public abstract class MoveTestsBase<TUutFixture, TUut>
         
         var result = fixture.Invoking(fixture => 
             {
-                fixture.MoveItemWithinUut(
+                fixture.Uut.Move(
                     oldIndex:   oldIndex,
                     newIndex:   0);
             })
@@ -88,7 +89,7 @@ public abstract class MoveTestsBase<TUutFixture, TUut>
 
         using var fixture = TUutFixture.Create(items);
         
-        fixture.MoveItemWithinUut(
+        fixture.Uut.Move(
             oldIndex:   oldIndex,
             newIndex:   newIndex);
             
@@ -130,7 +131,7 @@ public abstract class MoveTestsBase<TUutFixture, TUut>
 
         using var fixture = TUutFixture.Create(items);
         
-        fixture.MoveItemWithinUut(
+        fixture.Uut.Move(
             oldIndex:   index,
             newIndex:   index);
             

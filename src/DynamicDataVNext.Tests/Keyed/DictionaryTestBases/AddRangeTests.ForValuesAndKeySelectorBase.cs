@@ -4,7 +4,8 @@ public static partial class AddRangeTests
 {
     public abstract class ForValuesAndKeySelectorBase<TUutFixture, TUut>
         where TUutFixture : IDictionaryUutFixture<TUutFixture, TUut>
-        where TUut : IDictionary<string, int>
+        where TUut : IDictionary<string, int>,
+            IRangeAwareDictionary<string, int>
     {
         [Test]
         public void WhenKeySelectorIsNull_ThrowsException()
@@ -13,7 +14,7 @@ public static partial class AddRangeTests
                 
             var result = FluentActions.Invoking(() =>
                 {
-                    fixture.AddRangeToUut(
+                    fixture.Uut.AddRange(
                         values:         Array.Empty<int>(),
                         keySelector:    null!);
                 })
@@ -33,7 +34,7 @@ public static partial class AddRangeTests
             
             var result = FluentActions.Invoking(() =>
                 {
-                    fixture.AddRangeToUut(testCase.Values, testCase.KeySelector);
+                    fixture.Uut.AddRange(testCase.Values, testCase.KeySelector);
                 })
                 .Should().Throw<ArgumentException>()
                 .WithParameterName("keySelector")
@@ -53,7 +54,7 @@ public static partial class AddRangeTests
             
             var result = FluentActions.Invoking(() =>
                 {
-                    fixture.AddRangeToUut(testCase.Values, testCase.KeySelector);
+                    fixture.Uut.AddRange(testCase.Values, testCase.KeySelector);
                 })
                 .Should().Throw<ArgumentException>()
                 .WithParameterName("keySelector")
@@ -71,7 +72,7 @@ public static partial class AddRangeTests
         {
             using var fixture = TUutFixture.Create(items: testCase.InitialItems);
                 
-            fixture.AddRangeToUut(testCase.Values, testCase.KeySelector);
+            fixture.Uut.AddRange(testCase.Values, testCase.KeySelector);
             
             var addedItems = testCase.Values
                 .Select(value => new KeyValuePair<string, int>(
@@ -91,7 +92,7 @@ public static partial class AddRangeTests
             
             var result = FluentActions.Invoking(() =>
                 {
-                    fixture.AddRangeToUut(testCase.Values, testCase.KeySelector);
+                    fixture.Uut.AddRange(testCase.Values, testCase.KeySelector);
                 })
                 .Should().Throw<ArgumentException>()
                 .WithParameterName("keySelector")
@@ -109,7 +110,7 @@ public static partial class AddRangeTests
         {
             using var fixture = TUutFixture.Create(items: initialItems);
                 
-            fixture.AddRangeToUut(
+            fixture.Uut.AddRange(
                 values:         Array.Empty<int>(),
                 keySelector:    static value => value.ToString());
             
@@ -125,7 +126,7 @@ public static partial class AddRangeTests
                 
             var keySelector = static (int value) => value.ToString();
                 
-            fixture.AddRangeToUut(
+            fixture.Uut.AddRange(
                 values:         values,
                 keySelector:    keySelector);
             
@@ -148,7 +149,7 @@ public static partial class AddRangeTests
                 
             var result = FluentActions.Invoking(() =>
                 {
-                    fixture.AddRangeToUut(
+                    fixture.Uut.AddRange(
                         values:         null!,
                         keySelector:    static value => value.ToString());
                 })

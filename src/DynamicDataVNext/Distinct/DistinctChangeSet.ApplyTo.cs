@@ -92,9 +92,9 @@ public static partial class DistinctChangeSet
                 {
                     var additions = changeSet.AsReset().Additions;
 
-                    if (target is IObservableSet<T> observableSet)
+                    if (target is IRangeAwareSet<T> rangeAwareSet)
                     {
-                        observableSet.Reset(additions);
+                        rangeAwareSet.Reset(additions);
                         return;
                     }
 
@@ -119,24 +119,6 @@ public static partial class DistinctChangeSet
             case ChangeSetType.Update:
                 switch (target)
                 {
-                    case ChangeTrackingHashSet<T> changeTrackingHashSet:
-                        foreach (var change in changeSet.Changes)
-                            switch (change.Type)
-                            {
-                                case DistinctChangeType.Addition:
-                                    changeTrackingHashSet.Add(change.Item);
-                                    break;
-
-                                case DistinctChangeType.Refreshment:
-                                    changeTrackingHashSet.Refresh(change.Item);
-                                    break;
-                        
-                                case DistinctChangeType.Removal:
-                                    changeTrackingHashSet.Remove(change.Item);
-                                    break;
-                            }
-                        break;
-                
                     case IObservableSet<T> observableSet:
                         using (observableSet.SuspendNotifications())
                             foreach (var change in changeSet.Changes)
@@ -156,6 +138,24 @@ public static partial class DistinctChangeSet
                                 }
                         break;
                         
+                    case IRefreshableSet<T> refreshableSet:
+                        foreach (var change in changeSet.Changes)
+                            switch (change.Type)
+                            {
+                                case DistinctChangeType.Addition:
+                                    target.Add(change.Item);
+                                    break;
+
+                                case DistinctChangeType.Refreshment:
+                                    refreshableSet.Refresh(change.Item);
+                                    break;
+                        
+                                case DistinctChangeType.Removal:
+                                    target.Remove(change.Item);
+                                    break;
+                            }
+                        break;
+                
                     default:
                         foreach (var change in changeSet.Changes)
                             switch (change.Type)

@@ -35,9 +35,6 @@ public sealed class UutFixture
     public OrderedItemOptions UutOptions
         => _uut.Options;
 
-    public void AddRangeToUut(IEnumerable<string?> items)
-        => _uut.AddRange(items);
-
     public void AssertItemsWereInserted(
         int                     insertionIndex,
         IReadOnlyList<string?>  insertedItems)
@@ -123,6 +120,27 @@ public sealed class UutFixture
         capturedChangeSet.Changes[0].AsMovement().NewIndex.Should().Be(newIndex, "the movement should have occurred toward the given new index");
         capturedChangeSet.Changes[0].AsMovement().Item.Should().Be(movedItem, "the item at the given old index should have been retrieved and moved");
         capturedChangeSet.Type.Should().Be(ChangeSetType.Update, "moving an item within a collection should produce an update");
+
+        _uut.BufferedChanges.Should().BeEmpty("all changes should have been captured from the buffer");
+    }
+
+    public void AssertItemWasRefreshed(
+        int     refreshmentIndex,
+        string? refreshedItem)
+    {
+        _uut.BufferedChanges.Should().ContainSingle("a single change was made");
+        _uut.BufferedChanges[0].Type.Should().Be(OrderedChangeType.Refreshment, "a single refreshment was performed");
+        _uut.BufferedChanges[0].AsRefreshment().Index.Should().Be(refreshmentIndex, "the refreshment should have occurred at the given index");
+        _uut.BufferedChanges[0].AsRefreshment().Item.Should().Be(refreshedItem, "the item at the given index should have been refreshment");
+        _uut.BufferedChanges.CurrentSetType.Should().Be(ChangeSetType.Update, "refreshing an item should produce an update");
+
+        var capturedChangeSet = _uut.BufferedChanges.CaptureAndClear();
+
+        capturedChangeSet.Changes.Should().ContainSingle("a single change was made");
+        capturedChangeSet.Changes[0].Type.Should().Be(OrderedChangeType.Refreshment, "a single refreshment was performed");
+        capturedChangeSet.Changes[0].AsRefreshment().Index.Should().Be(refreshmentIndex, "the refreshment should have occurred at the given index");
+        capturedChangeSet.Changes[0].AsRefreshment().Item.Should().Be(refreshedItem, "the item at the given index should have been refreshment");
+        capturedChangeSet.Type.Should().Be(ChangeSetType.Update, "refreshing an item should produce an update");
 
         _uut.BufferedChanges.Should().BeEmpty("all changes should have been captured from the buffer");
     }
@@ -236,23 +254,6 @@ public sealed class UutFixture
     }
 
     public void Dispose() { }
-
-    public void InsertRangeIntoUut(
-            int                     index,
-            IEnumerable<string?>    items)
-        => _uut.InsertRange(
-            index: index,
-            items: items);
-
-    public void MoveItemWithinUut(
-            int oldIndex,
-            int newIndex)
-        => _uut.Move(
-            oldIndex: oldIndex, 
-            newIndex: newIndex);
-
-    public void ResetUut(IEnumerable<string?> items)
-        => _uut.Reset(items);
 
     private readonly ChangeTrackingList<string?> _uut;
 }

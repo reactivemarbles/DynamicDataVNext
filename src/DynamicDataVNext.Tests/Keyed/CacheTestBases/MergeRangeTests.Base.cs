@@ -4,14 +4,15 @@ public static partial class MergeRangeTests
 {
     public abstract class Base<TUutFixture, TUut>
         where TUutFixture : ICacheUutFixture<TUutFixture, TUut>
-        where TUut : ICache<string, TestItem>
+        where TUut : ICache<string, TestItem>,
+            IRangeAwareCache<TestItem>
     {
         [TestCaseSource(typeof(MergeRangeTests), nameof(WhenCacheIsEmptyAndItemsIsNot_TestCases))]
         public void WhenCacheIsEmptyAndItemsIsNot_ResetsCache(IReadOnlyList<TestItem> items)
         {
             using var fixture = TUutFixture.Create(TestItem.SelectKey);
             
-            fixture.MergeRangeIntoUut(items);
+            fixture.Uut.MergeRange(items);
             
             fixture.Uut.Should().BeEquivalentTo(items, "the collection should not have been changed");
             
@@ -27,7 +28,7 @@ public static partial class MergeRangeTests
                 keySelector:    TestItem.SelectKey,
                 items:          testCase.InitialItems);
             
-            fixture.MergeRangeIntoUut(testCase.Items);
+            fixture.Uut.MergeRange(testCase.Items);
     
             var finalItems = testCase.InitialItems
                 .Where(item => !testCase.Items.Select(TestItem.SelectKey).Contains(item.Key))
@@ -63,7 +64,7 @@ public static partial class MergeRangeTests
                 keySelector:    TestItem.SelectKey,
                 items:          testCase.InitialItems);
             
-            fixture.MergeRangeIntoUut(testCase.Items);
+            fixture.Uut.MergeRange(testCase.Items);
         
             fixture.Uut.Should().BeEquivalentTo(testCase.InitialItems, "the collection should not have been changed");
             
@@ -79,7 +80,7 @@ public static partial class MergeRangeTests
             
             var result = fixture.Invoking(fixture =>
                 {
-                    fixture.MergeRangeIntoUut(items: null!);
+                    fixture.Uut.MergeRange(items: null!);
                 })
                 .Should().Throw<ArgumentNullException>()
                 .WithParameterName("items")
@@ -101,7 +102,7 @@ public static partial class MergeRangeTests
             
             var result = fixture.Invoking(fixture =>
                 {
-                    fixture.MergeRangeIntoUut(testCase.Items);
+                    fixture.Uut.MergeRange(testCase.Items);
                 })
                 .Should().Throw<ArgumentException>()
                 .WithParameterName("items")

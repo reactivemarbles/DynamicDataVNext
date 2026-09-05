@@ -8,6 +8,8 @@ namespace DynamicDataVNext;
 [DebuggerDisplay("Count = {Count}")]
 public partial class ChangeTrackingCache<TKey, TItem>
         : ICache<TKey, TItem>,
+            IRangeAwareCache<TItem>,
+            IRefreshableCache<TKey, TItem>,
             IReadOnlyCache<TKey, TItem>,
             IExpandableCollection
     where TKey : notnull
@@ -132,7 +134,7 @@ public partial class ChangeTrackingCache<TKey, TItem>
         _bufferedChanges.Add(KeyedChange.CreateAddition(key, item));
     }
 
-    /// <inheritdoc cref="IObservableCache{TKey, TItem}.AddRange(IEnumerable{TItem})"/>
+    /// <inheritdoc/>
     /// <exception cref="ArgumentException">Throws if <paramref name="items"/> contains any items whose key value is <see langword="null"/>.</exception>
     public void AddRange(IEnumerable<TItem> items)
     {
@@ -240,7 +242,7 @@ public partial class ChangeTrackingCache<TKey, TItem>
         }
     }
 
-    /// <inheritdoc cref="IObservableCache{TKey, TItem}.MergeRange(IEnumerable{TItem})"/>
+    /// <inheritdoc/>
     /// <exception cref="ArgumentException">Throws if <paramref name="items"/> contains any items whose key value is <see langword="null"/>.</exception>
     public void MergeRange(IEnumerable<TItem> items)
     {
@@ -320,12 +322,8 @@ public partial class ChangeTrackingCache<TKey, TItem>
         }
     }
 
-    /// <summary>
-    /// Signals that an item within the collection has, itself, mutated, triggering a <see cref="KeyedChangeType.Refreshment"/> record to be added to <see cref="BufferedChanges"/>.
-    /// </summary>
-    /// <param name="item">The item that was refreshed.</param>
+    /// <inheritdoc/>
     /// <exception cref="ArgumentException">Throws if the key value of <paramref name="item"/>, as determined by <see cref="KeySelector"/> is <see langword="null"/>.</exception>
-    /// <returns><see langword="false"/> if the collection does not actually contain <paramref name="item"/>, and it was not refreshed. Otherwise, <see langword="true"/>.</returns>
     public bool Refresh(TItem item)
     {
         if (!_options.ItemsAreMutable)
@@ -354,12 +352,8 @@ public partial class ChangeTrackingCache<TKey, TItem>
         return true;
     }
 
-    /// <summary>
-    /// Signals that an item within the collection has, itself, mutated, triggering a <see cref="KeyedChangeType.Refreshment"/> record to be added to <see cref="BufferedChanges"/>.
-    /// </summary>
-    /// <param name="key">The key of the item that was refreshed.</param>
+    /// <inheritdoc/>
     /// <exception cref="ArgumentNullException">Throws for <paramref name="key"/>.</exception>
-    /// <returns><see langword="false"/> if the collection does not actually contain <paramref name="key"/>. Otherwise, <see langword="true"/>.</returns>
     public bool RefreshKey(TKey key)
     {
         if (!_options.ItemsAreMutable)
@@ -416,7 +410,7 @@ public partial class ChangeTrackingCache<TKey, TItem>
         return true;
     }
 
-    /// <inheritdoc cref="IObservableCache{TKey, TItem}.RemoveRange(IEnumerable{TItem})"/>
+    /// <inheritdoc/>
     /// <exception cref="ArgumentException">Throws if <paramref name="items"/> contains any items whose key value, as determined by <see cref="KeySelector"/>, is <see langword="null"/>.</exception>
     public void RemoveRange(IEnumerable<TItem> items)
     {
@@ -481,11 +475,13 @@ public partial class ChangeTrackingCache<TKey, TItem>
         }
     }
 
-    /// <inheritdoc cref="IObservableCache{TKey, TItem}.Reset(IEnumerable{TItem})"/>
+    /// <inheritdoc/>
     /// <exception cref="ArgumentException">Throws if <paramref name="items"/> contains any items whose key value, as determined by <see cref="KeySelector"/>, is <see langword="null"/>.</exception>
-    public void Reset(IEnumerable<TItem> items)
+    public void Reset<TItems>(TItems items)
+        where TItems : IEnumerable<TItem>
     {
-        ArgumentNullException.ThrowIfNull(items);
+        if (items is null)
+            throw new ArgumentNullException(nameof(items));
 
         // If there's no existing items to remove, this is equivalent to an AddRange().
         if (_itemsByKey.Count is 0)
@@ -575,7 +571,8 @@ public partial class ChangeTrackingCache<TKey, TItem>
     IEnumerator IEnumerable.GetEnumerator()
         => ((IEnumerable)_itemsByKey.Values).GetEnumerator();
 
-    private void AddRange_Internal(IEnumerable<TItem> items)
+    private void AddRange_Internal<TItems>(TItems items)
+        where TItems : IEnumerable<TItem>
     {
         if (items.TryGetNonEnumeratedCount(out var itemCount))
         {

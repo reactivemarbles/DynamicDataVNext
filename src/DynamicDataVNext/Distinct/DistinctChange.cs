@@ -18,6 +18,7 @@ public readonly partial record struct DistinctChange<T>
         {
             DistinctChangeType.None         => ChangeCategory.None,
             DistinctChangeType.Addition     => ChangeCategory.Addition,
+            DistinctChangeType.Refreshment  => ChangeCategory.Refreshment,
             DistinctChangeType.Removal      => ChangeCategory.Removal,
             _                               => ChangeCategory.Other
         };

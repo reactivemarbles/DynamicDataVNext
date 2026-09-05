@@ -53,6 +53,9 @@ public static partial class UutFixture
         public void AssertItemWasAdded(int addedItem)
         { }
 
+        public void AssertItemWasRefreshed(int refreshedItem)
+        { }
+
         public void AssertItemWasRemoved(int removedItem)
         { }
 
@@ -81,9 +84,6 @@ public static partial class UutFixture
             string              itemsRemovedBecause)
         { }
         
-        public void ResetUut(IEnumerable<int> items)
-            => _uut.Reset(items);
-
         private readonly ObservableHashSet<int> _uut;
     }
 }

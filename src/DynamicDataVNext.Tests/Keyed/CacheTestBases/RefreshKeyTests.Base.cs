@@ -4,7 +4,8 @@ public static partial class RefreshKeyTests
 {
     public abstract class Base<TUutFixture, TUut>
         where TUutFixture : ICacheUutFixture<TUutFixture, TUut>
-        where TUut : ICache<string, TestItem>
+        where TUut : ICache<string, TestItem>,
+            IRefreshableCache<string, TestItem>
     {
         [TestCaseSource(typeof(RefreshKeyTests), nameof(WhenCacheContainsKey_TestCases))]
         public void WhenCacheContainsKey_RefreshesItemAndReturnsTrue(SingleKeyOperationTestCase testCase)
@@ -17,7 +18,7 @@ public static partial class RefreshKeyTests
                     ItemsAreMutable = true
                 });
             
-            var result = fixture.RefreshUutKey(testCase.Key);
+            var result = fixture.Uut.RefreshKey(testCase.Key);
             
             result.Should().BeTrue("the collection contains the given key");
             
@@ -37,7 +38,7 @@ public static partial class RefreshKeyTests
                     ItemsAreMutable = true
                 });
             
-            var result = fixture.RefreshUutKey(testCase.Key);
+            var result = fixture.Uut.RefreshKey(testCase.Key);
             
             result.Should().BeFalse("the collection does not contain the given key");
             
@@ -59,7 +60,7 @@ public static partial class RefreshKeyTests
 
             var result = FluentActions.Invoking(() =>
                 {
-                    _ = fixture.RefreshUutKey(null!);
+                    _ = fixture.Uut.RefreshKey(null!);
                 })
                 .Should().Throw<ArgumentNullException>()
                 .WithParameterName("key")
@@ -85,7 +86,7 @@ public static partial class RefreshKeyTests
 
             var result = FluentActions.Invoking(() =>
                 {
-                    _ = fixture.RefreshUutKey(item.Key);
+                    _ = fixture.Uut.RefreshKey(item.Key);
                 })
                 .Should().Throw<ImmutableRefreshException>()
                 .Which;
