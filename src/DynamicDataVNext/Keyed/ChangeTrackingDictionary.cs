@@ -320,15 +320,13 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
     }
 
     /// <inheritdoc/>
-    public void Reset<TItems>(TItems items)
-        where TItems : IEnumerable<KeyValuePair<TKey, TValue>>
+    public void Reset(IEnumerable<KeyValuePair<TKey, TValue>> items)
     {
-        if (items is null)
-            throw new ArgumentNullException(nameof(items));
+        ArgumentNullException.ThrowIfNull(items);
 
         try
         {
-            Reset_Internal<TItems, KeyValuePair<TKey, TValue>>(
+            Reset_Internal<IEnumerable<KeyValuePair<TKey, TValue>>, KeyValuePair<TKey, TValue>>(
                 elements:       items,
                 keySelector:    static item => item.Key,
                 valueSelector:  static item => item.Value);
@@ -343,13 +341,11 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
     }
 
     /// <inheritdoc/>
-    public void Reset<TValues>(
-            TValues             values,
-            Func<TValue, TKey>  keySelector)
-        where TValues : IEnumerable<TValue>
+    public void Reset(
+        IEnumerable<TValue> values,
+        Func<TValue, TKey>  keySelector)
     {
-        if (values is null)
-            throw new ArgumentNullException(nameof(values));
+        ArgumentNullException.ThrowIfNull(values);
         ArgumentNullException.ThrowIfNull(keySelector);
 
         try

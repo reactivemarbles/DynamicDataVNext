@@ -80,7 +80,7 @@ public static partial class ResetTests
                 
             var result = FluentActions.Invoking(() =>
                 {
-                    fixture.Uut.Reset<IEnumerable<TestItem>>(null!);
+                    fixture.Uut.Reset(null!);
                 })
                 .Should().Throw<ArgumentException>()
                 .WithParameterName("items")

@@ -82,7 +82,7 @@ public static partial class ResetTests
                 
             var result = FluentActions.Invoking(() =>
                 {
-                    fixture.Uut.Reset<IEnumerable<int>>(
+                    fixture.Uut.Reset(
                         values:         null!,
                         keySelector:    static value => value.ToString());
                 })

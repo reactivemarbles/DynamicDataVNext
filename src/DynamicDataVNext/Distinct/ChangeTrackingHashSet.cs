@@ -249,8 +249,7 @@ public partial class ChangeTrackingHashSet<T>
     }
 
     /// <inheritdoc/>
-    public void Reset<TItems>(TItems items)
-        where TItems : IEnumerable<T>
+    public void Reset(IEnumerable<T> items)
     {
         ArgumentNullException.ThrowIfNull(items);
 

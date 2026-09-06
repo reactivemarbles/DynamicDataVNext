@@ -111,45 +111,23 @@ public partial class ChangeTrackingList<T>
     // <inheritdoc/>
     public void AddRange(IEnumerable<T> items)
     {
-        ArgumentNullException.ThrowIfNull(items);
-    
-        AddRange_Internal(items);
-    }
-
-    public void AddRange2(IEnumerable<T> items)
-    {
         var priorOrderedItemsCount = _orderedItems.Count;
         
-        try
-        {
-            _orderedItems.AddRange(items);
-        }
-        catch (Exception exception)
-        {
-            if (exception is ArgumentNullException)
-                throw new ArgumentNullException(nameof(items));
-                    
-            // List<T>.AddRange() is more efficient than doing individual .Add()s ourselves, but it's not atomic. If an
-            // exception occurs during iteration, we need to roll back whatever items were added (or add them to the
-            // change buffer, but we're opting for the first option).
-            _orderedItems.RemoveRange(
-                index: priorOrderedItemsCount,
-                count: _orderedItems.Count - priorOrderedItemsCount);
-            
-            throw;
-        }
+        AddRange_Internal_Perform(
+            priorOrderedItemsCount: priorOrderedItemsCount,
+            items:                  items);
     
         _bufferedChanges.EnsureCapacity(_bufferedChanges.Count + (_orderedItems.Count - priorOrderedItemsCount));
-        for (var i = priorOrderedItemsCount; i < _orderedItems.Count; ++i)
-            _bufferedChanges.Add(OrderedChange.CreateInsertion(
-                index:  i,
-                item:   _orderedItems[i]));
+
+        AddRange_Internal_BufferChanges(priorOrderedItemsCount);
     }
 
     /// <inheritdoc/>
     public void Clear()
     {
-        // Buffer removals in reverse, to avoid internal copies and allocations, within _orderedItems.
+        // Buffer removals in reverse, to avoid internal copies and allocations within downstream copies, when
+        // processing items one-at-a-time.
+        _bufferedChanges.EnsureCapacity(_bufferedChanges.Count + _orderedItems.Count);
         for (var i = _orderedItems.Count - 1; i >= 0; --i)
             _bufferedChanges.Add(OrderedChange.CreateRemoval(
                 index:  i,
@@ -213,54 +191,14 @@ public partial class ChangeTrackingList<T>
         int             index,
         IEnumerable<T>  items)
     {
-        // I'd rather use List<T>.InsertRange() to leverage its internal optimizations, but it's not atomic, which we
-        // need to be.
-        ArgumentNullException.ThrowIfNull(items);
-    
-        if (items.TryGetNonEnumeratedCount(out var itemsCount))
-        {
-            _orderedItems.EnsureCapacity(itemsCount);
-            _bufferedChanges.EnsureCapacity(_bufferedChanges.Count + itemsCount);
-        }
-        
-        var priorBufferedChangeCount = _bufferedChanges.Count;
-        var checkpoint = _bufferedChanges.CreateCheckpoint();
-        try
-        {
-            var insertionIndex = index;
-            foreach (var item in items)
-            {
-                _orderedItems.Insert(
-                    index:  insertionIndex,
-                    item:   item);
-                
-                _bufferedChanges.Add(OrderedChange.CreateInsertion(
-                    index:  insertionIndex++,
-                    item:   item));
-            }
-        }
-        catch
-        {
-            // Before we rollback the change buffer, use it (well, all we need is its size) to undo the partial changes
-            // we already made.
-            if (_bufferedChanges.Count != priorBufferedChangeCount)
-                _orderedItems.RemoveRange(
-                    index: index,
-                    count: _bufferedChanges.Count - priorBufferedChangeCount);
-        
-            checkpoint.Restore();
-            
-            throw;
-        }
-    }
-
-    public void InsertRange2(
-        int             index,
-        IEnumerable<T>  items)
-    {
         var priorOrderedItemsCount = _orderedItems.Count;
         try
         {
+            // Benchmarking confirms that using List<T>.InsertRange() instead of individual .Insert()s, and then
+            // extracting the items into the change buffer after-the-fact, (I.E. effectively iterating the item range
+            // twice) is almost universally better, for both runtime (up to 85% reduction) and memory usage (up to 25%
+            // reduction), across a variety of range sizes. Native optimizations within .InsertRange() seem to be good
+            // enough to offset the cost of double-iterating.
             _orderedItems.InsertRange(
                 index:      index,
                 collection: items);
@@ -270,9 +208,7 @@ public partial class ChangeTrackingList<T>
             if (exception is ArgumentNullException)
                 throw new ArgumentNullException(nameof(items));
                 
-            // List<T>.InsertRange() is way more efficient than doing individual .Insert()s ourselves, but it's not
-            // atomic. If an exception occurs during iteration, we need to roll back whatever items were added (or add
-            // them to the change buffer, but we're opting for the first option).
+            // If an exception occurs during iteration, we need to roll back whatever items were added.
             if (_orderedItems.Count != priorOrderedItemsCount)
                 _orderedItems.RemoveRange(
                     index: index,
@@ -295,57 +231,6 @@ public partial class ChangeTrackingList<T>
         int oldIndex,
         int newIndex)
     {
-        // Intentionally doing this before checking for identical indexes, cause I think it makes sense for this method
-        // to throw for invalid indexes, even if they're referring to a pointless move.
-        T item;
-        try
-        {
-            item = _orderedItems[oldIndex];
-        }
-        catch (ArgumentOutOfRangeException exception)
-        {
-            throw new ArgumentOutOfRangeException(
-                message:    exception.Message,
-                paramName:  nameof(oldIndex));
-        }
-        
-        if (oldIndex == newIndex)
-            return;
-
-        // Remove first, to avoid an internal reallocation, within List<T>
-        _orderedItems.RemoveAt(oldIndex);
-    
-        try
-        {
-            _orderedItems.Insert(
-                index:  newIndex,
-                item:   item);
-        }
-        catch (Exception exception)
-        {
-            // Make sure and undo the partial change we made
-            _orderedItems.Insert(
-                index:  oldIndex,
-                item:   item);
-
-            if (exception is ArgumentOutOfRangeException)
-                throw new ArgumentOutOfRangeException(
-                    message:    exception.Message,
-                    paramName:  nameof(newIndex));
-            
-            throw;
-        }
-    
-        _bufferedChanges.Add(OrderedChange.CreateMovement(
-            oldIndex:   oldIndex,
-            newIndex:   newIndex,
-            item:       item));
-    }
-
-    public void Move2(
-        int oldIndex,
-        int newIndex)
-    {
         ArgumentOutOfRangeException.ThrowIfLessThan(oldIndex, 0);
         ArgumentOutOfRangeException.ThrowIfLessThan(newIndex, 0);
         ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(oldIndex, _orderedItems.Count);
@@ -353,6 +238,10 @@ public partial class ChangeTrackingList<T>
 
         if (oldIndex == newIndex)
             return;
+
+        // It might seem obvious, but I went ahead and benchmarked the span copying approach below, over just doing a
+        // basic remove/insert pair, and it confirms that using span copies like this, rather than a basic remove/insert
+        // pair, is almost universally better for runtime (up to 25% reduction). 
 
         var orderedItems = CollectionsMarshal.AsSpan(_orderedItems);
         var item = orderedItems[oldIndex];
@@ -422,28 +311,10 @@ public partial class ChangeTrackingList<T>
         if (count is 0)
             return;
 
-        _bufferedChanges.EnsureCapacity(_bufferedChanges.Count + count);
-        for (var i = index + count - 1; i >= index; --i)
-        {
-            _bufferedChanges.Add(OrderedChange.CreateRemoval(
-                index:  i,
-                item:   _orderedItems[i]));
-                
-            _orderedItems.RemoveAt(i);
-        }
-    }
-
-    public void RemoveRange2(
-        int index,
-        int count)
-    {
-        ArgumentOutOfRangeException.ThrowIfNegative(index);
-        ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(index, _orderedItems.Count);
-        ArgumentOutOfRangeException.ThrowIfNegative(count);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(count, _orderedItems.Count - index);
-
-        if (count is 0)
-            return;
+        // Benchmarking confirms that using List<T>.RemoveRange() instead of individual .RemoveAt()s, after extracting
+        // the items into the change buffer ahead-of-time, (I.E. effectively iterating the item range twice) is almost
+        // universally better for runtime (up to 85% reduction) across a variety of range sizes. Native optimizations
+        // within .RemoveRange() seem to be good enough to offset the cost of double-iterating.
 
         _bufferedChanges.EnsureCapacity(_bufferedChanges.Count + count);
         for (var i = index + count - 1; i >= index; --i)
@@ -457,16 +328,14 @@ public partial class ChangeTrackingList<T>
     }
 
     /// <inheritdoc/>
-    public void Reset<TItems>(TItems items)
-        where TItems : IEnumerable<T>
+    public void Reset(IEnumerable<T> items)
     {
-        if (items is null)
-            throw new ArgumentNullException(nameof(items));
+        ArgumentNullException.ThrowIfNull(items);
 
         // If there's no existing items to remove, this is equivalent to an AddRange().
         if (_orderedItems.Count is 0)
         {
-            AddRange_Internal(items);
+            AddRange(items);
             return;
         }
 
@@ -484,30 +353,22 @@ public partial class ChangeTrackingList<T>
         }
 
         // We'll be adding a change for each item in the current collection, and each item in the new collection
-        // (although we don't know for sure how many the new collection has)
+        // (we don't know for sure how many items the new collection has, but the value defaults to 0, which is fine)
         _bufferedChanges.EnsureCapacity(_bufferedChanges.Count + _orderedItems.Count + itemCount);
 
         var checkpoint = _bufferedChanges.CreateCheckpoint();
         var priorBufferedChangeCount = _bufferedChanges.Count; 
         var lastRemovalIndex = _bufferedChanges.Count + _orderedItems.Count - 1;
-        // Remove items in reverse order, to eliminate the need for shuffles after each removal.
-        for (var i = _orderedItems.Count - 1; i >= 0; --i)
-            _bufferedChanges.Add(OrderedChange.CreateRemoval(
-                index:  i,
-                item:   _orderedItems[i]));
 
-        _orderedItems.Clear();
+        Clear_Internal();
 
+        var priorOrderedItemsCount = _orderedItems.Count;
+        
         try
         {
-            foreach(var item in items)
-            {
-                _bufferedChanges.Add(OrderedChange.CreateInsertion(
-                    index:  _orderedItems.Count,
-                    item:   item));
-
-                _orderedItems.Add(item);
-            }
+            AddRange_Internal_Perform(
+                priorOrderedItemsCount: priorOrderedItemsCount,
+                items:                  items);
         }
         catch
         {
@@ -524,6 +385,8 @@ public partial class ChangeTrackingList<T>
             checkpoint.Restore();
             throw;
         }
+
+        AddRange_Internal_BufferChanges(priorOrderedItemsCount);
     }
 
     bool ICollection<T>.IsReadOnly
@@ -534,42 +397,57 @@ public partial class ChangeTrackingList<T>
 
     IEnumerator<T> IEnumerable<T>.GetEnumerator()
         => _orderedItems.GetEnumerator();
-
-    private void AddRange_Internal<TItems>(TItems items)
-        where TItems : IEnumerable<T>
-    {
-        if (items.TryGetNonEnumeratedCount(out var itemsCount))
-        {
-            _orderedItems.EnsureCapacity(itemsCount);
-            _bufferedChanges.EnsureCapacity(_bufferedChanges.Count + itemsCount);
-        }
         
-        var priorBufferedChangeCount = _bufferedChanges.Count;
-        var checkpoint = _bufferedChanges.CreateCheckpoint();
+    // De-duplicated logic for the second-half of an AddRange(), where we retroactively load the added items into the
+    // change buffer.
+    private void AddRange_Internal_BufferChanges(int priorOrderedItemsCount)
+    {
+        for (var i = priorOrderedItemsCount; i < _orderedItems.Count; ++i)
+            _bufferedChanges.Add(OrderedChange.CreateInsertion(
+                index:  i,
+                item:   _orderedItems[i]));
+    }
+
+    // De-duplicated logic for the first-half of an AddRange(), which passes off to List<T>.AddRange(), with rollback
+    // logic.
+    private void AddRange_Internal_Perform(
+        int             priorOrderedItemsCount,
+        IEnumerable<T>  items)
+    {
         try
         {
-            foreach (var item in items)
-            {
-                _bufferedChanges.Add(OrderedChange.CreateInsertion(
-                    index:  _orderedItems.Count,
-                    item:   item));
-
-                _orderedItems.Add(item);
-            }
+            // Benchmarking confirms that using List<T>.AddRange() instead of individual .Add()s, and then extracting
+            // the items into the change buffer after-the-fact, (I.E. effectively iterating the item range twice) is
+            // almost universally better, for both runtime (up to 20% reduction) and memory usage (up to 25% reduction),
+            // across a variety of range sizes. Native optimizations within .AddRange() seem to be good enough to offset
+            // the cost of double-iterating.
+            _orderedItems.AddRange(items);
         }
-        catch
+        catch (Exception exception)
         {
-            // Before we rollback the change buffer, use it (well, all we need is its size) to undo the partial changes
-            // we already made.
-            var rollbackCount = _bufferedChanges.Count - priorBufferedChangeCount;
+            if (exception is ArgumentNullException)
+                throw new ArgumentNullException(nameof(items));
+                    
+            // If an exception occurs during iteration, we need to roll back whatever items were added.
             _orderedItems.RemoveRange(
-                index: _orderedItems.Count - rollbackCount,
-                count: rollbackCount);
-        
-            checkpoint.Restore();
+                index: priorOrderedItemsCount,
+                count: _orderedItems.Count - priorOrderedItemsCount);
             
             throw;
         }
+    }
+
+    // De-duplicated logic for a Clear()
+    private void Clear_Internal()
+    {
+        // Buffer removals in reverse, to avoid internal copies and allocations within downstream copies, when
+        // processing items one-at-a-time.
+        for (var i = _orderedItems.Count - 1; i >= 0; --i)
+            _bufferedChanges.Add(OrderedChange.CreateRemoval(
+                index:  i,
+                item:   _orderedItems[i]));
+    
+        _orderedItems.Clear();
     }
 
     private readonly BufferedChangeCollection   _bufferedChanges;

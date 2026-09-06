@@ -72,7 +72,7 @@ public static partial class ResetTests
                 
             var result = FluentActions.Invoking(() =>
                 {
-                    fixture.Uut.Reset<IEnumerable<KeyValuePair<string, int>>>(null!);
+                    fixture.Uut.Reset(null!);
                 })
                 .Should().Throw<ArgumentException>()
                 .WithParameterName("items")

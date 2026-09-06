@@ -30,21 +30,17 @@ public interface IRangeAwareDictionary<TKey, TValue>
     /// <summary>
     /// Performs a <see cref="ChangeSetType.Reset"/> operation upon the collection, by removing any existing items within the collection, and replacing them with the given items. 
     /// </summary>
-    /// <typeparam name="TItems">The type of the <paramref name="items"/> sequence.</typeparam>
     /// <param name="items">The new set of items to be loaded into the collection.</param>
     /// <exception cref="ArgumentNullException">Throws for <paramref name="items"/>.</exception>
-    void Reset<TItems>(TItems items)
-        where TItems : IEnumerable<KeyValuePair<TKey, TValue>>;
+    void Reset(IEnumerable<KeyValuePair<TKey, TValue>> items);
 
     /// <summary>
     /// Performs a <see cref="ChangeSetType.Reset"/> operation upon the collection, by removing any existing items within the collection, and replacing them with the given items. 
     /// </summary>
-    /// <typeparam name="TValues">The type of the <paramref name="values"/> sequence.</typeparam>
     /// <param name="values">The values to use as <see cref="KeyValuePair{TKey, TValue}.Value"/> for the new set of items to be loaded into the collection.</param>
     /// <param name="keySelector">A selector to select a <see cref="KeyValuePair{TKey, TValue}.Key"/> value for each new item.</param>
     /// <exception cref="ArgumentNullException">Throws for <paramref name="values"/> and <paramref name="keySelector"/>.</exception>
-    void Reset<TValues>(
-            TValues             values,
-            Func<TValue, TKey>  keySelector)
-        where TValues : IEnumerable<TValue>;
+    void Reset(
+        IEnumerable<TValue> values,
+        Func<TValue, TKey>  keySelector);
 }

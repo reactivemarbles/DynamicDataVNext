@@ -52,7 +52,7 @@ public static partial class ResetTests
             
             var result = fixture.Uut.Invoking(uut =>
                 {
-                    uut.Reset<IEnumerable<string?>>(null!);
+                    uut.Reset(null!);
                 })
                 .Should().Throw<ArgumentNullException>()
                 .WithParameterName("items")

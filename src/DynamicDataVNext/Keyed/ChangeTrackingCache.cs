@@ -477,11 +477,9 @@ public partial class ChangeTrackingCache<TKey, TItem>
 
     /// <inheritdoc/>
     /// <exception cref="ArgumentException">Throws if <paramref name="items"/> contains any items whose key value, as determined by <see cref="KeySelector"/>, is <see langword="null"/>.</exception>
-    public void Reset<TItems>(TItems items)
-        where TItems : IEnumerable<TItem>
+    public void Reset(IEnumerable<TItem> items)
     {
-        if (items is null)
-            throw new ArgumentNullException(nameof(items));
+        ArgumentNullException.ThrowIfNull(items);
 
         // If there's no existing items to remove, this is equivalent to an AddRange().
         if (_itemsByKey.Count is 0)
@@ -571,8 +569,7 @@ public partial class ChangeTrackingCache<TKey, TItem>
     IEnumerator IEnumerable.GetEnumerator()
         => ((IEnumerable)_itemsByKey.Values).GetEnumerator();
 
-    private void AddRange_Internal<TItems>(TItems items)
-        where TItems : IEnumerable<TItem>
+    private void AddRange_Internal(IEnumerable<TItem> items)
     {
         if (items.TryGetNonEnumeratedCount(out var itemCount))
         {
