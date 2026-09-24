@@ -34,7 +34,8 @@ public sealed class ReactiveHashSet<T>
             Options     = options,
             Source      = Signal.Create<DistinctChangeSet<T>>(downstreamObserver =>
             {
-                downstreamObserver.OnNext(DistinctChangeSet.CreateForReset(addedItems: _items));
+                if (_items.Count is not 0)
+                    downstreamObserver.OnNext(DistinctChangeSet.CreateForReset(addedItems: _items));
                 
                 return _changeStreamSourceSource.SubscribeSafe(downstreamObserver);
             })

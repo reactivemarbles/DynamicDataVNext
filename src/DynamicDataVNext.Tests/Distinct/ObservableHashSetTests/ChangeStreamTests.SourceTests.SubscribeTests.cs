@@ -24,11 +24,11 @@ public static partial class ChangeStreamTests
             [Test]
             public void WhenSetIsEmpty_DoesNothing()
             {
-                var uut = new ObservableHashSet<int>();
+                using var uut = new ObservableHashSet<int>();
                 
-                var observer = new ValueRecordingObserver<DistinctChangeSet<int>>(Sequencer.Default);
+                var observer = new DistinctItemRecordingObserver<int>(Sequencer.Default);
 
-                var result = uut.ChangeStream.Source.Subscribe(observer);
+                using var result = uut.ChangeStream.Source.Subscribe(observer);
 
                 result.Should().NotBeNull();
 
@@ -42,18 +42,18 @@ public static partial class ChangeStreamTests
             {
                 var items = new[] { 1, 2, 3 };
                 
-                var uut = new ObservableHashSet<int>(items: items);
+                using var uut = new ObservableHashSet<int>(items: items);
                 
                 var suspension = uut.SuspendNotifications();
                 
-                var observer = new ValueRecordingObserver<DistinctChangeSet<int>>(Sequencer.Default);
+                var observer = new DistinctItemRecordingObserver<int>(Sequencer.Default);
 
-                var result = uut.ChangeStream.Source.Subscribe(observer);
+                using var result = uut.ChangeStream.Source.Subscribe(observer);
 
                 result.Should().NotBeNull();
 
                 observer.Error.Should().BeNull("no error should have occurred");
-                observer.RecordedValues.Should().BeEmpty("the initial reset should have been suspended");
+                observer.RecordedChangeSets.Should().BeEmpty("the initial reset should have been suspended");
                 observer.HasCompleted.Should().BeFalse("the set can still be changed");
                 
                 uut.Should().BeEquivalentTo(items, "the set should not have been changed");
@@ -61,10 +61,10 @@ public static partial class ChangeStreamTests
                 suspension.Dispose();
                 
                 observer.Error.Should().BeNull("no error should have occurred");
-                observer.RecordedValues.Count.Should().Be(1, "the suspended initial reset should have been published");
-                observer.RecordedValues[0].Type.Should().Be(ChangeSetType.Reset, "the suspended initial reset should have been published");
-                observer.RecordedValues[0].AsReset().Removals.Should().BeEmpty("the initial reset should contain only initial items");
-                observer.RecordedValues[0].AsReset().Additions.Should().BeEquivalentTo(items, "the initial reset should contain all initial items");
+                observer.RecordedChangeSets.Count.Should().Be(1, "the suspended initial reset should have been published");
+                observer.RecordedChangeSets[0].Type.Should().Be(ChangeSetType.Reset, "the suspended initial reset should have been published");
+                observer.RecordedChangeSets[0].AsReset().Removals.Should().BeEmpty("the initial reset should contain only initial items");
+                observer.RecordedChangeSets[0].AsReset().Additions.Should().BeEquivalentTo(items, "the initial reset should contain all initial items");
                 observer.HasCompleted.Should().BeFalse("the set can still be changed");
             }
         }

@@ -1,4 +1,4 @@
-namespace DynamicDataVNext.Tests.Distinct.ObservableHashSetTests;
+namespace DynamicDataVNext.Tests.Distinct.ReactiveHashSetTests;
 
 public static partial class ChangeStreamTests
 {
@@ -15,7 +15,9 @@ public static partial class ChangeStreamTests
             [TestCaseSource(nameof(WhenSetIsNotEmpty_TestCases))]
             public void WhenSetIsNotEmpty_PublishesReset(IReadOnlyList<int> items)
             {
-                using var uut = new ObservableHashSet<int>(items: items);
+                using var uut = new ReactiveHashSet<int>(source: Signal.Chain(
+                    Signal.Emit(DistinctChangeSet.CreateForReset(addedItems: items)),
+                    Signal.Silent<DistinctChangeSet<int>>()));
                 
                 var observer = new DistinctItemRecordingObserver<int>(Sequencer.Default);
 
