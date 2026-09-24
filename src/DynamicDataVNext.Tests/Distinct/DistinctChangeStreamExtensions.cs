@@ -48,6 +48,10 @@ public static class DistinctChangeStreamExtensions
                                         items.Add(change.Item);
                                         break;
                                         
+                                    case DistinctChangeType.Refreshment:
+                                        items.Should().Contain(change.Item, "item refreshments should not be performed for items not in a collection");
+                                        break;
+
                                     case DistinctChangeType.Removal:
                                         items.Should().Contain(change.Item, "item removals should not be performed for items not in a collection");
                                         items.Remove(change.Item);
