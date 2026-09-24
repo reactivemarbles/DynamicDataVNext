@@ -4,7 +4,7 @@ using System.Threading;
 namespace DynamicDataVNext;
 
 /// <summary>
-/// Defines a collection of distinct items, which tracks mutations from a given stream, and materializes them for read-only use..
+/// Defines a collection of distinct items, which tracks mutations from a given stream, and materializes them for read-only use.
 /// </summary>
 /// <typeparam name="T">The type of the items in the collection.</typeparam>
 public sealed class ReactiveHashSet<T>
@@ -122,11 +122,9 @@ public sealed class ReactiveHashSet<T>
     public bool SetEquals(IEnumerable<T> other)
         => _items.SetEquals(other);
 
-    /// <inheritdoc/>
     IEnumerator<T> IEnumerable<T>.GetEnumerator()
         => _items.GetEnumerator();
 
-    /// <inheritdoc/>
     IEnumerator IEnumerable.GetEnumerator()
         => _items.GetEnumerator();
 

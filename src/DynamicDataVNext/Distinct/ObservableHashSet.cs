@@ -2,7 +2,7 @@ namespace DynamicDataVNext;
 
 
 /// <summary>
-/// Describes a collection of distinct items, which publishes notifications about mutations made to itself or its items.
+/// A collection of distinct items, which publishes notifications about mutations made to itself or its items.
 /// </summary>
 /// <typeparam name="T">The type of the items in the collection.</typeparam>
 [DebuggerDisplay("Count = {Count}")]

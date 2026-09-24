@@ -44,7 +44,7 @@ public partial class ChangeTrackingDictionary<TKey, TValue>
     /// Initializes a new instance of the <see cref="ChangeTrackingDictionary{TKey, TValue}"/> class, containing the given items. 
     /// </summary>
     /// <inheritdoc cref="ChangeTrackingDictionary{TKey, TValue}(System.Collections.Generic.IEqualityComparer{TKey}, KeyedItemOptions)"/>
-    /// <param name="items">The initial set of items to be loaded into the collection. Duplicate items are ignored.</param>
+    /// <param name="items">The initial set of items to be loaded into the collection.</param>
     /// <exception cref="ArgumentNullException">Throws for <paramref name="items"/>.</exception>
     /// <exception cref="ArgumentException">Throws if <paramref name="items"/> contains any key values that are <see langword="null"/> or duplicated.</exception>
     public ChangeTrackingDictionary(
