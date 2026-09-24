@@ -7,9 +7,9 @@
 /// <typeparam name="TValue">The type of the item values in the collection.</typeparam>
 public interface IObservableDictionary<TKey, TValue>
     : IObservableCollection<KeyValuePair<TKey, TValue>>,
-        IDictionary<TKey, TValue>,
         IRangeAwareDictionary<TKey, TValue>,
-        IRefreshableDictionary<TKey>
+        IRefreshableDictionary<TKey>,
+        IDictionary<TKey, TValue>
 {
     /// <summary>
     /// The stream of changes describing mutations made to the collection.

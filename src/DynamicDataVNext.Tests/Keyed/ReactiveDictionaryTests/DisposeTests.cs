@@ -1,0 +1,80 @@
+namespace DynamicDataVNext.Tests.Keyed.ReactiveDictionaryTests;
+
+[TestFixture]
+public class DisposeTests
+{
+    [Test]
+    public void Always_UnsubscribesFromSource()
+    {
+        using var source = new Signal<KeyedChangeSet<string, int>>();
+        
+        var uut = new ReactiveDictionary<string, int>(source);
+        
+        uut.Dispose();
+        
+        source.HasObservers.Should().BeFalse("the source subscription should have been disposed");
+    }
+    
+    [Test]
+    public void WhenChangeStreamSourceHasSubscribers_SubscribersReceiveCompletion()
+    {
+        var source = Signal.Never<KeyedChangeSet<string, int>>();
+
+        var uut = new ReactiveDictionary<string, int>(source);
+        
+        using var subscription = uut.ChangeStream.Source
+            .RecordValues(out var results);
+        
+        uut.Dispose();
+        
+        results.HasCompleted.Should().BeTrue("no further notifications should occur");
+    }
+
+    [Test]
+    public void WhenCollectionChangedHasSubscribers_SubscribersReceiveCompletion()
+    {
+        var source = Signal.Never<KeyedChangeSet<string, int>>();
+
+        var uut = new ReactiveDictionary<string, int>(source);
+        
+        using var subscription = uut.CollectionChanged
+            .RecordValues(out var results);
+        
+        uut.Dispose();
+        
+        results.HasCompleted.Should().BeTrue("no further notifications should occur");
+    }
+    
+    [Test]
+    public void WhenSetHasBeenDisposed_DoesNothing()
+    {
+        var items = new KeyValuePair<string, int>[]
+        {
+            new("1", 1),
+            new("2", 2),
+            new("3", 3)
+        };
+        
+        var source = Signal.Return(KeyedChangeSet.CreateForReset(additions: items));
+
+        var uut = new ReactiveDictionary<string, int>(source);
+        
+        using var changeStreamSourceSubscription = uut.ChangeStream.Source
+            .RecordValues(out var changeStreamSourceResults);
+
+        using var collectionChangedSubscription = uut.CollectionChanged
+            .RecordValues(out var collectionChangedResults);
+        
+        uut.Dispose();
+        
+        changeStreamSourceResults.ClearNotifications();
+        collectionChangedResults.ClearNotifications();
+        
+        uut.Dispose();
+        
+        changeStreamSourceResults.RecordedNotifications.Should().BeEmpty("redundant disposal should do nothing");
+        collectionChangedResults.RecordedNotifications.Should().BeEmpty("redundant disposal should do nothing");
+        
+        uut.Should().BeEquivalentTo(items, options => options.WithoutStrictOrdering(), "disposal should not mutate the set");
+    }
+}

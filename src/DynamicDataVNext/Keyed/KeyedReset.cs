@@ -27,9 +27,31 @@ public readonly struct KeyedReset<TKey, TItem>
         };
     
     /// <summary>
+    /// The items added to the collection by the reset operation, as <see cref="KeyValuePair{TKey, TValue}"/> values, for compatibility.
+    /// </summary>
+    public KeyedChangeValuePairCollection<TKey, TItem> AdditionPairs
+        => new()
+        {
+            Changes     = _changes,
+            FirstIndex  = _firstAdditionIndex,
+            LastIndex   = _changes.Length - 1 
+        };
+    
+    /// <summary>
     /// The items removed from the collection by the reset operation.
     /// </summary>
     public KeyedChangeItemCollection<TKey, TItem> Removals
+        => new()
+        {
+            Changes     = _changes,
+            FirstIndex  = 0,
+            LastIndex   = _firstAdditionIndex - 1 
+        };
+    
+    /// <summary>
+    /// The items removed from the collection by the reset operation, as <see cref="KeyValuePair{TKey, TValue}"/> values, for compatibility.
+    /// </summary>
+    public KeyedChangeValuePairCollection<TKey, TItem> RemovalPairs
         => new()
         {
             Changes     = _changes,
