@@ -2,7 +2,7 @@ namespace DynamicDataVNext.Tests.Keyed.DictionaryTestBases;
 
 public static partial class IndexerTests
 {
-    public static partial class SetTests
+    public static partial class Set
     {
         public abstract class Base<TUutFixture, TUut>
             where TUutFixture : IDictionaryUutFixture<TUutFixture, TUut>
@@ -24,7 +24,7 @@ public static partial class IndexerTests
                 Console.WriteLine(result);
             }
             
-            [TestCaseSource(typeof(SetTests), nameof(WhenDictionaryContainsKeyWithDifferentValue_TestCases))]
+            [TestCaseSource(typeof(Set), nameof(WhenDictionaryContainsKeyWithDifferentValue_TestCases))]
             public void WhenDictionaryContainsKeyWithDifferentValue_ReplacesItem(SingleItemOperationTestCase testCase)
             {
                 using var fixture = TUutFixture.Create(testCase.InitialItems);
@@ -45,7 +45,7 @@ public static partial class IndexerTests
                     replacementValue:   testCase.Value);
             }
 
-            [TestCaseSource(typeof(SetTests), nameof(WhenDictionaryContainsKeyWithSameValue_TestCases))]
+            [TestCaseSource(typeof(Set), nameof(WhenDictionaryContainsKeyWithSameValue_TestCases))]
             public void WhenDictionaryContainsKeyWithSameValue_DoesNothing(SingleItemOperationTestCase testCase)
             {
                 using var fixture = TUutFixture.Create(testCase.InitialItems);
@@ -57,7 +57,7 @@ public static partial class IndexerTests
                 fixture.AssertUutDidNothing();
             }
 
-            [TestCaseSource(typeof(SetTests), nameof(WhenDictionaryDoesNotContainKey_TestCases))]
+            [TestCaseSource(typeof(Set), nameof(WhenDictionaryDoesNotContainKey_TestCases))]
             public void WhenDictionaryDoesNotContainKey_AddsItem(SingleItemOperationTestCase testCase)
             {
                 using var fixture = TUutFixture.Create(testCase.InitialItems);

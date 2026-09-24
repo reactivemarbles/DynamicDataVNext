@@ -2,7 +2,7 @@ namespace DynamicDataVNext.Tests.Keyed.DictionaryTestBases;
 
 public static partial class IndexerTests
 {
-    public static partial class GetTests
+    public static partial class Get
     {
         public abstract class Base<TUutFixture, TUut>
             where TUutFixture : IReadOnlyDictionaryUutFixture<TUutFixture, TUut>
@@ -24,7 +24,7 @@ public static partial class IndexerTests
                 Console.WriteLine(result);
             }
             
-            [TestCaseSource(typeof(GetTests), nameof(WhenDictionaryContainsKey_TestCases))]
+            [TestCaseSource(typeof(Get), nameof(WhenDictionaryContainsKey_TestCases))]
             public void WhenDictionaryContainsKey_ReturnsMatchingValue(SingleKeyOperationTestCase testCase)
             {
                 using var fixture = TUutFixture.Create(testCase.InitialItems);
@@ -34,7 +34,7 @@ public static partial class IndexerTests
                 result.Should().Be(testCase.InitialItems.First(item => item.Key == testCase.Key).Value, "the value in the collection for the given key should have been retrieved");
             }
 
-            [TestCaseSource(typeof(GetTests), nameof(WhenDictionaryDoesNotContainKey_TestCases))]
+            [TestCaseSource(typeof(Get), nameof(WhenDictionaryDoesNotContainKey_TestCases))]
             public void WhenDictionaryDoesNotContainKey_ThrowsException(SingleKeyOperationTestCase testCase)
             {
                 using var fixture = TUutFixture.Create(testCase.InitialItems);

@@ -2,7 +2,7 @@ namespace DynamicDataVNext.Tests.Keyed.DictionaryTestBases;
 
 public static partial class IndexerTests
 {
-    public static partial class SetTests
+    public static partial class Set
     {
         public static readonly IReadOnlyList<TestCaseData> WhenDictionaryContainsKeyWithDifferentValue_TestCases
             = new[]
