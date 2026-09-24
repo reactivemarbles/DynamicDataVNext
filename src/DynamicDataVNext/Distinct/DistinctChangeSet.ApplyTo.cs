@@ -117,58 +117,28 @@ public static partial class DistinctChangeSet
                 break;
             
             case ChangeSetType.Update:
-                switch (target)
+                var suspension = (target as IObservableSet<T>)?.SuspendNotifications();
+                try
                 {
-                    case IObservableSet<T> observableSet:
-                        using (observableSet.SuspendNotifications())
-                            foreach (var change in changeSet.Changes)
-                                switch (change.Type)
-                                {
-                                    case DistinctChangeType.Addition:
-                                        observableSet.Add(change.Item);
-                                        break;
+                    foreach (var change in changeSet.Changes)
+                        switch (change.Type)
+                        {
+                            case DistinctChangeType.Addition:
+                                target.Add(change.Item);
+                                break;
 
-                                    case DistinctChangeType.Refreshment:
-                                        observableSet.Refresh(change.Item);
-                                        break;
-                            
-                                    case DistinctChangeType.Removal:
-                                        observableSet.Remove(change.Item);
-                                        break;
-                                }
-                        break;
-                        
-                    case IRefreshableSet<T> refreshableSet:
-                        foreach (var change in changeSet.Changes)
-                            switch (change.Type)
-                            {
-                                case DistinctChangeType.Addition:
-                                    target.Add(change.Item);
-                                    break;
-
-                                case DistinctChangeType.Refreshment:
-                                    refreshableSet.Refresh(change.Item);
-                                    break;
-                        
-                                case DistinctChangeType.Removal:
-                                    target.Remove(change.Item);
-                                    break;
-                            }
-                        break;
-                
-                    default:
-                        foreach (var change in changeSet.Changes)
-                            switch (change.Type)
-                            {
-                                case DistinctChangeType.Addition:
-                                    target.Add(change.Item);
-                                    break;
-
-                                case DistinctChangeType.Removal:
-                                    target.Remove(change.Item);
-                                    break;
-                            }
-                        break;
+                            case DistinctChangeType.Refreshment:
+                                (target as IRefreshableSet<T>)?.Refresh(change.Item);
+                                break;
+                    
+                            case DistinctChangeType.Removal:
+                                target.Remove(change.Item);
+                                break;
+                        }
+                }
+                finally
+                {
+                    suspension?.Dispose();
                 }
                 break;
         }
