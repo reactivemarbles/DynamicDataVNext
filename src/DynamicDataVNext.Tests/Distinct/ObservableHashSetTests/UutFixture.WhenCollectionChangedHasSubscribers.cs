@@ -4,18 +4,18 @@ namespace DynamicDataVNext.Tests.Distinct.ObservableHashSetTests;
 
 public static partial class UutFixture
 {
-    public sealed class WhenSetChangedHasSubscribers
-        : ISetUutFixture<WhenSetChangedHasSubscribers, ObservableHashSet<int>>,
-            IReadOnlySetUutFixture<WhenSetChangedHasSubscribers, ObservableHashSet<int>>
+    public sealed class WhenCollectionChangedHasSubscribers
+        : ISetUutFixture<WhenCollectionChangedHasSubscribers, ObservableHashSet<int>>,
+            IReadOnlySetUutFixture<WhenCollectionChangedHasSubscribers, ObservableHashSet<int>>
     {
-        public static WhenSetChangedHasSubscribers Create(
+        public static WhenCollectionChangedHasSubscribers Create(
                 IEqualityComparer<int>? comparer    = null,
                 DistinctItemOptions     options     = default)
             => new(new ObservableHashSet<int>(
                 comparer:   comparer,
                 options:    options));
 
-        public static WhenSetChangedHasSubscribers Create(
+        public static WhenCollectionChangedHasSubscribers Create(
                 int                     capacity,
                 IEqualityComparer<int>? comparer    = null,
                 DistinctItemOptions     options     = default)
@@ -24,7 +24,7 @@ public static partial class UutFixture
                 comparer:   comparer,
                 options:    options));
 
-        public static WhenSetChangedHasSubscribers Create(
+        public static WhenCollectionChangedHasSubscribers Create(
                 IEnumerable<int>        items,
                 IEqualityComparer<int>? comparer    = null,
                 DistinctItemOptions     options     = default)
@@ -33,7 +33,7 @@ public static partial class UutFixture
                 comparer:   comparer,
                 options:    options));
 
-        private WhenSetChangedHasSubscribers(ObservableHashSet<int> uut)
+        private WhenCollectionChangedHasSubscribers(ObservableHashSet<int> uut)
         {
             _uut = uut;
             

@@ -4,5 +4,5 @@ public partial class RemoveTests
 {
     [TestFixture]
     public class WhenCollectionChangedHasSubscribers
-        : Distinct.SetTestBases.RemoveTests.Base<UutFixture.WhenSetChangedHasSubscribers, ObservableHashSet<int>>;
+        : Distinct.SetTestBases.RemoveTests.Base<UutFixture.WhenCollectionChangedHasSubscribers, ObservableHashSet<int>>;
 }
