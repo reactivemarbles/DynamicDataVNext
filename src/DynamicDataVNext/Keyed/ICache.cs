@@ -30,6 +30,9 @@ public interface ICache<TKey, TItem>
     /// Merges an item into the cache by either adding it, or replacing it, if an item with the same key is already present.
     /// </summary>
     /// <param name="item">The item to be added or replaced</param>
+    /// <remarks>
+    /// If the collection already contains an item for the corresponding key, <see cref="EqualityComparer{T}.Default"/> is used to check if that item is equivalent to the new one. If so, no change is made. 
+    /// </remarks>
     void Merge(TItem item);
 
     /// <summary>

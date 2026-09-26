@@ -3,7 +3,7 @@ namespace DynamicDataVNext;
 public partial class ObservableDictionary<TKey, TValue>
 {
     /// <summary>
-    /// The value returned by <see cref="ObservableHashSet{T}.SuspendNotifications"/>, allowing consumers to control when notifications are resumed.
+    /// The value returned by <see cref="ObservableDictionary{TKey, TValue}.SuspendNotifications"/>, allowing consumers to control when notifications are resumed.
     /// </summary>
     public struct Suspension
         : IDisposable
@@ -12,7 +12,7 @@ public partial class ObservableDictionary<TKey, TValue>
             => _owner = owner;
 
         /// <summary>
-        /// Instructs the <see cref="ObservableHashSet{T}"/> that created this to resume publishing notifications.
+        /// Instructs the <see cref="ObservableDictionary{TKey, TValue}"/> that created this to resume publishing notifications.
         /// </summary>
         public void Dispose()
         {

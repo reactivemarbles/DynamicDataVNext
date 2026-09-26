@@ -78,6 +78,7 @@ public partial class ChangeTrackingCache<TKey, TItem>
     }            
 
     /// <inheritdoc cref="IDictionary{TKey, TValue}.this[TKey]"/>
+    /// <exception cref="ArgumentNullException">Throws for <paramref name="key"/>.</exception>
     public TItem this[TKey key]
         => _itemsByKey[key];
 
@@ -116,6 +117,7 @@ public partial class ChangeTrackingCache<TKey, TItem>
         => _options;
 
     /// <inheritdoc/>
+    /// <exception cref="ArgumentException">Throws if the key value of <paramref name="item"/>, as determined by <see cref="KeySelector"/> is <see langword="null"/>.</exception>
     public void Add(TItem item)
     {
         var key = _keySelector.Invoke(item);
@@ -215,9 +217,6 @@ public partial class ChangeTrackingCache<TKey, TItem>
 
     /// <inheritdoc/>
     /// <exception cref="ArgumentException">Throws if the key value of <paramref name="item"/>, as determined by <see cref="KeySelector"/> is <see langword="null"/>.</exception>
-    /// <remarks>
-    /// If the collection already contains an item for the corresponding key, <see cref="EqualityComparer{T}.Default"/> is used to check if that item is equivalent to the new one. If so, no change is made. 
-    /// </remarks>
     public void Merge(TItem item)
     {
         var key = _keySelector.Invoke(item);
