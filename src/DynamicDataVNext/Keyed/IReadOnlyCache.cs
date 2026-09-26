@@ -13,6 +13,12 @@ public interface IReadOnlyCache<TKey, TItem>
     /// <inheritdoc cref="ICache{TKey, TItem}.Keys"/>
     IReadOnlyCollection<TKey> Keys { get; }
 
+    /// <inheritdoc cref="ICache{TKey, TItem}.KeyedItems"/>
+    IReadOnlyCollection<KeyedItem<TKey, TItem>> KeyedItems { get; }
+
+    /// <inheritdoc cref="ICache{TKey, TItem}.KeyValuePairs"/>
+    IReadOnlyCollection<KeyValuePair<TKey, TItem>> KeyValuePairs { get; }
+
     /// <inheritdoc cref="ICache{TKey, TItem}.KeySelector"/>
     Func<TItem, TKey> KeySelector { get; }
 

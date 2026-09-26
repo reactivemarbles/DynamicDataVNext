@@ -47,7 +47,7 @@ public sealed partial class ObservableHashSet<T>
             IEqualityComparer<T>?   comparer    = null,
             DistinctItemOptions     options     = default)
         : this(new(
-            items:      items ?? throw new ArgumentNullException(nameof(items)),
+            items:      items,
             comparer:   comparer,
             options:    options))
     { }

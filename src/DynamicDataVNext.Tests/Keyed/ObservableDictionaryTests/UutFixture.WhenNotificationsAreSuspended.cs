@@ -86,8 +86,8 @@ public static partial class UutFixture
             _changeStreamSourceResults.RecordedChangeSets.Should().ContainSingle("a single change operation was performed");
             _changeStreamSourceResults.RecordedChangeSets[0].Changes.Should().ContainSingle("a single change was made");
             _changeStreamSourceResults.RecordedChangeSets[0].Changes[0].Type.Should().Be(KeyedChangeType.Refreshment, "a single refreshment was performed");
-            _changeStreamSourceResults.RecordedChangeSets[0].Changes[0].AsRefreshment().Key.Should().Be(key, "the given item should have been added");
-            _changeStreamSourceResults.RecordedChangeSets[0].Changes[0].AsRefreshment().Item.Should().Be(value, "the given item should have been added");
+            _changeStreamSourceResults.RecordedChangeSets[0].Changes[0].AsRefreshment().Key.Should().Be(key, "the given item should have been refreshed");
+            _changeStreamSourceResults.RecordedChangeSets[0].Changes[0].AsRefreshment().Item.Should().Be(value, "the given item should have been refreshed");
             _changeStreamSourceResults.RecordedChangeSets[0].Type.Should().Be(ChangeSetType.Update, "refreshing an item should produce an update");
             _changeStreamSourceResults.RecordedItems.Should().BeEquivalentTo(_uut, "collecting published changes should reproduce the source collection");
         }

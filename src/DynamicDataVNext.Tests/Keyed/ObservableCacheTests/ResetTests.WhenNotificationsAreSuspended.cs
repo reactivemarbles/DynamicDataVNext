@@ -1,0 +1,10 @@
+using DynamicDataVNext.Tests.Keyed.CacheTestBases;
+
+namespace DynamicDataVNext.Tests.Keyed.ObservableCacheTests;
+
+public partial class ResetTests
+{
+    [TestFixture]
+    public class WhenNotificationsAreSuspended
+        : Keyed.CacheTestBases.ResetTests.Base<UutFixture.WhenNotificationsAreSuspended, ObservableCache<string, TestItem>>;
+}

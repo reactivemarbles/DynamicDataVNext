@@ -301,8 +301,7 @@ public sealed partial class ObservableDictionary<TKey, TValue>
         return new(this);
     }
 
-    public bool TryGetValue(
-                                        TKey    key,
+    public bool TryGetValue(            TKey    key,
             [MaybeNullWhen(false)]  out TValue  value)
         => _items.TryGetValue(key, out value);
 

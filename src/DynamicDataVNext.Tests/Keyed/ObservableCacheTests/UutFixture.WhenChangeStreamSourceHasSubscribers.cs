@@ -1,0 +1,260 @@
+using DynamicDataVNext.Tests.Keyed.CacheTestBases;
+
+namespace DynamicDataVNext.Tests.Keyed.ObservableCacheTests;
+
+public static partial class UutFixture
+{
+    public sealed class WhenChangeStreamSourceHasSubscribers
+        : ICacheUutFixture<WhenChangeStreamSourceHasSubscribers, ObservableCache<string, TestItem>>,
+            IReadOnlyCacheUutFixture<WhenChangeStreamSourceHasSubscribers, ObservableCache<string, TestItem>>
+    {
+        public static WhenChangeStreamSourceHasSubscribers Create(
+                Func<TestItem, string>      keySelector,
+                IEqualityComparer<string>?  comparer    = null,
+                KeyedItemOptions            options     = default)
+            => new(
+                uut:            new(
+                    keySelector:    keySelector,
+                    comparer:       comparer,
+                    options:        options),
+                keySelector:    keySelector);
+
+        public static WhenChangeStreamSourceHasSubscribers Create(
+                int                         capacity,
+                Func<TestItem, string>      keySelector,
+                IEqualityComparer<string>?  comparer    = null,
+                KeyedItemOptions            options     = default)
+            => new(
+                uut:            new(
+                    capacity:       capacity,
+                    keySelector:    keySelector,
+                    comparer:       comparer,
+                    options:        options),
+                keySelector:    keySelector);
+
+        public static WhenChangeStreamSourceHasSubscribers Create(
+                IEnumerable<TestItem>       items,
+                Func<TestItem, string>      keySelector,
+                IEqualityComparer<string>?  comparer    = null,
+                KeyedItemOptions            options     = default)
+            => new(
+                uut:            new(
+                    items:          items,
+                    keySelector:    keySelector,
+                    comparer:       comparer,
+                    options:        options),
+                keySelector:    keySelector);
+
+        private WhenChangeStreamSourceHasSubscribers(
+            ObservableCache<string, TestItem>   uut,
+            Func<TestItem, string>              keySelector)
+        {
+            _uut            = uut;
+            _keySelector    = keySelector;
+
+            _subscription = uut.ChangeStream
+                .ValidateChangeSets()
+                .RecordItems(out _results);
+            _results.ClearNotifications();       
+        }
+        
+        public ObservableCache<string, TestItem> Uut
+            => _uut;
+
+        public int UutCapacity
+            => _uut.Capacity;
+
+        public IEqualityComparer<string> UutComparer
+            => _uut.ChangeStream.KeyComparer;
+        
+        public KeyedItemOptions UutOptions
+            => _uut.ChangeStream.Options;
+        
+        public void AssertItemWasAdded(TestItem addedItem)
+        {
+            var addedKey = _keySelector.Invoke(addedItem);
+        
+            _results.HasFinalized.Should().BeFalse("the dictionary can still be changed");
+            _results.RecordedChangeSets.Should().ContainSingle("a single change operation was performed");
+            _results.RecordedChangeSets[0].Changes.Should().ContainSingle("a single change was made");
+            _results.RecordedChangeSets[0].Changes[0].Type.Should().Be(KeyedChangeType.Addition, "a single addition was performed");
+            _results.RecordedChangeSets[0].Changes[0].AsAddition().Key.Should().Be(addedKey, "the given item should have been added");
+            _results.RecordedChangeSets[0].Changes[0].AsAddition().Item.Should().Be(addedItem, "the given item should have been added");
+            _results.RecordedChangeSets[0].Type.Should().Be(ChangeSetType.Update, "adding an item to a non-empty set should produce an update");
+            _results.RecordedItems.Values.Should().BeEquivalentTo(_uut, "collecting published changes should reproduce the source collection");
+        }
+
+        public void AssertItemWasRefreshed(TestItem refreshedItem)
+        {
+            var refreshedKey = _keySelector.Invoke(refreshedItem);
+
+            _results.HasFinalized.Should().BeFalse("the dictionary can still be changed");
+            _results.RecordedChangeSets.Should().ContainSingle("a single change operation was performed");
+            _results.RecordedChangeSets[0].Changes.Should().ContainSingle("a single change was made");
+            _results.RecordedChangeSets[0].Changes[0].Type.Should().Be(KeyedChangeType.Refreshment, "a single refreshment was performed");
+            _results.RecordedChangeSets[0].Changes[0].AsRefreshment().Key.Should().Be(refreshedKey, "the given item should have been refreshed");
+            _results.RecordedChangeSets[0].Changes[0].AsRefreshment().Item.Should().Be(refreshedItem, "the given item should have been refreshed");
+            _results.RecordedChangeSets[0].Type.Should().Be(ChangeSetType.Update, "refreshing an item should produce an update");
+            _results.RecordedItems.Values.Should().BeEquivalentTo(_uut, "collecting published changes should reproduce the source collection");
+        }
+
+        public void AssertItemWasRemoved(TestItem removedItem)
+        {
+            var removedKey = _keySelector.Invoke(removedItem);
+
+            _results.HasFinalized.Should().BeFalse("the dictionary can still be changed");
+            _results.RecordedChangeSets.Should().ContainSingle("a single change operation was performed");
+            _results.RecordedChangeSets[0].Changes.Should().ContainSingle("a single change was made");
+            _results.RecordedChangeSets[0].Changes[0].Type.Should().Be(KeyedChangeType.Removal, "a single removal was performed");
+            _results.RecordedChangeSets[0].Changes[0].AsRemoval().Key.Should().Be(removedKey, "the given item should have been removed");
+            _results.RecordedChangeSets[0].Changes[0].AsRemoval().Item.Should().Be(removedItem, "the given item should have been removed");
+            _results.RecordedChangeSets[0].Type.Should().Be(ChangeSetType.Update, "removing an item from a collection of multiple items should produce an update");
+            _results.RecordedItems.Values.Should().BeEquivalentTo(_uut, "collecting published changes should reproduce the source collection");
+        }
+
+        public void AssertItemWasReplaced(
+            TestItem oldItem,
+            TestItem newItem)
+        {
+            var replacementKey = _keySelector.Invoke(oldItem);
+            
+            _results.HasFinalized.Should().BeFalse("the dictionary can still be changed");
+            _results.RecordedChangeSets.Should().ContainSingle("a single change operation was performed");
+            _results.RecordedChangeSets[0].Changes.Should().ContainSingle("a single change was made");
+            _results.RecordedChangeSets[0].Changes[0].Type.Should().Be(KeyedChangeType.Replacement, "a single replacement was performed");
+            _results.RecordedChangeSets[0].Changes[0].AsReplacement().Key.Should().Be(replacementKey, "the replacement should have occurred for the given key");
+            _results.RecordedChangeSets[0].Changes[0].AsReplacement().OldItem.Should().Be(oldItem, "the previous item at the given key should have been recorded");
+            _results.RecordedChangeSets[0].Changes[0].AsReplacement().NewItem.Should().Be(newItem, "the given item should have replaced the previous one");
+            _results.RecordedChangeSets[0].Type.Should().Be(ChangeSetType.Update, "replacing an item within a collection should produce an update");
+            _results.RecordedItems.Values.Should().BeEquivalentTo(_uut, "collecting published changes should reproduce the source collection");
+        }
+
+        public void AssertItemsWereAdded(IReadOnlyList<TestItem> addedItems)
+        {
+            var additions = addedItems
+                .Select(addedItem => new KeyedItem<string, TestItem>()
+                {
+                    Key     = _keySelector.Invoke(addedItem),
+                    Item    = addedItem
+                })
+                .ToArray();
+
+            _results.HasFinalized.Should().BeFalse("the dictionary can still be changed");
+            _results.RecordedChangeSets.Should().ContainSingle("a single change operation was performed");
+            _results.RecordedChangeSets[0].Changes.Select(change => change.Type).Should().AllBeEquivalentTo(DistinctChangeType.Addition, "items should only have been added");
+            _results.RecordedChangeSets[0].Changes.Select(change => change.AsAddition()).Should().BeEquivalentTo(additions, "items should have been added to the dictionary");
+            _results.RecordedChangeSets[0].Type.Should().Be(ChangeSetType.Update, "adding items to a non-empty dictionary should produce an update");
+            _results.RecordedItems.Values.Should().BeEquivalentTo(_uut, "collecting published changes should reproduce the source collection");
+        }
+
+        public void AssertItemsWereMerged(
+            IReadOnlyList<TestItem>                             addedItems,
+            IReadOnlyList<KeyedReplacement<string, TestItem>>   replacements)
+        {
+            var additions = addedItems
+                .Select(addedItem => new KeyedItem<string, TestItem>()
+                {
+                    Key     = _keySelector.Invoke(addedItem),
+                    Item    = addedItem
+                })
+                .ToArray();
+
+            _results.HasFinalized.Should().BeFalse("the dictionary can still be changed");
+            _results.RecordedChangeSets.Should().ContainSingle("a single change operation was performed");
+            _results.RecordedChangeSets[0].Changes.Length.Should().Be(additions.Length + replacements.Count, "all given items not present in the collection should have been merged into it");
+            _results.RecordedChangeSets[0].Changes.Where(change => change.Type is KeyedChangeType.Addition).Select(change => change.AsAddition()).Should().BeEquivalentTo(additions, options => options.WithoutStrictOrdering(), "all given items whose keys were not present within the collection should have been added");
+            _results.RecordedChangeSets[0].Changes.Where(change => change.Type is KeyedChangeType.Replacement).Select(change => change.AsReplacement()).Should().BeEquivalentTo(replacements, options => options.WithoutStrictOrdering(), "all given items not present in the collection, but whose keys were, should have been replaced");
+            _results.RecordedChangeSets[0].Type.Should().Be(ChangeSetType.Update, "a combination of addition and replacement operations, should produce an update");
+            _results.RecordedItems.Values.Should().BeEquivalentTo(_uut, "collecting published changes should reproduce the source collection");
+        }
+
+        public void AssertItemsWereRemoved(IReadOnlyList<TestItem> removedItems)
+        {
+            var removals = removedItems
+                .Select(removedItem => new KeyedItem<string, TestItem>()
+                {
+                    Key     = _keySelector.Invoke(removedItem),
+                    Item    = removedItem
+                })
+                .ToArray();
+    
+            _results.HasFinalized.Should().BeFalse("the dictionary can still be changed");
+            _results.RecordedChangeSets.Should().ContainSingle("a single change operation was performed");
+            _results.RecordedChangeSets[0].Changes.Select(change => change.Type).Should().AllBeEquivalentTo(DistinctChangeType.Removal, "items should only have been removed");
+            _results.RecordedChangeSets[0].Changes.Select(change => change.AsRemoval()).Should().BeEquivalentTo(removals, options => options.WithoutStrictOrdering(), "the given items should have been removed from the collection");
+            _results.RecordedChangeSets[0].Type.Should().Be(ChangeSetType.Update, "removing items from a collection, without emptying it, should produce an update");
+            _results.RecordedItems.Values.Should().BeEquivalentTo(_uut, "collecting published changes should reproduce the source collection");
+        }
+
+        public void AssertKeyWasRefreshed(string key)
+        {
+            _results.HasFinalized.Should().BeFalse("the dictionary can still be changed");
+            _results.RecordedChangeSets.Should().ContainSingle("a single change operation was performed");
+            _results.RecordedChangeSets[0].Changes.Should().ContainSingle("a single change was made");
+            _results.RecordedChangeSets[0].Changes[0].Type.Should().Be(KeyedChangeType.Refreshment, "a single refreshment was performed");
+            _results.RecordedChangeSets[0].Changes[0].AsRefreshment().Key.Should().Be(key, "the given key should have been retrieved");
+            _results.RecordedChangeSets[0].Changes[0].AsRefreshment().Item.Key.Should().Be(key, "the given key's item should have been retrieved");
+            _results.RecordedChangeSets[0].Type.Should().Be(ChangeSetType.Update, "refreshing an item should produce an update");
+            _results.RecordedItems.Values.Should().BeEquivalentTo(_uut, "collecting published changes should reproduce the source collection");
+        }
+
+        public void AssertUutDidNothing()
+            => _results.RecordedNotifications.Should().BeEmpty("the dictionary should not have been changed");
+
+        public void AssertUutWasCleared(IReadOnlyList<TestItem> removedItems)
+        {
+            var removals = removedItems
+                .Select(removedItem => new KeyedItem<string, TestItem>()
+                {
+                    Key     = _keySelector.Invoke(removedItem),
+                    Item    = removedItem
+                })
+                .ToArray();
+
+            _results.HasFinalized.Should().BeFalse("the dictionary can still be changed");
+            _results.RecordedChangeSets.Should().ContainSingle("a single change operation was performed");
+            _results.RecordedChangeSets[0].Changes.Select(change => change.Type).Should().AllBeEquivalentTo(DistinctChangeType.Removal, "items should only have been removed");
+            _results.RecordedChangeSets[0].Changes.Select(change => change.AsRemoval()).Should().BeEquivalentTo(removals, "all items should have been removed");
+            _results.RecordedChangeSets[0].Type.Should().Be(ChangeSetType.Clear, "removing all items from a dictionary should produce a clear");
+            _results.RecordedItems.Values.Should().BeEquivalentTo(_uut, "collecting published changes should reproduce the source collection");
+        }
+
+        public void AssertUutWasReset(
+            IReadOnlyList<TestItem> removedItems,
+            IReadOnlyList<TestItem> addedItems)
+        {
+            var additions = addedItems
+                .Select(addedItem => new KeyedItem<string, TestItem>()
+                {
+                    Key     = _keySelector.Invoke(addedItem),
+                    Item    = addedItem
+                })
+                .ToArray();
+
+            var removals = removedItems
+                .Select(removedItem => new KeyedItem<string, TestItem>()
+                {
+                    Key     = _keySelector.Invoke(removedItem),
+                    Item    = removedItem
+                })
+                .ToArray();
+
+            _results.HasFinalized.Should().BeFalse("the dictionary can still be changed");
+            _results.RecordedChangeSets.Should().ContainSingle("a single change operation was performed");
+            _results.RecordedChangeSets[0].Changes.Take(removedItems.Count).Select(change => change.Type).Should().AllBeEquivalentTo(DistinctChangeType.Removal, "all existing items should have been removed");
+            _results.RecordedChangeSets[0].Changes.Take(removedItems.Count).Select(change => change.AsRemoval()).Should().BeEquivalentTo(removals, "all existing items should have been removed");
+            _results.RecordedChangeSets[0].Changes.Skip(removedItems.Count).Select(change => change.Type).Should().AllBeEquivalentTo(DistinctChangeType.Addition, "all given items should have been added");
+            _results.RecordedChangeSets[0].Changes.Skip(removedItems.Count).Select(change => change.AsAddition()).Should().BeEquivalentTo(additions, "all given items should have been added");
+            _results.RecordedChangeSets[0].Type.Should().Be(ChangeSetType.Reset, "removing all items in a set, then adding new items, should produce a reset");
+            _results.RecordedItems.Values.Should().BeEquivalentTo(_uut, "collecting published changes should reproduce the source collection");
+        }
+        
+        public void Dispose()
+            => _subscription.Dispose();
+
+        private readonly Func<TestItem, string>                         _keySelector;
+        private readonly KeyedItemRecordingObserver<string, TestItem>   _results;
+        private readonly IDisposable                                    _subscription;
+        private readonly ObservableCache<string, TestItem>              _uut;
+    }
+}

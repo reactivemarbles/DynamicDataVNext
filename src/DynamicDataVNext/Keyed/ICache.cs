@@ -15,6 +15,22 @@ public interface ICache<TKey, TItem>
     IReadOnlyCollection<TKey> Keys { get; }
 
     /// <summary>
+    /// Retrieves the current set of items present within the collection, paired with their key values.
+    /// </summary>
+    /// <remarks>
+    /// Note that the returned collection represents a "snapshot" of the source collection, at the time at which it is created. Changes made to the source collection after a collection is retrieved are not reflected upon the collection.
+    /// </remarks>
+    IReadOnlyCollection<KeyedItem<TKey, TItem>> KeyedItems { get; }
+
+    /// <summary>
+    /// Retrieves the current set of items present within the collection, paired with their key values.
+    /// </summary>
+    /// <remarks>
+    /// Note that the returned collection represents a "snapshot" of the source collection, at the time at which it is created. Changes made to the source collection after a collection is retrieved are not reflected upon the collection.
+    /// </remarks>
+    IReadOnlyCollection<KeyValuePair<TKey, TItem>> KeyValuePairs { get; }
+
+    /// <summary>
     /// A delegate that defines, and allows retrieval of, the key for each item in the collection.
     /// </summary>
     Func<TItem, TKey> KeySelector { get; }

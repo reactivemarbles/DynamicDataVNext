@@ -4,4 +4,10 @@
     <PackageReference Include="ReactiveUI.Primitives" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Keyed\KeyedItemCollection.Enumerator.cs">
+      <DependentUpon>KeyedItemCollection.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
 </Project>

@@ -106,6 +106,14 @@ public partial class ChangeTrackingCache<TKey, TItem>
     public Dictionary<TKey, TItem>.KeyCollection Keys
         => _itemsByKey.Keys;
 
+    /// <inheritdoc cref="ICache{TKey, TItem}.KeyedItems"/>
+    public KeyedItemCollection<TKey, TItem> KeyedItems
+        => new(_itemsByKey);
+
+    /// <inheritdoc cref="ICache{TKey, TItem}.KeyValuePairs"/>
+    public KeyValuePairCollection<TKey, TItem> KeyValuePairs
+        => new(_itemsByKey);
+
     /// <inheritdoc cref="ICache{TKey, TItem}.KeySelector"/>
     public Func<TItem, TKey> KeySelector
         => _keySelector;
@@ -550,7 +558,8 @@ public partial class ChangeTrackingCache<TKey, TItem>
 
     /// <inheritdoc cref="ICache{TKey, TItem}.TryGetItem(TKey, out TItem)"/>
     /// <exception cref="ArgumentNullException">Throws for <paramref name="key"/>.</exception>
-    public bool TryGetItem(TKey key, [MaybeNullWhen(false)] out TItem item)
+    public bool TryGetItem(             TKey    key,
+            [MaybeNullWhen(false)]  out TItem   item)
         => _itemsByKey.TryGetValue(key, out item);
 
     IReadOnlyCollection<TKey> ICache<TKey, TItem>.Keys
@@ -558,6 +567,18 @@ public partial class ChangeTrackingCache<TKey, TItem>
 
     IReadOnlyCollection<TKey> IReadOnlyCache<TKey, TItem>.Keys
         => _itemsByKey.Keys;
+
+    IReadOnlyCollection<KeyedItem<TKey, TItem>> ICache<TKey, TItem>.KeyedItems
+        => KeyedItems;
+
+    IReadOnlyCollection<KeyedItem<TKey, TItem>> IReadOnlyCache<TKey, TItem>.KeyedItems
+        => KeyedItems;
+
+    IReadOnlyCollection<KeyValuePair<TKey, TItem>> ICache<TKey, TItem>.KeyValuePairs
+        => KeyValuePairs;
+
+    IReadOnlyCollection<KeyValuePair<TKey, TItem>> IReadOnlyCache<TKey, TItem>.KeyValuePairs
+        => KeyValuePairs;
 
     bool ICollection<TItem>.IsReadOnly
         => false;
